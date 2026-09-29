@@ -1,0 +1,25 @@
+# Keil build outputs
+**/Objects/
+**/Listings/
+*.axf
+*.hex
+*.bin
+*.elf
+*.map
+*.lst
+*.crf
+*.dep
+*.lnp
+*.build_log.htm
+
+# Keil user-specific settings
+*.uvguix.*
+*.uvoptx
+
+# Common build directories
+Debug/
+Release/
+
+# OS files
+.DS_Store
+Thumbs.db
