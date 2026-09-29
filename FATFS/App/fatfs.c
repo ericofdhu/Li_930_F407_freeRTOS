@@ -22,8 +22,8 @@ uint8_t retUSER;    /* Return value for USER */
 char USERPath[4];   /* USER logical drive path */
 FATFS USERFatFS;    /* File system object for USER logical drive */
 FIL USERFile;       /* File object for USER */
-
 /* USER CODE BEGIN Variables */
+FRESULT USERFatFSResult = FR_NOT_READY;
 
 /* USER CODE END Variables */
 

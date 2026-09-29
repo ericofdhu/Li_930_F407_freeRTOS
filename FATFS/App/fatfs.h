@@ -39,6 +39,7 @@ extern FIL USERFile; /* File object for USER */
 void MX_FATFS_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+extern FRESULT USERFatFSResult;
 
 /* USER CODE END Prototypes */
 #ifdef __cplusplus

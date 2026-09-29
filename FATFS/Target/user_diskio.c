@@ -31,6 +31,7 @@
 #endif
 
 /* USER CODE BEGIN DECL */
+#include "w25q128.h"
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
@@ -42,6 +43,11 @@
 /* Private variables ---------------------------------------------------------*/
 /* Disk status */
 static volatile DSTATUS Stat = STA_NOINIT;
+static uint8_t SectorBuffer[W25Q128_SECTOR_SIZE];
+
+#define USER_SECTOR_SIZE       512U
+#define USER_SECTORS_PER_BLOCK (W25Q128_SECTOR_SIZE / USER_SECTOR_SIZE)
+#define USER_SECTOR_COUNT      (W25Q128_CAPACITY_BYTES / USER_SECTOR_SIZE)
 
 /* USER CODE END DECL */
 
@@ -81,7 +87,12 @@ DSTATUS USER_initialize (
 )
 {
   /* USER CODE BEGIN INIT */
-    Stat = STA_NOINIT;
+    if (pdrv != 0U)
+    {
+      return STA_NOINIT;
+    }
+
+    Stat = (W25Q128_Init() != 0U) ? 0U : STA_NOINIT;
     return Stat;
   /* USER CODE END INIT */
 }
@@ -96,7 +107,10 @@ DSTATUS USER_status (
 )
 {
   /* USER CODE BEGIN STATUS */
-    Stat = STA_NOINIT;
+    if (pdrv != 0U)
+    {
+      return STA_NOINIT;
+    }
     return Stat;
   /* USER CODE END STATUS */
 }
@@ -117,7 +131,27 @@ DRESULT USER_read (
 )
 {
   /* USER CODE BEGIN READ */
-    return RES_OK;
+    uint32_t byteAddress;
+    uint32_t byteCount;
+
+    if ((pdrv != 0U) || (buff == NULL) || (count == 0U))
+    {
+      return RES_PARERR;
+    }
+    if (Stat & STA_NOINIT)
+    {
+      return RES_NOTRDY;
+    }
+    if ((sector >= USER_SECTOR_COUNT) ||
+        (count > (USER_SECTOR_COUNT - sector)))
+    {
+      return RES_PARERR;
+    }
+
+    byteAddress = sector * USER_SECTOR_SIZE;
+    byteCount = (uint32_t)count * USER_SECTOR_SIZE;
+    return (W25Q128_Read(byteAddress, buff, byteCount) != 0U) ?
+           RES_OK : RES_ERROR;
   /* USER CODE END READ */
 }
 
@@ -138,7 +172,83 @@ DRESULT USER_write (
 )
 {
   /* USER CODE BEGIN WRITE */
-  /* USER CODE HERE */
+    uint32_t blockAddress;
+    uint32_t blockOffset;
+    uint32_t sectorsInBlock;
+    uint32_t bytesInBlock;
+    uint32_t remaining;
+
+    if ((pdrv != 0U) || (buff == NULL) || (count == 0U))
+    {
+      return RES_PARERR;
+    }
+    if (Stat & STA_NOINIT)
+    {
+      return RES_NOTRDY;
+    }
+    if ((sector >= USER_SECTOR_COUNT) ||
+        (count > (USER_SECTOR_COUNT - sector)))
+    {
+      return RES_PARERR;
+    }
+
+    remaining = count;
+    while (remaining > 0U)
+    {
+      blockAddress = (sector / USER_SECTORS_PER_BLOCK) *
+                     W25Q128_SECTOR_SIZE;
+      blockOffset = (sector % USER_SECTORS_PER_BLOCK) * USER_SECTOR_SIZE;
+      sectorsInBlock = USER_SECTORS_PER_BLOCK -
+                       (blockOffset / USER_SECTOR_SIZE);
+      if (sectorsInBlock > remaining)
+      {
+        sectorsInBlock = remaining;
+      }
+      bytesInBlock = sectorsInBlock * USER_SECTOR_SIZE;
+
+      if (W25Q128_Read(blockAddress, SectorBuffer,
+                       W25Q128_SECTOR_SIZE) == 0U)
+      {
+        return RES_ERROR;
+      }
+      memcpy(&SectorBuffer[blockOffset], buff, bytesInBlock);
+
+      if (W25Q128_EraseSector(blockAddress) == 0U)
+      {
+        return RES_ERROR;
+      }
+
+      {
+        uint32_t pageOffset;
+        uint8_t pageIsErased;
+        uint32_t index;
+
+        for (pageOffset = 0U; pageOffset < W25Q128_SECTOR_SIZE;
+             pageOffset += W25Q128_PAGE_SIZE)
+        {
+          pageIsErased = 1U;
+          for (index = 0U; index < W25Q128_PAGE_SIZE; index++)
+          {
+            if (SectorBuffer[pageOffset + index] != 0xFFU)
+            {
+              pageIsErased = 0U;
+              break;
+            }
+          }
+          if ((pageIsErased == 0U) &&
+              (W25Q128_Write(blockAddress + pageOffset,
+                             &SectorBuffer[pageOffset],
+                             W25Q128_PAGE_SIZE) == 0U))
+          {
+            return RES_ERROR;
+          }
+        }
+      }
+
+      buff += bytesInBlock;
+      sector += sectorsInBlock;
+      remaining -= sectorsInBlock;
+    }
     return RES_OK;
   /* USER CODE END WRITE */
 }
@@ -159,9 +269,47 @@ DRESULT USER_ioctl (
 )
 {
   /* USER CODE BEGIN IOCTL */
-    DRESULT res = RES_ERROR;
-    return res;
+    if (pdrv != 0U)
+    {
+      return RES_PARERR;
+    }
+    if (Stat & STA_NOINIT)
+    {
+      return RES_NOTRDY;
+    }
+
+    switch (cmd)
+    {
+      case CTRL_SYNC:
+        return RES_OK;
+
+      case GET_SECTOR_COUNT:
+        if (buff == NULL)
+        {
+          return RES_PARERR;
+        }
+        *(DWORD *)buff = USER_SECTOR_COUNT;
+        return RES_OK;
+
+      case GET_SECTOR_SIZE:
+        if (buff == NULL)
+        {
+          return RES_PARERR;
+        }
+        *(WORD *)buff = USER_SECTOR_SIZE;
+        return RES_OK;
+
+      case GET_BLOCK_SIZE:
+        if (buff == NULL)
+        {
+          return RES_PARERR;
+        }
+        *(DWORD *)buff = USER_SECTORS_PER_BLOCK;
+        return RES_OK;
+
+      default:
+        return RES_PARERR;
+    }
   /* USER CODE END IOCTL */
 }
 #endif /* _USE_IOCTL == 1 */
-
