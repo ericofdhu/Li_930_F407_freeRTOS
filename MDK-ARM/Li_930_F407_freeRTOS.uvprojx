@@ -410,11 +410,6 @@
               <FilePath>../Core/Src/freertos.c</FilePath>
             </File>
             <File>
-              <FileName>debug_cli.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/debug_cli.c</FilePath>
-            </File>
-            <File>
               <FileName>dwin.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/dwin.c</FilePath>
