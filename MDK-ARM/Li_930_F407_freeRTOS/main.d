@@ -62,7 +62,6 @@ li_930_f407_freertos\main.o: ../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h
 li_930_f407_freertos\main.o: ../Middlewares/Third_Party/FatFs/src/diskio.h
 li_930_f407_freertos\main.o: ../FATFS/Target/user_diskio.h
 li_930_f407_freertos\main.o: ../Core/Inc/spi.h
-li_930_f407_freertos\main.o: ../Core/Inc/usart.h
 li_930_f407_freertos\main.o: ../USB_DEVICE/App/usb_device.h
 li_930_f407_freertos\main.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h
 li_930_f407_freertos\main.o: ../USB_DEVICE/Target/usbd_conf.h
@@ -70,3 +69,10 @@ li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 li_930_f407_freertos\main.o: ../Core/Inc/gpio.h
+li_930_f407_freertos\main.o: ..\Drivers\./SYSTEM/sys/sys.h
+li_930_f407_freertos\main.o: ../Drivers/CMSIS/Include/core_cm4.h
+li_930_f407_freertos\main.o: ..\Drivers\./SYSTEM/usart/usart.h
+li_930_f407_freertos\main.o: ..\Drivers\./SYSTEM/delay/delay.h
+li_930_f407_freertos\main.o: ..\Middlewares\./USMART/usmart.h
+li_930_f407_freertos\main.o: ..\Middlewares\./USMART/usmart_port.h
+li_930_f407_freertos\main.o: ..\Middlewares\./MALLOC/malloc.h

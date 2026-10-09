@@ -51,6 +51,8 @@ li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_l
 li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
+li_930_f407_freertos\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+li_930_f407_freertos\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 li_930_f407_freertos\freertos.o: ../FATFS/App/fatfs.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/ff.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/integer.h
@@ -60,3 +62,6 @@ li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/diskio.h
 li_930_f407_freertos\freertos.o: ../FATFS/Target/user_diskio.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/tmc5130a.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/ads1256.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/system_runtime.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/dwin.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/ui_manager.h

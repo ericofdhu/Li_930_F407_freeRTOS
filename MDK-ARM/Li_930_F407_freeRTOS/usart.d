@@ -1,10 +1,5 @@
-li_930_f407_freertos\usart.o: ../Core/Src/usart.c
-li_930_f407_freertos\usart.o: ../Core/Inc/usart.h
-li_930_f407_freertos\usart.o: ../Core/Inc/main.h
-li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
-li_930_f407_freertos\usart.o: ../Core/Inc/stm32f4xx_hal_conf.h
-li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h
-li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h
+li_930_f407_freertos\usart.o: ..\Drivers\SYSTEM\usart\usart.c
+li_930_f407_freertos\usart.o: ..\Drivers\./SYSTEM/sys/sys.h
 li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
 li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h
 li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Include/core_cm4.h
@@ -15,6 +10,10 @@ li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
+li_930_f407_freertos\usart.o: ../Core/Inc/stm32f4xx_hal_conf.h
+li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h
+li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h
+li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
 li_930_f407_freertos\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
@@ -41,3 +40,7 @@ li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h
 li_930_f407_freertos\usart.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
+li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Include/core_cm4.h
+li_930_f407_freertos\usart.o: ..\Drivers\./SYSTEM/usart/usart.h
+li_930_f407_freertos\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+li_930_f407_freertos\usart.o: ../Core/Inc/main.h

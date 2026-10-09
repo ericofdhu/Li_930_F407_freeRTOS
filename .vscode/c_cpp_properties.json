@@ -4,12 +4,15 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/Drivers/CMSIS/Include/**"
+                "C:/Keil_v5/ARM/ARMCC/include/**",
+                "${workspaceFolder}/**"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
-                "STM32F407xx"
+                "STM32F407xx",
+                "__CC_ARM",
+                "__ARMCC_VERSION=6100100",
+                "__STDC__=1"
             ],
             "compilerPath": "C:/Keil_v5/ARM/ARMCC/bin/armcc.exe",
             "intelliSenseMode": "windows-clang-arm",
