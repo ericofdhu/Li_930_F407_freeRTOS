@@ -34,6 +34,7 @@
 #include "system_runtime.h"
 #include "dwin.h"
 #include "ui_manager.h"
+#include "./SYSTEM/usart/usart.h"
 
 /* USER CODE END Includes */
 
@@ -205,6 +206,8 @@ void StartTaskFunc(void *argument)
 //  }
   DWIN_StartResult = DWIN_Init();
   UI_ManagerStartResult = UI_Manager_Init();
+
+  usart3_send_string_dma("Hello, World! usart3 dma test\r\n");
 
   /* Infinite loop */
   for(;;)

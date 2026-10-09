@@ -84,6 +84,8 @@ void MX_UART4_Init(void);
 //void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 void MX_USART3_UART_Init(void);
+/* Starts asynchronous DMA transmission; str must remain valid until completion. */
+HAL_StatusTypeDef usart3_send_string_dma(const char *str);
 
 
 

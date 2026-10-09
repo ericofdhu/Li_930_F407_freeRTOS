@@ -26,6 +26,7 @@
 #include "./SYSTEM/sys/sys.h"
 #include "./SYSTEM/usart/usart.h"
 #include "main.h"
+#include <string.h>
 
 
 /* 如果使用os,则包括下面的头文件即可 */
@@ -255,6 +256,29 @@ void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 2 */
 
+}
+
+HAL_StatusTypeDef usart3_send_string_dma(const char *str)
+{
+    size_t length;
+
+    if (str == NULL)
+    {
+        return HAL_ERROR;
+    }
+
+    length = strlen(str);
+    if (length == 0U)
+    {
+        return HAL_OK;
+    }
+    if (length > 0xFFFFU)
+    {
+        return HAL_ERROR;
+    }
+
+    return HAL_UART_Transmit_DMA(&huart3, (const uint8_t *)str,
+                                 (uint16_t)length);
 }
 
 

@@ -44,3 +44,4 @@ li_930_f407_freertos\usart.o: ../Drivers/CMSIS/Include/core_cm4.h
 li_930_f407_freertos\usart.o: ..\Drivers\./SYSTEM/usart/usart.h
 li_930_f407_freertos\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 li_930_f407_freertos\usart.o: ../Core/Inc/main.h
+li_930_f407_freertos\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

@@ -65,3 +65,6 @@ li_930_f407_freertos\freertos.o: ../Core/Inc/ads1256.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/system_runtime.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/dwin.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/ui_manager.h
+li_930_f407_freertos\freertos.o: ..\Drivers\./SYSTEM/usart/usart.h
+li_930_f407_freertos\freertos.o: ..\Drivers\./SYSTEM/sys/sys.h
+li_930_f407_freertos\freertos.o: ../Drivers/CMSIS/Include/core_cm4.h

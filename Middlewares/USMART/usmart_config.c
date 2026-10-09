@@ -16,8 +16,9 @@
  * 用户直接在这里输入要执行的函数名及其查找串
  */
 extern void SysRun_SetBeep(uint32_t ticks);
- 
- 
+extern HAL_StatusTypeDef usart3_send_string_dma(const char *str);
+
+
 struct _m_usmart_nametab usmart_nametab[] =
 {
 #if USMART_USE_WRFUNS == 1      /* 如果使能了读写操作 */
@@ -30,6 +31,10 @@ struct _m_usmart_nametab usmart_nametab[] =
     (void *)mymalloc, "void *mymalloc(uint8_t memx, uint32_t size)",
     (void *)myfree, "void myfree(uint8_t memx, void *ptr)",
     (void *)SysRun_SetBeep, "void SysRun_SetBeep(uint32_t ticks)",
+
+
+
+    (void *)usart3_send_string_dma, "HAL_StatusTypeDef usart3_send_string_dma(const char *str)",
 			
 		
 
