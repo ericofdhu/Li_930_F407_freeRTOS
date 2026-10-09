@@ -24,9 +24,17 @@
 #include "dma.h"
 #include "fatfs.h"
 #include "spi.h"
-#include "usart.h"
+//#include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
+
+#include "./SYSTEM/sys/sys.h"
+#include "./SYSTEM/usart/usart.h"
+#include "./SYSTEM/delay/delay.h"
+#include "./USMART/usmart.h"
+#include "./MALLOC/malloc.h"
+
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -83,11 +91,15 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
+	sys_stm32_clock_init(336, 8, 2, 7); /* 设置时钟,168Mhz */
+	delay_init(168);                    /* 延时初始化 */
+	usart_init(115200);                 /* 串口初始化为115200 */
+	usmart_dev.init(84);                /* 初始化USMART */
 
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+//  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
@@ -99,14 +111,17 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_SPI3_Init();
-  MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
-  MX_UART4_Init();
+//  MX_USART1_UART_Init();
+//  MX_USART2_UART_Init();
+//  MX_USART3_UART_Init();
+//  MX_UART4_Init();
   MX_ADC1_Init();
   MX_DAC_Init();
-  MX_FATFS_Init();
+//  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
+	my_mem_init(SRAMIN);                /* 初始化内部SRAM内存池 */
+//	my_mem_init(SRAMEX);                /* 初始化外部SRAM内存池 */
+	my_mem_init(SRAMCCM);               /* 初始化内部CCM内存池 */
 
   /* USER CODE END 2 */
 

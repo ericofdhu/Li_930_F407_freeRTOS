@@ -22,6 +22,9 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+//#include "usart.h"
+#include "./SYSTEM/usart/usart.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -342,6 +345,22 @@ void DMA2_Stream0_IRQHandler(void)
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
+
+/**
+  * @brief This function handles DMA2 stream2 global interrupt.
+  */
+//void DMA2_Stream2_IRQHandler(void)
+//{
+//  HAL_DMA_IRQHandler(&hdma_usart1_rx);
+//}
+
+/**
+  * @brief This function handles DMA2 stream7 global interrupt.
+  */
+//void DMA2_Stream7_IRQHandler(void)
+//{
+//  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+//}
 
 /**
   * @brief This function handles EXTI line[15:10] interrupts.
