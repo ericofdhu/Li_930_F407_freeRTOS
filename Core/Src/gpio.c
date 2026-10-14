@@ -20,6 +20,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
+#include "dac.h"
+#include "main.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -167,5 +169,120 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
+/**
+ * @brief 打开指定的激发光源。
+ * @param light 光源编号：0 表示同时打开全部四路，1 至 4 分别表示对应的单路。
+ * @retval 无。
+ */
+void BSP_LIGHT_CONTROL_On(uint8_t light)
+{
+    switch (light) {
+        case 0:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl1_Pin | emit_led_ctrl2_Pin | emit_led_ctrl3_Pin | emit_led_ctrl4_Pin, GPIO_PIN_SET);
+             break;
+        case 1:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl1_Pin, GPIO_PIN_SET);
+             break;
+        case 2:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl2_Pin, GPIO_PIN_SET);
+             break;
+        case 3:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl3_Pin, GPIO_PIN_SET);
+             break;
+        case 4:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl4_Pin, GPIO_PIN_SET);
+             break;
+        default:
+             break;
+    }
+}
+
+/**
+ * @brief 关闭指定的激发光源。
+ * @param light 光源编号：0 表示同时关闭全部四路，1 至 4 分别表示对应的单路。
+ * @retval 无。
+ */
+void BSP_LIGHT_CONTROL_Off(uint8_t light)
+{
+    switch (light) {
+        case 0:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl1_Pin | emit_led_ctrl2_Pin | emit_led_ctrl3_Pin | emit_led_ctrl4_Pin, GPIO_PIN_RESET);
+             break;
+        case 1:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl1_Pin, GPIO_PIN_RESET);
+             break;
+        case 2:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl2_Pin, GPIO_PIN_RESET);
+             break;
+        case 3:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl3_Pin, GPIO_PIN_RESET);
+             break;
+        case 4:
+             HAL_GPIO_WritePin(GPIOF, emit_led_ctrl4_Pin, GPIO_PIN_RESET);
+             break;
+        default:
+             break;
+    }
+}
+
+/**
+ * @brief 选择并打开指定的激发光源。
+ * @param index 光源编号：1 至 4 表示对应的单路；其他值会先关闭全部光源且不打开任何一路。
+ * @retval 无。
+ */
+void BSP_Light_Sel(uint8_t index)
+{
+    BSP_LIGHT_CONTROL_Off(0);
+    BSP_LIGHT_CONTROL_On(index);
+}
+
+
+
+/**
+ * @brief 初始化高压控制用的 DAC 通道。
+ * @details 本函数依赖 MX_DAC_Init() 已完成 DAC 外设、通道 1 和 PA4 的 HAL 配置；本函数将输出值设为零并启动通道。
+ * @retval 无；HAL 操作失败时调用 Error_Handler()。
+ */
+void BSP_DAC_HV_INIT(void)
+{
+  if (HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, 0U) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  if (HAL_DAC_Start(&hdac, DAC_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+ * @brief 根据设定值更新高压控制 DAC 输出。
+ * @details 按原有标定公式将输入值换算为 12 位 DAC 码值，并将结果限制在 0 至 4095；DAC 配置为无触发模式，写入数据后自动更新输出。
+ * @param hv 高压设定值，换算公式为 ((hv + 25) * 275 * 4096) / 330 / 1250。
+ * @retval 无；HAL 操作失败时调用 Error_Handler()。
+ */
+void BSP_Set_HV(uint16_t hv)
+{
+    uint32_t dacValue = (hv + 25U) * 275U * 4096U;
+
+    dacValue /= 330U;
+    dacValue /= 1250U;
+    if (dacValue > 4095U)
+    {
+        dacValue = 4095U;
+    }
+
+    if (HAL_DAC_SetValue(&hdac, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t)dacValue) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_DAC_Start(&hdac, DAC_CHANNEL_1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
 
 /* USER CODE END 2 */

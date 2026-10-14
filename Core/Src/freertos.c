@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 #include "main.h"
 #include "cmsis_os.h"
 #include <stdio.h>
@@ -37,6 +38,7 @@
 #include "./SYSTEM/usart/usart.h"
 #include "TouchKey_8inch.h"
 #include "ColorWm_8inch.h"
+#include "MySaveLoadFile.h"
 
 /* USER CODE END Includes */
 
@@ -62,12 +64,13 @@ static uint8_t TouchKeyEventQueueReady;
 //volatile DebugCLI_Status DebugCLI_StartResult = DEBUG_CLI_ERROR_RTOS;
 EventGroupHandle_t MyInitFlag = NULL;
 EventGroupHandle_t MyOsFlag = NULL;
+QueueHandle_t g_ActionQueue = NULL;
 
 volatile int32_t CurWaveLen;//当前所处的波长
 volatile _SYS_ABS MySysAbs ;
 
 volatile _MVStruct MVStruct ;
-volatile _GuPuCeShiStruct GuPuCeShiStruct ;
+volatile _SetScaleStruct SetScale;
 
 
 
@@ -88,6 +91,12 @@ const osThreadAttr_t ADS1256Task_attributes = {
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
 osThreadId_t SysRunTaskHandle;
+osThreadId_t ActionTaskHandle;
+const osThreadAttr_t ActionTask_attributes = {
+  .name = "ActionTask",
+  .stack_size = 256 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 const osThreadAttr_t SysRunTask_attributes = {
   .name = "SysRun",
   .stack_size = 256 * 4,
@@ -116,6 +125,7 @@ const osThreadAttr_t USART2_ProcessTask_attributes = {
 /* USER CODE BEGIN FunctionPrototypes */
 void ADS1256_SamplingTask(void *argument);
 void SysRunTask(void *argument);
+static void ActionTask(void *argument);
 static void DispTask(void *argument);
 static void USART3_ProcessTask(void *argument);
 static void USART2_ProcessTask(void *argument);
@@ -257,7 +267,7 @@ static void USART2_ProcessTask(void *argument)
     status = USART2_Process_GetFrame(&frame, osWaitForever);
     if (status != osOK)
     {
-      printf("USART2 frame queue error: %ld\r\n", (long)status);
+//      printf("USART2 frame queue error: %ld\r\n", (long)status);
       osDelay(10U);
       continue;
     }
@@ -363,6 +373,11 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  g_ActionQueue = xQueueCreate(1U, COLOR_WM_MESSAGE_SIZE);
+  if (g_ActionQueue == NULL)
+  {
+    Error_Handler();
+  }
   TouchKeyEventQueueReady =
       (TouchKeyEventQueue_Init() == osOK) ? 1U : 0U;
   TouchKey_Init();
@@ -372,7 +387,11 @@ void MX_FREERTOS_Init(void) {
   /* creation of StartTask */
   StartTaskHandle = osThreadNew(StartTaskFunc, NULL, &StartTask_attributes);
   SysRunTaskHandle = osThreadNew(SysRunTask, NULL, &SysRunTask_attributes);
-
+  ActionTaskHandle = osThreadNew(ActionTask, NULL, &ActionTask_attributes);
+  if (ActionTaskHandle == NULL)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -394,7 +413,7 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartTaskFunc */
 void StartTaskFunc(void *argument)
 {
-  static uint8_t formatWork[_MAX_SS];
+//  static uint8_t formatWork[_MAX_SS];
   ADS1256_Status ads1256InitResult;
 
   /* init code for USB_DEVICE */
@@ -405,24 +424,28 @@ void StartTaskFunc(void *argument)
     printf("Failed to initialize touch event queue\r\n");
   }
 
-  MX_FATFS_Init();
-  if (retUSER == 0U)
-  {
-    USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
-    if (USERFatFSResult == FR_NO_FILESYSTEM)
-    {
-      USERFatFSResult = f_mkfs(USERPath, FM_ANY, 0U, formatWork,
-                               sizeof(formatWork));
-      if (USERFatFSResult == FR_OK)
-      {
-        USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
-      }
-    }
-  }
-  else
-  {
-    USERFatFSResult = FR_NOT_READY;
-  }
+  // MX_FATFS_Init();
+  // if (retUSER == 0U)
+  // {
+  //   USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
+  //   if (USERFatFSResult == FR_NO_FILESYSTEM)
+  //   {
+  //     USERFatFSResult = f_mkfs(USERPath, FM_ANY, 0U, formatWork,
+  //                              sizeof(formatWork));
+  //     if (USERFatFSResult == FR_OK)
+  //     {
+  //       USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
+  //     }
+  //   }
+  // }
+  // else
+  // {
+  //   USERFatFSResult = FR_NOT_READY;
+  // }
+
+  	FileInit();
+
+
 
   ads1256InitResult = ADS1256_Init();
   if (ads1256InitResult == ADS1256_OK)
@@ -524,6 +547,45 @@ void SysRunTask(void *argument)
   }
 }
 
+/**
+ * @brief 接收动作队列消息并执行对应的系统动作。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行，直至系统调度器停止。
+ * @note 当前已实现 MSG_SCAN：设置波长扫描运行标志；未知消息类型会记录错误。
+ */
+static void ActionTask(void *argument)
+{
+  uint8_t actionMessage[COLOR_WM_MESSAGE_SIZE];
+  BaseType_t queueStatus;
+
+  (void)argument;
+
+  for (;;)
+  {
+    queueStatus = xQueueReceive(g_ActionQueue, actionMessage, portMAX_DELAY);
+    if (queueStatus != pdPASS)
+    {
+      printf("Failed to receive action queue message\r\n");
+      continue;
+    }
+
+    switch (actionMessage[0])
+    {
+      case MSG_SCAN:
+        taskENTER_CRITICAL();
+        SysFlag.RunWaveScanFlag = 1U;
+        taskEXIT_CRITICAL();
+        printf("Scan action triggered\r\n");
+
+        break;
+
+      default:
+        printf("Unsupported action message type: %u\r\n",
+               (unsigned int)actionMessage[0]);
+        break;
+    }
+  }
+}
 static void DispTask(void *argument)
 {
   uint8_t event;
@@ -546,7 +608,8 @@ static void DispTask(void *argument)
     status = TouchKeyEventQueue_Get(&event, 1000U);
     if (status == osErrorTimeout)
     {
-      printf("Touch event queue receive error: %ld\r\n", (long)status);
+//      printf("Touch event queue receive error: %ld\r\n", (long)status);
+      DisplayWindow();
       osDelay(1U);
       // continue;
     }

@@ -49,7 +49,8 @@ li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/So
 li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
 li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
 li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
-li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+li_930_f407_freertos\stm32f4xx_hal_msp.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h

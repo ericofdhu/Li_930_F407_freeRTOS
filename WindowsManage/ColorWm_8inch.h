@@ -31,6 +31,7 @@
 #include "event_groups.h"
 #include "icon_8inch.h"
 #include "TouchKey_8inch.h"
+#include "ColorLcd.h"
 
 
 
@@ -382,7 +383,18 @@ typedef struct {
 	const SIMPLE_ICON*   MsgIcon;
 }_DispMsgTable;
 
+typedef struct _PIXEL_POINT
+{
+	uint16_t x;
+	uint16_t y;
+}PIXEL_POINT;
 
+typedef struct {
+	uint16_t y_val;
+	uint32_t x_data;
+	PIXEL_POINT pt;
+
+}M1_M2;
 
 typedef struct _DISP_BUF
 {
@@ -394,7 +406,25 @@ typedef struct _DISP_BUF
 extern DISP_BUF  LineDispBuf; 
 
 
+typedef struct GuPuCeShiStruct{
+	uint32_t Speed;
+	uint32_t Interval;
 
+	uint32_t WaveLenStart; //光谱起始波长
+	uint32_t WaveLenEnd; //光谱结束波长
+
+	uint16_t data_E_Start;//数据起始
+	uint16_t data_E_End;//数据结束
+
+
+	uint8_t M1_M2_mode;
+	M1_M2 M1;
+	M1_M2 M2;
+
+	uint8_t backup[2];	
+	
+}_GuPuCeShiStruct;
+extern _GuPuCeShiStruct GuPuCeShiStruct ;
 
 
 

@@ -56,10 +56,11 @@ li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Sourc
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
-li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+li_930_f407_freertos\usbd_customhid.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h
 li_930_f407_freertos\usbd_customhid.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h

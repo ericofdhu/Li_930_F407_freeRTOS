@@ -18,3 +18,4 @@ li_930_f407_freertos\touchkey_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Sourc
 li_930_f407_freertos\touchkey_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 li_930_f407_freertos\touchkey_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 li_930_f407_freertos\touchkey_8inch.o: ../Core/Inc/system_runtime.h
+li_930_f407_freertos\touchkey_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h

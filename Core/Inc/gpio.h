@@ -39,6 +39,11 @@ extern "C" {
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+void  BSP_Light_Sel (uint8_t index);
+void  BSP_LIGHT_CONTROL_On(uint8_t light);
+void  BSP_LIGHT_CONTROL_Off(uint8_t light);
+void BSP_DAC_HV_INIT(void);
+void BSP_Set_HV(uint16_t hv);
 
 /* USER CODE END Prototypes */
 

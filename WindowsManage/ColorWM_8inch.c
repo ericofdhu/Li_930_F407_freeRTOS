@@ -38,6 +38,7 @@
 #include "system_runtime.h"
 #include "MyLib.h"
 #include "MyPinYin.h"
+#include "MySaveLoadFile.h"
 
 
 
@@ -50,6 +51,7 @@ _COLOR_WM   ColorWm;
 _MsgBox		MsgBox;
 
 DISP_BUF  LineDispBuf; 
+_GuPuCeShiStruct GuPuCeShiStruct ;
 
 
 #define COLOR_WM_MESSAGE_QUEUE_COUNT 4U
@@ -201,9 +203,8 @@ const FATHER_WINDOWS_CONTROL_TABLE FatherWinTbl[] = {
 	{WIN_NUM_GUPU_CESHI,	
 		WIN_NUM_GUPU_CESHI_PIC,							
 		WindowGuangPu_key_table,		
-		// GuPuCeShiK,				
-		// GuPuCeShiW,		
-		0,0,	
+		GuPuCeShiK,				
+		GuPuCeShiW,		
 		GuPuCeShiW_Init},
 	
 
@@ -1221,7 +1222,7 @@ void GuPuCeShiW(void)
 					uint16_t tmp_wave = gPeak[i].wavelength;
 					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
 					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
+					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8_t*)str);
 				}
 			}
 		}
@@ -1289,8 +1290,8 @@ void GuPuCeShiW(void)
 			if(message[0] == MSG_CONFIRM)
 			{
 				
-				int32 tmp=0;	
-				memcpy((uint8*)&tmp,(uint8*)&message[1],4);
+				int32_t tmp=0;	
+				memcpy((uint8_t*)&tmp,(uint8_t*)&message[1],4);
 
 				if(ColorWm.FatherPageNumber == 1)
 				{
@@ -1322,7 +1323,7 @@ void GuPuCeShiW(void)
 			if(ColorWm.FatherPageNumber == 1)
 			{
 				sprintf(str,"%d",MVStruct.sensitive_level);
-				ColorLcdSendString(315,550,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GREEN,(uint8*)str);
+				ColorLcdSendString(315,550,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GREEN,(uint8_t*)str);
 			}
 		}
 	}
@@ -1356,18 +1357,15 @@ void GuPuCeShiW(void)
 
 void GuPuCeShiK(void)
 {
-	CPU_SR        cpu_sr;
 	uint32_t tmp_key = 0;
 	
 	if(TouchKey.Release== 1)
 	{
-		OS_ENTER_CRITICAL();
 		tmp_key = TouchKey.back_keyassignments;
-		OS_EXIT_CRITICAL();
 
 		if (tmp_key == KEY_GUANGPU_SET_SCALE)
 		{
-			if (ColorWm.FatherMenuNumber == 0)//
+			if (ColorWm.FatherMenuNumber == 0)//…Ë÷√±Í≥ﬂ
 			{
 				SetScale.left =gDraw.left;
 				SetScale.right = gDraw.right;
@@ -1393,24 +1391,25 @@ void GuPuCeShiK(void)
 		{
 			if(ColorWm.FatherMenuNumber == 0)
 			{	
-				FindMontainVally(gDraw.left,gDraw.right,gDraw.Interval,MVStruct.sensitive_level);  
+
+				detect_peaks_and_valleys(gDraw.left,gDraw.right,gDraw.Interval,0.08,100/gDraw.Interval,gPeak,30);
 				for(int i=0;i<10;i++)
 				{
 					gNew_wl_table[i].wl = 0;
 					gNew_wl_table[i].pos = 0;
-				}
-				for(int i=0;i<MVStruct.M_sum;i++)
-				{
-					uint16_t index = MVStruct.Montain[i];
-					uint16_t tmp_wave = index+gDraw.left;
-					gNew_wl_table[i].wl = tmp_wave;
-					gNew_wl_table[i].pos = WavelengthToPosition(tmp_wave);
-					if(i>=9)
+
+					if(gPeak[i].is_peak && gPeak[i].wavelength >0)
 					{
-						break;
+						uint16_t tmp_data = gPeak[i].intensity;
+						uint16_t tmp_wave = gPeak[i].wavelength;
+						gNew_wl_table[i].wl = tmp_wave;
+						gNew_wl_table[i].pos = WavelengthToPosition(tmp_wave);
 					}
-				}	
+				}
 				ColorWindowsControl(WIN_NUM_WAVE_CORRECT,0);
+
+
+
 			}
 		}
 		else if(tmp_key == KEY_GUANGPU_CLEAR)
@@ -1459,21 +1458,6 @@ void GuPuCeShiK(void)
 			if(ColorWm.FatherMenuNumber == 0)
 			{
 
-				//calc mountain valley
-				// FindMontainVally(gDraw.left,gDraw.right,gDraw.Interval,MVStruct.sensitive_level);  
-				// //draw  mountain
-				// char str[16];
-				// for(int i=0;i<MVStruct.M_sum;i++)
-				// {
-				// 	uint16_t index = MVStruct.Montain[i]*gDraw.Interval;
-				// 	uint16_t tmp_data = GuangPuScanLine[gDraw.left-MIN_WAVELEN+index];
-				// 	uint16_t tmp_wave = index+gDraw.left;
-				// 	PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw);
-
-				// 	sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-				// 	ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-				// }	
-				// extern PeakInfo gPeak[30];
 				for(int i=0;i<30;i++)
 				{
 					gPeak[i].is_peak = 0;
@@ -1491,26 +1475,12 @@ void GuPuCeShiK(void)
 						uint16_t tmp_wave = gPeak[i].wavelength;
 						PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
 						sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-						ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-
-
+						ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8_t*)str);
 					}
 				}
 
 			}
 		}
-		else if (tmp_key == KEY_GUANGPU_PRINT)
-		{
-			if (ColorWm.FatherMenuNumber == 0)//
-			{
-				//SysFlag.PrintFlag = 0;
-				ActionMsg[0] = MSG_PRINT;
-				ActionMsg[1] = 2;
-				OSMboxPost(ActionMbox,ActionMsg);
-				ColorWm.FatherMenuNumber = MENU_NUMBER_PRINT;
-
-			}
-		} 	
 		else if(tmp_key == KEY_GUANGPU_TEST)
 		{
 			if(ColorWm.FatherMenuNumber == 0)
@@ -1525,56 +1495,57 @@ void GuPuCeShiK(void)
 				}
 				else
 				{
-						gDraw.x_Width= GuPuCeShiStruct.WaveLenEnd - GuPuCeShiStruct.WaveLenStart;
-						gDraw.y_Height = GuPuCeShiStruct.data_E_End - GuPuCeShiStruct.data_E_Start;
-						gDraw.left = GuPuCeShiStruct.WaveLenStart;
-						gDraw.right = GuPuCeShiStruct.WaveLenEnd;
-						gDraw.top = GuPuCeShiStruct.data_E_End;
-						gDraw.bottom = GuPuCeShiStruct.data_E_Start;
-						gDraw.Interval = GuPuCeShiStruct.Interval;
-//						gDraw.speed= GuPuCeShiStruct.Speed;
-						gDraw.x_cur = GuPuCeShiStruct.WaveLenStart;
+					gDraw.x_Width= GuPuCeShiStruct.WaveLenEnd - GuPuCeShiStruct.WaveLenStart;
+					gDraw.y_Height = GuPuCeShiStruct.data_E_End - GuPuCeShiStruct.data_E_Start;
+					gDraw.left = GuPuCeShiStruct.WaveLenStart;
+					gDraw.right = GuPuCeShiStruct.WaveLenEnd;
+					gDraw.top = GuPuCeShiStruct.data_E_End;
+					gDraw.bottom = GuPuCeShiStruct.data_E_Start;
+					gDraw.Interval = GuPuCeShiStruct.Interval;
+					gDraw.x_cur = GuPuCeShiStruct.WaveLenStart;
 
 
-						gDraw.left_reserve = gDraw.left;
-						gDraw.right_reserve= gDraw.right;
-						gDraw.top_reserve= gDraw.top;
-						gDraw.bottom_reserve= gDraw.bottom;
+					gDraw.left_reserve = gDraw.left;
+					gDraw.right_reserve= gDraw.right;
+					gDraw.top_reserve= gDraw.top;
+					gDraw.bottom_reserve= gDraw.bottom;
 
-						gDraw.y_cur = 0.0;	
+					gDraw.y_cur = 0.0;	
 
-					memcpy((uint8*)&SysPara.GuPuPar,(uint8*)&GuPuCeShiStruct,sizeof(GuPuCeShiStruct));
+					memcpy((uint8_t*)&SysPara.GuPuPar,(uint8_t*)&GuPuCeShiStruct,sizeof(GuPuCeShiStruct));
 					UpdateSysParameter();
 					LineDispBuf.num = LineDispBuf.scan_sum = 0;
 					GuPuCeShiW_Init();
 					
 					// ColorLcdDispIcon_Ext1(ICON_STOP_GUANGPU,718,	256);
 					ColorLcdDispResetAt(DRAW_FRAME_LEFT,DRAW_FRAME_TOP,DRAW_FRAME_RIGHT,DRAW_FRAME_BOTTOM);
-					OSTimeDly(OS_TICKS_PER_SEC/5);
+					osDelay(500);
 					ColorLcdDispIcon_Ext1_1(ICON_STOP_GUANGPU);
 
 					
 					ColorWm.FatherMenuNumber = 4;
-
 					
-					ActionMsg[0] = MSG_SCAN;//
-//					SysFlag.ScanFlag = 0;
-					OSMboxPost(ActionMbox,ActionMsg);
+					uint8_t actionMessage[COLOR_WM_MESSAGE_SIZE] = {0U};
+					actionMessage[0] = MSG_SCAN;
+					if ((g_ActionQueue == NULL) ||
+					    (xQueueSend(g_ActionQueue, actionMessage, 0U) != pdPASS))
+					{
+						printf("Failed to queue scan action\r\n");
+					}
+
 					
 				}
 			}
 			else if(ColorWm.FatherMenuNumber == 2 )
 			{
-					SysFlag.EmergercyStopFlag = 1;
+				SysFlag.EmergercyStopFlag = 1;
 			}
 		}
 		TouchKey.Release = 0;
 	}
 	else if (TouchKey.Trg == 1)
 	{
-		OS_ENTER_CRITICAL();
 		tmp_key = TouchKey.current_keyassignments;
-		OS_EXIT_CRITICAL();
 		if (tmp_key == KEY_GUANGPU_MAIN_MENU)
 		{
 			if (ColorWm.FatherMenuNumber == 0)//
@@ -1582,7 +1553,7 @@ void GuPuCeShiK(void)
 				ColorWindowsControl(WIN_NUM_MAIN_MENU,0);
 			}
 		}
-		else if (tmp_key == KEY_GUANGPU_CUR_CURSOR)
+		else if ((tmp_key == KEY_GUANGPU_CUR_CURSOR) || (tmp_key == KEY_GUANGPU_CURSOR_LEFT) || (tmp_key == KEY_GUANGPU_CURSOR_RIGHT))
 		{
 			if (ColorWm.FatherMenuNumber == 0)//
 			{
@@ -1598,31 +1569,30 @@ void GuPuCeShiK(void)
 				{
 					p = &GuPuCeShiStruct.M2;
 				}
+				if(tmp_key == KEY_GUANGPU_CUR_CURSOR)
+				{
+					p->x_data = (TouchKey.x - DRAW_FRAME_LEFT)*(gDraw.right - gDraw.left)/DRAW_FRAME_WIDTH + gDraw.left;
+					p->x_data = p->x_data -(p->x_data% gDraw.Interval);
+				}
+				else if (tmp_key == KEY_GUANGPU_CURSOR_LEFT)
+				{
+					if(p->x_data>gDraw.left)
+					{
+						p->x_data-=gDraw.Interval;
+					}
+				}
+				else if (tmp_key == KEY_GUANGPU_CURSOR_RIGHT)
+				{
+					if(p->x_data<gDraw.right)
+					{
+						p->x_data+=gDraw.Interval;
+					}
+				}
 
-
-
-				p->x_data = (TouchKey.x - DRAW_FRAME_LEFT)*(gDraw.right - gDraw.left)/DRAW_FRAME_WIDTH + gDraw.left;
-				p->x_data = p->x_data -(p->x_data% gDraw.Interval);
-//				memcpy((uint8*)&p->y_val,(uint8*)&GuangPuScanLine[p->x_data-MIN_WAVELEN],sizeof(int16));
 				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
 
 //==================================================================================================================
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
+				sprintf(str,"%6d",p->y_val);
 //==================================================================================================================
 				
 
@@ -1636,131 +1606,9 @@ void GuPuCeShiK(void)
 					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
 
 					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
+					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8_t*)str);
 				}	
 
-			}
-		}
-		else if (tmp_key == KEY_GUANGPU_CURSOR_LEFT)
-		{
-			if (ColorWm.FatherMenuNumber == 0)//
-			{
-//				uint32 wave = 0;
-				char str[20];
-				M1_M2* p = NULL;
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-					p = &GuPuCeShiStruct.M1;
-				}
-				else
-				{
-					p = &GuPuCeShiStruct.M2;
-				}
-
-
-
-				if(p->x_data>gDraw.left)
-				{
-					p->x_data-=gDraw.Interval;
-				}
-//				memcpy((uint8*)&p->y_val,(uint8*)&ScanLine[p->x_data-MIN_WAVELEN],sizeof(_SCAN_LINE));
-				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
-				
-//==================================================================================================================
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-//==================================================================================================================
-				
-				p->pt = CalcXY(p->x_data, p->y_val,gDraw,(_FRAME*)&WL_FRAME);
-				ColorLcdDrawLine(p->pt.x,DRAW_FRAME_TOP,p->pt.x,DRAW_FRAME_BOTTOM,0);
-
-				for(int i=0;i<MVStruct.M_sum;i++)
-				{
-					uint16_t index = MVStruct.Montain[i];
-					uint16_t tmp_data = GuangPuScanLine[gDraw.left-MIN_WAVELEN+index];
-					uint16_t tmp_wave = index+gDraw.left;
-					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
-
-					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-				}	
-
-
-
-
-			}
-		}
-		else if (tmp_key == KEY_GUANGPU_CURSOR_RIGHT)
-		{
-			if (ColorWm.FatherMenuNumber == 0)//
-			{
-//				uint32 wave = 0;
-				char str[20];
-				M1_M2* p = NULL;
-
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-					p = &GuPuCeShiStruct.M1;
-				}
-				else
-				{
-					p = &GuPuCeShiStruct.M2;
-				}
-
-
-
-				if(p->x_data<gDraw.right)
-				{
-					p->x_data+=gDraw.Interval;
-				}
-//				memcpy((uint8*)&p->y_val,(uint8*)&ScanLine[p->x_data-MIN_WAVELEN],sizeof(_SCAN_LINE));
-				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
-				
-//==================================================================================================================
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-//==================================================================================================================
-				
-				p->pt = CalcXY(p->x_data, p->y_val,gDraw,(_FRAME*)&WL_FRAME);
-				ColorLcdDrawLine(p->pt.x,DRAW_FRAME_TOP,p->pt.x,DRAW_FRAME_BOTTOM,0);
-				for(int i=0;i<MVStruct.M_sum;i++)
-				{
-					uint16_t index = MVStruct.Montain[i];
-					uint16_t tmp_data = GuangPuScanLine[gDraw.left-MIN_WAVELEN+index];
-					uint16_t tmp_wave = index+gDraw.left;
-					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
-
-					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-				}	
 			}
 		}
 
@@ -1768,10 +1616,8 @@ void GuPuCeShiK(void)
 	}
 	else if(TouchKey.Press == 1)
 	{
-		OS_ENTER_CRITICAL();
 		tmp_key = TouchKey.current_keyassignments;
-		OS_EXIT_CRITICAL();
-		if (tmp_key == KEY_GUANGPU_CUR_CURSOR)
+		if ((tmp_key == KEY_GUANGPU_CUR_CURSOR) || (tmp_key == KEY_GUANGPU_CURSOR_LEFT) || (tmp_key == KEY_GUANGPU_CURSOR_RIGHT))
 		{
 			if (ColorWm.FatherMenuNumber == 0)//
 			{
@@ -1787,31 +1633,29 @@ void GuPuCeShiK(void)
 					p = &GuPuCeShiStruct.M2;
 				}
 
-
-
-				p->x_data = (TouchKey.x - DRAW_FRAME_LEFT)*(gDraw.right - gDraw.left)/DRAW_FRAME_WIDTH + gDraw.left;
-				p->x_data = p->x_data -(p->x_data% gDraw.Interval);
-//				memcpy((uint8*)&p->y_val,(uint8*)&ScanLine[p->x_data-MIN_WAVELEN],sizeof(_SCAN_LINE));
+				if(tmp_key == KEY_GUANGPU_CUR_CURSOR)
+				{
+					p->x_data = (TouchKey.x - DRAW_FRAME_LEFT)*(gDraw.right - gDraw.left)/DRAW_FRAME_WIDTH + gDraw.left;
+					p->x_data = p->x_data -(p->x_data% gDraw.Interval);
+				}
+				else if (tmp_key == KEY_GUANGPU_CURSOR_LEFT)
+				{
+					if(p->x_data>gDraw.left)
+					{
+						p->x_data-=gDraw.Interval;
+					}
+				}
+				else if (tmp_key == KEY_GUANGPU_CURSOR_RIGHT)
+				{
+					if(p->x_data<gDraw.right)
+					{
+						p->x_data+=gDraw.Interval;
+					}
+				}
 				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
 
 //==================================================================================================================
-
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
+				sprintf(str,"%6d",p->y_val);
 //==================================================================================================================
 				
 
@@ -1826,128 +1670,11 @@ void GuPuCeShiK(void)
 					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
 
 					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
+					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8_t*)str);
 				}	
 			}
 		}
-		else if (tmp_key == KEY_GUANGPU_CURSOR_LEFT)
-		{
-			if (ColorWm.FatherMenuNumber == 0)//
-			{
-//				uint32 wave = 0;
-				char str[20];
-				M1_M2* p = NULL;
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-					p = &GuPuCeShiStruct.M1;
-				}
-				else
-				{
-					p = &GuPuCeShiStruct.M2;
-				}
 
-
-
-				if(p->x_data>gDraw.left)
-				{
-					p->x_data-=gDraw.Interval;
-				}
-//				memcpy((uint8*)&p->y_val,(uint8*)&ScanLine[p->x_data-MIN_WAVELEN],sizeof(_SCAN_LINE));
-				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
-				
-//==================================================================================================================
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-
-//==================================================================================================================
-				
-				p->pt = CalcXY(p->x_data, p->y_val,gDraw,(_FRAME*)&WL_FRAME);
-				ColorLcdDrawLine(p->pt.x,DRAW_FRAME_TOP,p->pt.x,DRAW_FRAME_BOTTOM,0);
-				for(int i=0;i<MVStruct.M_sum;i++)
-				{
-					uint16_t index = MVStruct.Montain[i];
-					uint16_t tmp_data = GuangPuScanLine[gDraw.left-MIN_WAVELEN+index];
-					uint16_t tmp_wave = index+gDraw.left;
-					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
-
-					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-				}	
-			}
-		}
-		else if (tmp_key == KEY_GUANGPU_CURSOR_RIGHT)
-		{
-			if (ColorWm.FatherMenuNumber == 0)//
-			{
-//				uint32 wave = 0;
-				char str[20];
-				M1_M2* p = NULL;
-
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-					p = &GuPuCeShiStruct.M1;
-				}
-				else
-				{
-					p = &GuPuCeShiStruct.M2;
-				}
-
-
-
-				if(p->x_data<gDraw.right)
-				{
-					p->x_data+=gDraw.Interval;
-				}
-//				memcpy((uint8*)&p->y_val,(uint8*)&ScanLine[p->x_data-MIN_WAVELEN],sizeof(_SCAN_LINE));
-				p->y_val = GuangPuScanLine[p->x_data-MIN_WAVELEN];
-				
-//==================================================================================================================
-				if(GuPuCeShiStruct.M1_M2_mode == 0)
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-				else
-				{
-
-
-
-					sprintf(str,"%6d",p->y_val);
-
-				}
-//==================================================================================================================
-				
-				p->pt = CalcXY(p->x_data, p->y_val,gDraw,(_FRAME*)&WL_FRAME);
-				ColorLcdDrawLine(p->pt.x,DRAW_FRAME_TOP,p->pt.x,DRAW_FRAME_BOTTOM,0);
-				for(int i=0;i<MVStruct.M_sum;i++)
-				{
-					uint16_t index = MVStruct.Montain[i];
-					uint16_t tmp_data = GuangPuScanLine[gDraw.left-MIN_WAVELEN+index];
-					uint16_t tmp_wave = index+gDraw.left;
-					PIXEL_POINT pt = CalcXY(tmp_wave, tmp_data,gDraw,(_FRAME*)&WL_FRAME);
-
-					sprintf(str,"%3d.%d:%d" ,tmp_wave/10,tmp_wave%10,tmp_data);
-					ColorLcdSendString(pt.x,pt.y,COLOR_LCD_LIB_12_12/*COLOR_LCD_LIB_24_24*/,FCOLOR_ON|GB2312,0X03,0,COLOR_WHITE,(uint8*)str);
-				}	
-			}
-		}
 	}
 
 	
@@ -6287,7 +6014,6 @@ void RedrawGuangPuLine(_DrawStruct tmpDraw)
 		uint16_t j=0;
 //		uint8_t cnt = 0;
 		uint16_t tWave=0;
-		CPU_SR cpu_sr;
 
 		const uint16_t addr =SCAN_LINE1_BUF_ADDR;
 		const uint16_t color =  COLOR_RED;

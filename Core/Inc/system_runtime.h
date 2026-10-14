@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "FreeRTOS.h"
+#include "queue.h"
 #include "event_groups.h"
 typedef struct
 {
@@ -42,7 +43,7 @@ typedef struct _SYS_FLAG
 extern volatile SYS_FLAG SysFlag;
 
 
-//ϵͳ����ȣ�͸����
+//ϵͳ����ȣ�͸����?
 typedef struct {
 	float data_A;
 	float data_T;
@@ -62,39 +63,16 @@ typedef struct {
 extern volatile _MVStruct MVStruct ;
 
 
-typedef struct _PIXEL_POINT
-{
-	uint16_t x;
-	uint16_t y;
-}PIXEL_POINT;
-
+//�޸ı�����ݽṹ
 typedef struct {
-	uint16_t y_val;
-	uint32_t x_data;
-	PIXEL_POINT pt;
-
-}M1_M2;
-
-//���ײ������ݽṹ
-typedef struct {
-	uint32_t Speed;
-	uint32_t Interval;
-
-	uint32_t WaveLenStart; //��ʼ����
-	uint32_t WaveLenEnd; //��������
-
-	uint16_t data_E_Start;//��Χ  EN
-	uint16_t data_E_End;
+		uint32_t left;
+		uint32_t right;
+		float   top;
+		float   bottom;
+}_SetScaleStruct;
+extern volatile _SetScaleStruct SetScale;
 
 
-	uint8_t M1_M2_mode;
-	M1_M2 M1;
-	M1_M2 M2;
-
-	uint8_t backup[2];	
-	
-}_GuPuCeShiStruct;
-extern volatile _GuPuCeShiStruct GuPuCeShiStruct ;
 
 
 
@@ -102,6 +80,7 @@ extern volatile _GuPuCeShiStruct GuPuCeShiStruct ;
 
 extern EventGroupHandle_t MyInitFlag;
 extern EventGroupHandle_t MyOsFlag;
+extern QueueHandle_t g_ActionQueue;
 
 
 
@@ -150,7 +129,7 @@ extern int32_t volatile CurWaveLen; //��ǰ�����Ĳ���
 
 
 //������Χ
-#define  MAX_WAVELEN			8000ul  //��󲨳�?
+#define  MAX_WAVELEN			8000ul  //��󲨳�??
 #define  MIN_WAVELEN			2000ul  //��С����  
 #define  WAVE_SCAN_LINE_BUF_SIZE				(MAX_WAVELEN- MIN_WAVELEN)
 #define  TIME_SCAN_LINE_BUF_SIZE				3600

@@ -10,6 +10,7 @@ li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/port
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/main.h
 li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/stm32f4xx_hal_conf.h
@@ -74,3 +75,5 @@ li_930_f407_freertos\freertos.o: ../Drivers/CMSIS/Include/core_cm4.h
 li_930_f407_freertos\freertos.o: ..\WindowsManage\TouchKey_8inch.h
 li_930_f407_freertos\freertos.o: ..\WindowsManage\icon_8inch.h
 li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorWm_8inch.h
+li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorLcd.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/MySaveLoadFile.h

@@ -62,6 +62,7 @@ li_930_f407_freertos\colorwm_8inch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f
 li_930_f407_freertos\colorwm_8inch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
 li_930_f407_freertos\colorwm_8inch.o: ..\MDK-ARM\App_Config.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/system_runtime.h
+li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h
 li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FatFs/src/diskio.h
@@ -73,3 +74,4 @@ li_930_f407_freertos\colorwm_8inch.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string
 li_930_f407_freertos\colorwm_8inch.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MyLib.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MyPinYin.h
+li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MySaveLoadFile.h

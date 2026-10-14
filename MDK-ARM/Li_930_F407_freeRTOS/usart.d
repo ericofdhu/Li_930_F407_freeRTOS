@@ -53,8 +53,9 @@ li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include
 li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
 li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
 li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
-li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
-li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+li_930_f407_freertos\usart.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 li_930_f407_freertos\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
