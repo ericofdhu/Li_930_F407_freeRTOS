@@ -49,6 +49,10 @@ li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_h
 li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h
 li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h
 li_930_f407_freertos\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
+li_930_f407_freertos\freertos.o: ..\MDK-ARM\App_Config.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/system_runtime.h
+li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 li_930_f407_freertos\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
@@ -62,9 +66,11 @@ li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/diskio.h
 li_930_f407_freertos\freertos.o: ../FATFS/Target/user_diskio.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/tmc5130a.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/ads1256.h
-li_930_f407_freertos\freertos.o: ../Core/Inc/system_runtime.h
-li_930_f407_freertos\freertos.o: ../Core/Inc/dwin.h
-li_930_f407_freertos\freertos.o: ../Core/Inc/ui_manager.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/usart2_process.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/usart3_process.h
 li_930_f407_freertos\freertos.o: ..\Drivers\./SYSTEM/usart/usart.h
 li_930_f407_freertos\freertos.o: ..\Drivers\./SYSTEM/sys/sys.h
 li_930_f407_freertos\freertos.o: ../Drivers/CMSIS/Include/core_cm4.h
+li_930_f407_freertos\freertos.o: ..\WindowsManage\TouchKey_8inch.h
+li_930_f407_freertos\freertos.o: ..\WindowsManage\icon_8inch.h
+li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorWm_8inch.h

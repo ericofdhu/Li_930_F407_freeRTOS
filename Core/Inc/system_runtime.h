@@ -2,7 +2,8 @@
 #define SYSTEM_RUNTIME_H
 
 #include <stdint.h>
-
+#include "FreeRTOS.h"
+#include "event_groups.h"
 typedef struct
 {
   volatile uint8_t En;
@@ -11,7 +12,182 @@ typedef struct
 
 extern volatile BeepCtrl_t Beep;
 
+typedef struct _SYS_FLAG
+{
+	uint32_t MoveFlag				:1;
+	uint32_t MoveDirFlag			:1;
+	uint32_t ReadFreqFlag 		:1;
+	uint32_t RunWaveScanFlag		:1;
+	uint32_t RunBaseScanFlag		:1;
+	uint32_t EmergercyStopFlag    :1;
+	uint32_t OnePointMethodGetKFlag	:1;
+	uint32_t MultiPointMehtodGetBiaoDing	:1;
+	uint32_t RunTimeScanFlag			:1;
+	uint32_t ZeroSetStep			:3;
+	uint32_t KeyDebugFlag			:1;
+	uint32_t ScanFileAvaliable			:1;
+	uint32_t DuobochangZeroFlag		:1;
+	uint32_t DuobochangTestFlag		:1;
+	uint32_t PcConnectFlag				:1;
+	uint32_t GetBlackCurrent			:1;
+	uint32_t DeviceInitFlag				:2;
+	uint32_t InitByPcFlag					:1;
+	uint32_t StopInitFlag					:1;
+	uint32_t PcCmdSolveFlag				:1;
+	uint32_t RunSnrScanFlag				:1;
+	
+	uint32_t ReserveFlag				:8; 
+}SYS_FLAG;
+
+extern volatile SYS_FLAG SysFlag;
+
+
+//ÏµÍ³Îü¹â¶È£¬Í¸¹ýÂÊ
+typedef struct {
+	float data_A;
+	float data_T;
+	int16_t data_E;
+
+}_SYS_ABS;
+extern volatile _SYS_ABS MySysAbs ;
+
+typedef struct {
+
+	uint16_t Montain[30];
+	uint16_t M_sum;
+	uint16_t Vally[30];
+	uint16_t V_sum;	
+	uint16_t sensitive_level;		
+}_MVStruct;
+extern volatile _MVStruct MVStruct ;
+
+
+typedef struct _PIXEL_POINT
+{
+	uint16_t x;
+	uint16_t y;
+}PIXEL_POINT;
+
+typedef struct {
+	uint16_t y_val;
+	uint32_t x_data;
+	PIXEL_POINT pt;
+
+}M1_M2;
+
+//¹âÆ×²âÊÔÊý¾Ý½á¹¹
+typedef struct {
+	uint32_t Speed;
+	uint32_t Interval;
+
+	uint32_t WaveLenStart; //ÆðÊ¼²¨³¤
+	uint32_t WaveLenEnd; //½áÊø²¨³¤
+
+	uint16_t data_E_Start;//·¶Î§  EN
+	uint16_t data_E_End;
+
+
+	uint8_t M1_M2_mode;
+	M1_M2 M1;
+	M1_M2 M2;
+
+	uint8_t backup[2];	
+	
+}_GuPuCeShiStruct;
+extern volatile _GuPuCeShiStruct GuPuCeShiStruct ;
+
+
+
+
+
+extern EventGroupHandle_t MyInitFlag;
+extern EventGroupHandle_t MyOsFlag;
+
+
+
+
+typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+
 void SysRun_SetBeep(uint32_t ticks);
 void SysRun_GetBeep(uint8_t *enabled, uint32_t *ticks);
+EventGroupHandle_t MyInitFlag_Init(void);
+EventGroupHandle_t MyOsFlag_Init(void);
+
+extern int32_t volatile CurWaveLen; //µ±Ç°Ëù´¦µÄ²¨³¤
+
+#define BEEP_ONCE() SysRun_SetBeep(100)
+
+//======================ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¾Î»ï¿½ï¿½ï¿½ï¿½ (EventBits)==================
+#define INIT_WL_GOOD_FLAG              (1UL << 0)
+#define INIT_WL_ERR_FLAG               (1UL << 1)
+#define INIT_WL_500_GOOD_FLAG          (1UL << 2)
+#define INIT_WL_500_ERR_FLAG           (1UL << 3)
+#define INIT_ALL_GOOD_FLAG             (1UL << 4)
+#define SYS_MOVE_WL_FLAG                (1UL << 5)
+
+
+
+
+#define Unit_10nm						100
+#define Unit_5nm						50
+#define Unit_2nm						20
+#define Unit_1nm						10
+#define Unit_0_5nm						5
+#define Unit_0_1nm						1
+
+
+
+
+#define DATA_TYPE_E					3
+#define DATA_TYPE_A					4
+#define DATA_TYPE_T					3
+#define DATA_TYPE_WAVELEN		1
+#define DATA_TYPE_TIME			5
+#define DATA_TYPE_NORMAL		6
+
+
+
+
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§
+#define  MAX_WAVELEN			8000ul  //ï¿½ï¿½ó²¨³ï¿?
+#define  MIN_WAVELEN			2000ul  //ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½  
+#define  WAVE_SCAN_LINE_BUF_SIZE				(MAX_WAVELEN- MIN_WAVELEN)
+#define  TIME_SCAN_LINE_BUF_SIZE				3600
+
+
+
+
+//É¨ï¿½ï¿½ï¿½Ù¶ï¿½
+#define SCAN_SPEED_FAST		    2
+#define SCAN_SPEED_MIDDLE	    1
+#define SCAN_SPEED_SLOW		    0
+
+// ï¿½ï¿½ï¿½ï¿½ï¿½Í?ï¿½ï¿½
+#define     EMIT_LIGHT_1		0
+#define     EMIT_LIGHT_2		1
+#define     EMIT_LIGHT_3		2
+#define     EMIT_LIGHT_4		3
+
+
+// PMTï¿½ï¿½ï¿½ï¿½
+#define     PMT_GAIN_1		0
+#define     PMT_GAIN_2		1
+#define     PMT_GAIN_4		2
+#define     PMT_GAIN_8		3
+
+// PMTï¿½ï¿½ï¿½ï¿½
+#define     PMT_OFF		0
+#define     PMT_ON		1
+
+
+#define MAX_ENTER_DATA_LEN				8
+#define MAX_K_METHOD_POINT				30
+#define MAX_ONE_POINT_METHOD_POINT		30
+#define MAX_MULTI_POINT_METHOD_POINT	30
+#define MAX_MULTI_POINT_BIAO_DING_NUM	10
+
+
+
+
 
 #endif

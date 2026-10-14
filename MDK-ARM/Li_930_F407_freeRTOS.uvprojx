@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../FATFS/Target;../FATFS/App;../USB_DEVICE/App;../USB_DEVICE/Target;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Middlewares/Third_Party/FatFs/src;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\Middlewares;..\Drivers</IncludePath>
+              <IncludePath>../Core/Inc;../FATFS/Target;../FATFS/App;../USB_DEVICE/App;../USB_DEVICE/Target;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Middlewares/Third_Party/FatFs/src;../Middlewares/ST/STM32_USB_Device_Library/Core/Inc;../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\Middlewares;..\Drivers;..\WindowsManage;..\MDK-ARM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,21 +410,6 @@
               <FilePath>../Core/Src/freertos.c</FilePath>
             </File>
             <File>
-              <FileName>dwin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/dwin.c</FilePath>
-            </File>
-            <File>
-              <FileName>ui_manager.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/ui_manager.c</FilePath>
-            </File>
-            <File>
-              <FileName>tmc5130a.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/tmc5130a.c</FilePath>
-            </File>
-            <File>
               <FileName>ads1256.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/ads1256.c</FilePath>
@@ -463,6 +448,66 @@
               <FileName>stm32f4xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_timebase_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart3_process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\usart3_process.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart2_process.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\usart2_process.c</FilePath>
+            </File>
+            <File>
+              <FileName>spectral_peak_detector.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\spectral_peak_detector.c</FilePath>
+            </File>
+            <File>
+              <FileName>wavelength_transfor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\wavelength_transfor.c</FilePath>
+            </File>
+            <File>
+              <FileName>MyLib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\MyLib.c</FilePath>
+            </File>
+            <File>
+              <FileName>MyPinYin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\MyPinYin.c</FilePath>
+            </File>
+            <File>
+              <FileName>TMC_5130.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\TMC_5130.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>WindowsManage</GroupName>
+          <Files>
+            <File>
+              <FileName>icon_8inch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WindowsManage\icon_8inch.c</FilePath>
+            </File>
+            <File>
+              <FileName>ColorLcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WindowsManage\ColorLcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>ColorWM_8inch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WindowsManage\ColorWM_8inch.c</FilePath>
+            </File>
+            <File>
+              <FileName>TouchKey_8inch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WindowsManage\TouchKey_8inch.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "C:/Keil_v5/ARM/ARMCC/include/**",
+                "C:/Keil_v5/ARM/ARMCC/include/",
+                "${workspaceFolder}/WindowsManage/**",
                 "${workspaceFolder}/**"
             ],
             "defines": [

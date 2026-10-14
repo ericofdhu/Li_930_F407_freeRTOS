@@ -3,6 +3,7 @@
 #include "main.h"
 #include "spi.h"
 #include "cmsis_os.h"
+#include "system_runtime.h"
 
 #define TMC5130A_REG_GCONF             0x00U
 #define TMC5130A_REG_GSTAT             0x01U

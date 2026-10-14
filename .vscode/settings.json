@@ -1,4 +1,5 @@
 {
+    "files.encoding": "gb2312",
     "terminal.integrated.env.windows": {
         "PATH": "C:\\Keil_v5\\ARM\\ARMCC\\bin;C:\\Keil_v5\\UV4;${env:PATH}"
     },

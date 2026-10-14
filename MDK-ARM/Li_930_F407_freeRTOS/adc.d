@@ -41,3 +41,16 @@ li_930_f407_freertos\adc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_ua
 li_930_f407_freertos\adc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd.h
 li_930_f407_freertos\adc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h
 li_930_f407_freertos\adc.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h
+li_930_f407_freertos\adc.o: ..\MDK-ARM\App_Config.h
+li_930_f407_freertos\adc.o: ../Core/Inc/system_runtime.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+li_930_f407_freertos\adc.o: ../Core/Inc/FreeRTOSConfig.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+li_930_f407_freertos\adc.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h

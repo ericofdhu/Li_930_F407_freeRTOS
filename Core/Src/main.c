@@ -27,6 +27,7 @@
 //#include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
+#include "system_runtime.h"
 
 #include "./SYSTEM/sys/sys.h"
 #include "./SYSTEM/usart/usart.h"
@@ -59,19 +60,34 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+int16_t GuangPuScanLine[WAVE_SCAN_LINE_BUF_SIZE+1]; 
+int16_t DongLiXueScanLine[TIME_SCAN_LINE_BUF_SIZE+1]; 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-
+void Print_SystemVersion(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/**
+  * @brief  æ‰“å°è¾“å‡ºå½“å‰è½¯ç¡¬ä»¶ç‰ˆæœ¬å·
+  * @param  None
+  * @retval None
+  */
+void Print_SystemVersion(void)
+{
+  printf("\r\n========================================\r\n");
+  printf(" Firmware Version : %s\r\n", FIRM_WARE_VERSION);
+  printf(" Firmware Date    : %s\r\n", FIRM_WARE_DATE);
+  printf(" Hardware/PCB Ver : %s\r\n", PCB_VERSION);
+  printf(" Protocol Version : %u\r\n", (unsigned int)PROTOCAL_VERSION);
+  printf(" Device Type      : %u\r\n", (unsigned int)DEVICE_TYPE);
+  printf("========================================\r\n\r\n");
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,10 +107,10 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	sys_stm32_clock_init(336, 8, 2, 7); /* ÉèÖÃÊ±ÖÓ,168Mhz */
-	delay_init(168);                    /* ÑÓÊ±³õÊ¼»¯ */
-	usart_init(115200);                 /* ´®¿Ú³õÊ¼»¯Îª115200 */
-	usmart_dev.init(84);                /* ³õÊ¼»¯USMART */
+	sys_stm32_clock_init(336, 8, 2, 7); /* ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½,168Mhz */
+	delay_init(168);                    /* ï¿½ï¿½Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ */
+	usart_init(115200);                 /* ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½Îª115200 */
+	usmart_dev.init(84);                /* ï¿½ï¿½Ê¼ï¿½ï¿½USMART */
 
   /* USER CODE END Init */
 
@@ -113,17 +129,19 @@ int main(void)
   MX_SPI3_Init();
 //  MX_USART1_UART_Init();
 //  MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
+//  MX_USART3_UART_Init();
 //  MX_UART4_Init();
   MX_ADC1_Init();
   MX_DAC_Init();
 //  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-	my_mem_init(SRAMIN);                /* ³õÊ¼»¯ÄÚ²¿SRAMÄÚ´æ³Ø */
-//	my_mem_init(SRAMEX);                /* ³õÊ¼»¯Íâ²¿SRAMÄÚ´æ³Ø */
-	my_mem_init(SRAMCCM);               /* ³õÊ¼»¯ÄÚ²¿CCMÄÚ´æ³Ø */
+	my_mem_init(SRAMIN);                /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ú²ï¿½SRAMï¿½Ú´ï¿½ï¿½ */
+//	my_mem_init(SRAMEX);                /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½â²¿SRAMï¿½Ú´ï¿½ï¿½ */
+	my_mem_init(SRAMCCM);               /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ú²ï¿½CCMï¿½Ú´ï¿½ï¿½ */
 
   /* USER CODE END 2 */
+
+	Print_SystemVersion();
 
   /* Init scheduler */
   osKernelInitialize();  /* Call init function for freertos objects (in cmsis_os2.c) */

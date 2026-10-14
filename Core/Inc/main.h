@@ -31,6 +31,8 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "App_Config.h"
+#include "system_runtime.h"
 
 /* USER CODE END Includes */
 
@@ -53,6 +55,9 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+extern int16_t GuangPuScanLine[WAVE_SCAN_LINE_BUF_SIZE+1]; 
+extern int16_t DongLiXueScanLine[TIME_SCAN_LINE_BUF_SIZE+1]; 
+void Print_SystemVersion(void);
 
 /* USER CODE END EFP */
 

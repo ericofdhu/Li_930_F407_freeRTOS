@@ -4,6 +4,5 @@ li_930_f407_freertos\ui_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 li_930_f407_freertos\ui_manager.o: ../Core/Inc/ads1256.h
 li_930_f407_freertos\ui_manager.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
 li_930_f407_freertos\ui_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-li_930_f407_freertos\ui_manager.o: ../Core/Inc/dwin.h
 li_930_f407_freertos\ui_manager.o: ../Core/Inc/system_runtime.h
 li_930_f407_freertos\ui_manager.o: ../Core/Inc/tmc5130a.h
