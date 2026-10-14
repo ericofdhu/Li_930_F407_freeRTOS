@@ -42,7 +42,7 @@ typedef struct _SYS_FLAG
 extern volatile SYS_FLAG SysFlag;
 
 
-//ÏµÍ³Îü¹â¶È£¬Í¸¹ýÂÊ
+//ÏµÍ³ï¿½ï¿½ï¿½ï¿½È£ï¿½Í¸ï¿½ï¿½ï¿½ï¿½
 typedef struct {
 	float data_A;
 	float data_T;
@@ -75,15 +75,15 @@ typedef struct {
 
 }M1_M2;
 
-//¹âÆ×²âÊÔÊý¾Ý½á¹¹
+//ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹
 typedef struct {
 	uint32_t Speed;
 	uint32_t Interval;
 
-	uint32_t WaveLenStart; //ÆðÊ¼²¨³¤
-	uint32_t WaveLenEnd; //½áÊø²¨³¤
+	uint32_t WaveLenStart; //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+	uint32_t WaveLenEnd; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	uint16_t data_E_Start;//·¶Î§  EN
+	uint16_t data_E_Start;//ï¿½ï¿½Î§  EN
 	uint16_t data_E_End;
 
 
@@ -113,7 +113,7 @@ void SysRun_GetBeep(uint8_t *enabled, uint32_t *ticks);
 EventGroupHandle_t MyInitFlag_Init(void);
 EventGroupHandle_t MyOsFlag_Init(void);
 
-extern int32_t volatile CurWaveLen; //µ±Ç°Ëù´¦µÄ²¨³¤
+extern int32_t volatile CurWaveLen; //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½
 
 #define BEEP_ONCE() SysRun_SetBeep(100)
 
@@ -124,6 +124,7 @@ extern int32_t volatile CurWaveLen; //µ±Ç°Ëù´¦µÄ²¨³¤
 #define INIT_WL_500_ERR_FLAG           (1UL << 3)
 #define INIT_ALL_GOOD_FLAG             (1UL << 4)
 #define SYS_MOVE_WL_FLAG                (1UL << 5)
+#define SYS_SCAN_WL_FINISH_FLAG         (1UL << 6)
 
 
 
@@ -149,7 +150,7 @@ extern int32_t volatile CurWaveLen; //µ±Ç°Ëù´¦µÄ²¨³¤
 
 
 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§
-#define  MAX_WAVELEN			8000ul  //ï¿½ï¿½ó²¨³ï¿?
+#define  MAX_WAVELEN			8000ul  //ï¿½ï¿½ó²¨³ï¿½?
 #define  MIN_WAVELEN			2000ul  //ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½  
 #define  WAVE_SCAN_LINE_BUF_SIZE				(MAX_WAVELEN- MIN_WAVELEN)
 #define  TIME_SCAN_LINE_BUF_SIZE				3600
@@ -162,7 +163,7 @@ extern int32_t volatile CurWaveLen; //µ±Ç°Ëù´¦µÄ²¨³¤
 #define SCAN_SPEED_MIDDLE	    1
 #define SCAN_SPEED_SLOW		    0
 
-// ï¿½ï¿½ï¿½ï¿½ï¿½Í?ï¿½ï¿½
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½
 #define     EMIT_LIGHT_1		0
 #define     EMIT_LIGHT_2		1
 #define     EMIT_LIGHT_3		2

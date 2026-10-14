@@ -1173,7 +1173,6 @@ void GuPuCeShiW(void)
 {
 	char str[40];
 	uint16_t tmp;
-	uint8_t err=0;
 	
 	if(ColorWm.FatherMenuNumber==0)
 	{
@@ -1189,8 +1188,18 @@ void GuPuCeShiW(void)
 	}
 	else if (ColorWm.FatherMenuNumber == 2)//扫描的时候
 	{
-				
-		if(OSFlagAccept(MyOsFlag,SYS_SCAN_WL_FINISH_FLAG,OS_FLAG_CONSUME|OS_FLAG_WAIT_SET_ALL,&err) == SYS_SCAN_WL_FINISH_FLAG)
+		EventBits_t eventBits = 0U;
+
+		if(MyOsFlag != NULL)
+		{
+			eventBits = xEventGroupWaitBits(MyOsFlag,
+			                                (EventBits_t)SYS_SCAN_WL_FINISH_FLAG,
+			                                pdTRUE,
+			                                pdTRUE,
+			                                0U);
+		}
+
+		if((eventBits & (EventBits_t)SYS_SCAN_WL_FINISH_FLAG) == (EventBits_t)SYS_SCAN_WL_FINISH_FLAG)
 		{
 			ColorWm.FatherMenuNumber = 0;
 			ColorLcdDispIcon_Ext1_1(ICON_TEST_GUANGPU);
@@ -1225,53 +1234,63 @@ void GuPuCeShiW(void)
 	}
 	else if (ColorWm.FatherMenuNumber == 4)//扫描准备中
 	{
-		uint8_t* msg;
-		uint8_t err=0;
-		uint8_t msg_id=0;
-		msg_id = GetCurrentTaskPrio();
-		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-		if(err == OS_NO_ERR)
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		uint8_t msg_id = GetCurrentTaskPrio();
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			msg_id, message, pdMS_TO_TICKS(40U));
+
+		if(status == osOK)
 		{
-			if(msg[0] == MSG_CONFIRM)
+			if(message[0] == MSG_CONFIRM)
 			{
 				ColorWm.FatherMenuNumber = 2;
 			}
 		}
+		else if(status != osErrorTimeout)
+		{
+			printf("Failed to receive scan confirmation: %ld\r\n",
+			       (long)status);
+		}
 	}
 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_PRINT)
 	{
-		uint8_t* msg;
-		uint8_t err=0;
-		uint8_t msg_id=0;
-		msg_id = GetCurrentTaskPrio();
-		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-		if(err == OS_NO_ERR)
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		uint8_t msg_id = GetCurrentTaskPrio();
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			msg_id, message, pdMS_TO_TICKS(40U));
+
+		if(status == osOK)
 		{
-			if(msg[0] == MSG_CONFIRM)
+			if(message[0] == MSG_CONFIRM)
 			{
 				ColorWm.FatherMenuNumber = 0;
 			}
-			else if(msg[0] == MSG_CANCLE)
+			else if(message[0] == MSG_CANCLE)
 			{
 				ColorWm.FatherMenuNumber = 0;
 			}
 		}
+		else if(status != osErrorTimeout)
+		{
+			printf("Failed to receive print confirmation: %ld\r\n",
+			       (long)status);
+		}
 	}
 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_KEY_BOARD)
 	{
-		uint8_t* msg;
-		uint8_t err=0;
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
 		char str[20];
-		uint8_t msg_id=0;
-		msg_id = GetCurrentTaskPrio();
-		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-		if(err == OS_NO_ERR)
+		uint8_t msg_id = GetCurrentTaskPrio();
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			msg_id, message, pdMS_TO_TICKS(40U));
+
+		if(status == osOK)
 		{
-			if(msg[0] == MSG_CONFIRM)
+			if(message[0] == MSG_CONFIRM)
 			{
 				
 				int32 tmp=0;	
-				memcpy((uint8*)&tmp,(uint8*)&msg[1],4);
+				memcpy((uint8*)&tmp,(uint8*)&message[1],4);
 
 				if(ColorWm.FatherPageNumber == 1)
 				{
@@ -1280,14 +1299,14 @@ void GuPuCeShiW(void)
 
 				ColorWm.FatherMenuNumber = 0;
 			}
-			else if(msg[0] == MSG_PAR_ERR)
+			else if(message[0] == MSG_PAR_ERR)
 			{
 
 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_CHILD_WIN;
 
 
 			}
-			else if(msg[0] == MSG_CANCLE)
+			else if(message[0] == MSG_CANCLE)
 			{
 				ColorWm.FatherMenuNumber = 0;
 			}
@@ -1295,6 +1314,11 @@ void GuPuCeShiW(void)
 		}
 		else
 		{
+			if(status != osErrorTimeout)
+			{
+				printf("Failed to receive keyboard result: %ld\r\n",
+				       (long)status);
+			}
 			if(ColorWm.FatherPageNumber == 1)
 			{
 				sprintf(str,"%d",MVStruct.sensitive_level);
@@ -1304,22 +1328,27 @@ void GuPuCeShiW(void)
 	}
 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_CHILD_WIN)//等待标尺设置返回
 	{
-		uint8_t* msg;
-		uint8_t err=0;
-		uint8_t msg_id=0;
-		msg_id = GetCurrentTaskPrio();
-		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-		if(err == OS_NO_ERR)
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		uint8_t msg_id = GetCurrentTaskPrio();
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			msg_id, message, pdMS_TO_TICKS(40U));
+
+		if(status == osOK)
 		{
-			if(msg[0] == MSG_CONFIRM)
+			if(message[0] == MSG_CONFIRM)
 			{
 				GuPuCeShiW_Init();
 				ColorWm.FatherMenuNumber = 0;
 			}
-			else if(msg[0] == MSG_CANCLE)
+			else if(message[0] == MSG_CANCLE)
 			{
 				ColorWm.FatherMenuNumber = 0;
 			}
+		}
+		else if(status != osErrorTimeout)
+		{
+			printf("Failed to receive child window result: %ld\r\n",
+			       (long)status);
 		}
 	}
 }
@@ -6471,4 +6500,3 @@ PIXEL_POINT CalcXY(uint32_t wave,uint16_t data,_DrawStruct ds,_FRAME* pFrame)
 
 
 }
-
