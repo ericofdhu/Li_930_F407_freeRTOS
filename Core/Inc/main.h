@@ -48,7 +48,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define __log     printf
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -146,6 +146,7 @@ void Print_SystemVersion(void);
 #define TMC_EN_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+void DeviceInit(void);
 
 /* USER CODE END Private defines */
 

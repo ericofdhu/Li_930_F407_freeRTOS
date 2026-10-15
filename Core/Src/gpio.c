@@ -285,4 +285,18 @@ void BSP_Set_HV(uint16_t hv)
 }
 
 
+void BSP_IR_Emit_Control(uint8_t stat)
+{
+	if( stat == 0 )
+	{
+          HAL_GPIO_WritePin(Couple_Control_GPIO_Port, Couple_Control_Pin, GPIO_PIN_RESET);
+	}
+	else
+	{
+          HAL_GPIO_WritePin(Couple_Control_GPIO_Port, Couple_Control_Pin, GPIO_PIN_SET);
+	}
+}
+
+
+
 /* USER CODE END 2 */

@@ -11,7 +11,7 @@ static osMutexId_t TMC5130_CS_Mutex;
 
 void Delay(int32_t m)
 {
-	m = m * 2;
+	m = m * 5;
 	while (m--);
 }
 

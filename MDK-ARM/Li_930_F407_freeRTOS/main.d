@@ -74,6 +74,8 @@ li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 li_930_f407_freertos\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 li_930_f407_freertos\main.o: ../Core/Inc/gpio.h
+li_930_f407_freertos\main.o: ../Core/Inc/tmc_5130.h
+li_930_f407_freertos\main.o: ../Core/Inc/StepControl.h
 li_930_f407_freertos\main.o: ..\Drivers\./SYSTEM/sys/sys.h
 li_930_f407_freertos\main.o: ../Drivers/CMSIS/Include/core_cm4.h
 li_930_f407_freertos\main.o: ..\Drivers\./SYSTEM/usart/usart.h

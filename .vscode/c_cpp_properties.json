@@ -1,23 +1,47 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "STM32F407 Keil IntelliSense",
             "includePath": [
-                "${default}",
-                "C:/Keil_v5/ARM/ARMCC/include/",
-                "${workspaceFolder}/WindowsManage/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/.vscode/intellisense",
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Core/Src",
+                "${workspaceFolder}/FATFS/Target",
+                "${workspaceFolder}/FATFS/App",
+                "${workspaceFolder}/USB_DEVICE/App",
+                "${workspaceFolder}/USB_DEVICE/Target",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F",
+                "${workspaceFolder}/Middlewares/Third_Party/FatFs/src",
+                "${workspaceFolder}/Middlewares/Third_Party/FatFs/src/option",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc",
+                "${workspaceFolder}/Drivers",
+                "${workspaceFolder}/Middlewares",
+                "${workspaceFolder}/WindowsManage",
+                "${workspaceFolder}/MDK-ARM",
+                "C:/Keil_v5/ARM/ARMCLANG/include"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
-                "STM32F407xx",
-                "__CC_ARM",
-                "__ARMCC_VERSION=6100100",
-                "__STDC__=1"
+                "STM32F407xx"
             ],
-            "compilerPath": "C:/Keil_v5/ARM/ARMCC/bin/armcc.exe",
+            "forcedInclude": [
+                "${workspaceFolder}/.vscode/intellisense/FreeRTOSPortMacro.h"
+            ],
+            "compilerPath": "C:/Keil_v5/ARM/ARMCLANG/bin/armclang.exe",
+            "compilerArgs": [
+                "--target=arm-arm-none-eabi",
+                "-mcpu=cortex-m4",
+                "-mfpu=fpv4-sp-d16",
+                "-mfloat-abi=hard"
+            ],
             "intelliSenseMode": "windows-clang-arm",
-            "windowsSdkVersion": "10.0.26100.0",
             "cStandard": "c99",
             "cppStandard": "c++17"
         }

@@ -2,7 +2,7 @@
 /**
   ******************************************************************************
   * @file           : main.c
-  * @brief          : Main program body
+  * @brief          : Ö÷³ÌĞòÎÄ¼ş¡£
   ******************************************************************************
   * @attention
   *
@@ -28,6 +28,8 @@
 #include "usb_device.h"
 #include "gpio.h"
 #include "system_runtime.h"
+#include "tmc_5130.h"
+#include "StepControl.h"
 
 #include "./SYSTEM/sys/sys.h"
 #include "./SYSTEM/usart/usart.h"
@@ -74,9 +76,9 @@ void Print_SystemVersion(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /**
-  * @brief  æ‰“å°è¾“å‡ºå½“å‰è½¯ç¡¬ä»¶ç‰ˆæœ¬å·
-  * @param  None
-  * @retval None
+  * @brief ´òÓ¡µ±Ç°¹Ì¼ş¡¢Ó²¼ş¼°Í¨ĞÅĞ­Òé°æ±¾ĞÅÏ¢¡£
+  * @param ÎŞ¡£
+  * @retval ÎŞ¡£
   */
 void Print_SystemVersion(void)
 {
@@ -91,8 +93,9 @@ void Print_SystemVersion(void)
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
+  * @brief Ó¦ÓÃ³ÌĞòÈë¿Ú£¬Íê³É HAL¡¢ÍâÉè¡¢ÄÚ´æºÍ FreeRTOS ÄÚºËµÄ³õÊ¼»¯²¢Æô¶¯µ÷¶ÈÆ÷¡£
+  * @param ÎŞ¡£
+  * @retval int Õı³£ÔËĞĞÁ÷³ÌÖĞµ÷¶ÈÆ÷Æô¶¯ºó²»»á·µ»Ø£»±£Áô int ·µ»ØÀàĞÍÒÔ·ûºÏ C ³ÌĞòÈë¿ÚÔ¼¶¨¡£
   */
 int main(void)
 {
@@ -101,27 +104,27 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+  /* MCU ÅäÖÃ--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  /* ¸´Î»ÍâÉè£¬²¢³õÊ¼»¯ Flash ½Ó¿Ú¼°ÏµÍ³µÎ´ğ¶¨Ê±Æ÷¡£ */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	sys_stm32_clock_init(336, 8, 2, 7); /* ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½,168Mhz */
-	delay_init(168);                    /* ï¿½ï¿½Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ */
-	usart_init(115200);                 /* ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½Îª115200 */
-	usmart_dev.init(84);                /* ï¿½ï¿½Ê¼ï¿½ï¿½USMART */
+	sys_stm32_clock_init(336, 8, 2, 7); /* ÅäÖÃ 168 MHz ÏµÍ³Ê±ÖÓ¡£ */
+	delay_init(168);                    /* ¸ù¾İ 168 MHz Ö÷Æµ³õÊ¼»¯ÑÓÊ±Ä£¿é¡£ */
+	usart_init(115200);                 /* ³õÊ¼»¯²¨ÌØÂÊÎª 115200 µÄ´®¿Ú¡£ */
+	usmart_dev.init(84);                /* ³õÊ¼»¯ USMART µ÷ÊÔÄ£¿é¡£ */
 
   /* USER CODE END Init */
 
-  /* Configure the system clock */
+  /* ÅäÖÃÏµÍ³Ê±ÖÓ */
 //  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
+  /* ³õÊ¼»¯ÒÑÅäÖÃµÄÍâÉè */
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
@@ -135,24 +138,24 @@ int main(void)
   MX_DAC_Init();
 //  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-	my_mem_init(SRAMIN);                /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ú²ï¿½SRAMï¿½Ú´ï¿½ï¿½ */
-//	my_mem_init(SRAMEX);                /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½â²¿SRAMï¿½Ú´ï¿½ï¿½ */
-	my_mem_init(SRAMCCM);               /* ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ú²ï¿½CCMï¿½Ú´ï¿½ï¿½ */
+	my_mem_init(SRAMIN);                /* ³õÊ¼»¯ÄÚ²¿ SRAM ÄÚ´æ³Ø¡£ */
+//	my_mem_init(SRAMEX);                /* ³õÊ¼»¯Íâ²¿ SRAM ÄÚ´æ³Ø£¨µ±Ç°Î´ÆôÓÃ£©¡£ */
+	my_mem_init(SRAMCCM);               /* ³õÊ¼»¯ÄÚ²¿ CCM ÄÚ´æ³Ø¡£ */
 
   /* USER CODE END 2 */
 
 	Print_SystemVersion();
 
-  /* Init scheduler */
-  osKernelInitialize();  /* Call init function for freertos objects (in cmsis_os2.c) */
+  /* ³õÊ¼»¯ FreeRTOS µ÷¶ÈÆ÷¼°Æä¶ÔÏó */
+  osKernelInitialize();  /* ³õÊ¼»¯ CMSIS-RTOS2 ÄÚºË */
   MX_FREERTOS_Init();
 
-  /* Start scheduler */
+  /* Æô¶¯ FreeRTOS µ÷¶ÈÆ÷ */
   osKernelStart();
 
-  /* We should never get here as control is now taken by the scheduler */
+  /* µ÷¶ÈÆ÷Æô¶¯ºó½Ó¹Ü³ÌĞò¿ØÖÆÈ¨£¬Õı³£Çé¿öÏÂ²»»áÖ´ĞĞµ½´Ë´¦ */
 
-  /* Infinite loop */
+  /* ÎŞÏŞÑ­»·£»µ÷¶ÈÆ÷Æô¶¯ºóÍ¨³£²»»á½øÈë´Ë´¦ */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -164,21 +167,22 @@ int main(void)
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
+  * @brief Ê¹ÓÃÍâ²¿¸ßËÙÊ±ÖÓºÍ PLL ÅäÖÃÏµÍ³Ê±ÖÓ¼° AHB¡¢APB ×ÜÏßÊ±ÖÓ¡£
+  * @param ÎŞ¡£
+  * @retval ÎŞ£»Ê±ÖÓÅäÖÃÊ§°ÜÊ±µ÷ÓÃ Error_Handler ½øÈë´íÎó´¦Àí¡£
   */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Configure the main internal regulator output voltage
+  /** ÅäÖÃÄÚ²¿ÎÈÑ¹Æ÷µÄÊä³öµçÑ¹
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
+  /** °´Ö¸¶¨²ÎÊı³õÊ¼»¯ RCC Õñµ´Æ÷
+  * ²ÎÊıÓÉ RCC_OscInitTypeDef ½á¹¹ÌåÌá¹©¡£
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -193,7 +197,7 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
-  /** Initializes the CPU, AHB and APB buses clocks
+  /** ³õÊ¼»¯ CPU¡¢AHB ºÍ APB ×ÜÏßÊ±ÖÓ
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -209,17 +213,96 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-//bspçº§åˆ«çš„é©±åŠ¨
+
+/**
+ * @brief Ö´ĞĞÉè±¸Æô¶¯³õÊ¼»¯£¬°üÀ¨Çå³ı¾É×´Ì¬¡¢²¨³¤Ñ°Áã¡¢ÒÆ¶¯ÖÁ 500 nm¡¢Íê³ÉÌáÊ¾¼°Ó²¼şÊÕÎ²¡£
+ * @param ÎŞ¡£
+ * @retval ÎŞ¡£
+ * @note ±¾º¯Êı±ØĞëÔËĞĞÓÚ FreeRTOS ÈÎÎñÉÏÏÂÎÄ£¬²¢Í¨¹ı MyInitFlag ÊÂ¼ş×é·¢²¼³õÊ¼»¯½á¹û¡£
+ *       DeviceInitFlag ×´Ì¬ÖµÎª 0£¨Î´³õÊ¼»¯»òÒÑÖĞÖ¹£©¡¢1£¨³õÊ¼»¯ÖĞ£©¡¢2£¨³õÊ¼»¯Íê³É£©¡£
+ */
+void DeviceInit(void)
+{
+	enum
+	{
+		DEVICE_INIT_NOT_STARTED = 0U,
+		DEVICE_INIT_IN_PROGRESS = 1U,
+		DEVICE_INIT_COMPLETE = 2U
+	};
+	const EventBits_t initResultBits = INIT_WL_GOOD_FLAG | INIT_WL_ERR_FLAG |
+		INIT_WL_500_GOOD_FLAG | INIT_WL_500_ERR_FLAG | INIT_ALL_GOOD_FLAG;
+	uint8_t homeResult;
+	
+	BSP_IR_Emit_Control(1);
+
+
+	if (MyInitFlag == NULL)
+	{
+		SysFlag.DeviceInitFlag = DEVICE_INIT_NOT_STARTED;
+		__log("Éè±¸³õÊ¼»¯Ê§°Ü£º³õÊ¼»¯ÊÂ¼ş×éÎ´´´½¨\r\n");
+		return;
+	}
+
+	(void)xEventGroupClearBits(MyInitFlag, initResultBits);
+	(void)osDelay(pdMS_TO_TICKS(4000U));
+
+	SysFlag.DeviceInitFlag = DEVICE_INIT_IN_PROGRESS;
+	__log("¿ªÊ¼³õÊ¼»¯£¬ÏµÍ³ÔËĞĞÊ±¼ä£º%lu Ãë\r\n",
+		(unsigned long)(osKernelGetTickCount() / osKernelGetTickFreq()));
+
+	(void)osDelay(pdMS_TO_TICKS(1000U));
+
+	__log("¿ªÊ¼²éÕÒ²¨³¤³õÊ¼Î»ÖÃ\r\n");
+	homeResult = Find_Wavelength_init_pos();
+	__log("²¨³¤³õÊ¼Î»ÖÃ²éÕÒ½áÊø\r\n");
+	if (homeResult != 0U)
+	{
+		(void)xEventGroupSetBits(MyInitFlag, INIT_WL_ERR_FLAG);
+		SysFlag.DeviceInitFlag = DEVICE_INIT_NOT_STARTED;
+		__log("Éè±¸³õÊ¼»¯Ê§°Ü£ºÎ´ÄÜÕÒµ½²¨³¤³õÊ¼Î»ÖÃ\r\n");
+		return;
+	}
+
+	(void)xEventGroupSetBits(MyInitFlag, INIT_WL_GOOD_FLAG);
+	__log("²¨³¤³õÊ¼Î»ÖÃ³õÊ¼»¯³É¹¦\r\n");
+
+	if (SysFlag.StopInitFlag == 1U)
+	{
+		SysFlag.StopInitFlag = 0U;
+		SysFlag.DeviceInitFlag = DEVICE_INIT_NOT_STARTED;
+		return;
+	}
+
+	(void)osDelay(pdMS_TO_TICKS(1000U));
+	MoveToWaveLen(5000);
+	(void)xEventGroupSetBits(MyInitFlag, INIT_WL_500_GOOD_FLAG);
+	__log("ÒÑÒÆ¶¯ÖÁ 500 nm\r\n");
+
+	(void)osDelay(pdMS_TO_TICKS(1000U));
+	BEEP_ONCE();
+	(void)osDelay(pdMS_TO_TICKS(200U));
+	BEEP_ONCE();
+	(void)osDelay(pdMS_TO_TICKS(200U));
+	BEEP_ONCE();
+	(void)osDelay(pdMS_TO_TICKS(200U));
+
+	TMC5130_ConfigReferenceSwitches(0U, 0U, 0U, 1U);
+	(void)osDelay(pdMS_TO_TICKS(1000U));
+	BSP_IR_Emit_Control(0U);
+
+	(void)xEventGroupSetBits(MyInitFlag, INIT_ALL_GOOD_FLAG);
+	SysFlag.DeviceInitFlag = DEVICE_INIT_COMPLETE;
+	SysFlag.KeyDebugFlag = 0U;
+	__log("Éè±¸³õÊ¼»¯Íê³É£¬ÏµÍ³ÔËĞĞÊ±¼ä£º%lu Ãë\r\n",
+		(unsigned long)(osKernelGetTickCount() / osKernelGetTickFreq()));
+}
 
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
-  * @retval None
+  * @brief HAL ¶¨Ê±Æ÷ÖÜÆÚ»Øµ÷£»TIM6 ¸üĞÂÖĞ¶Ï·¢ÉúÊ±µİÔö HAL ÏµÍ³Ê±»ù¡£
+  * @param htim ·¢ÉúÖÜÆÚ¸üĞÂÊÂ¼şµÄ HAL ¶¨Ê±Æ÷¾ä±ú¡£
+  * @retval ÎŞ¡£
   */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
@@ -236,13 +319,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
+  * @brief HAL ´íÎó´¦Àíº¯Êı£»¹Ø±ÕÈ«¾ÖÖĞ¶Ï²¢Í£ÁôÔÚËÀÑ­»·£¬±ÜÃâ´íÎó×´Ì¬ÏÂ¼ÌĞøÔËĞĞ¡£
+  * @param ÎŞ¡£
+  * @retval ÎŞ¡£
   */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+  /* ¿ÉÔÚ´Ë´¦Ìí¼Ó HAL ´íÎó×´Ì¬µÄ¼ÇÂ¼»òÉÏ±¨´¦Àí¡£ */
   __disable_irq();
   while (1)
   {
@@ -251,17 +335,17 @@ void Error_Handler(void)
 }
 #ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
+  * @brief ÍêÕû¶ÏÑÔÊ§°Ü»Øµ÷£¬½ÓÊÕ´¥·¢¶ÏÑÔµÄÔ´ÎÄ¼ş¼°´úÂëĞĞºÅ¡£
+  * @param file ·¢Éú¶ÏÑÔÊ§°ÜµÄÔ´ÎÄ¼şÂ·¾¶×Ö·û´®¡£
+  * @param line ·¢Éú¶ÏÑÔÊ§°ÜµÄÔ´´úÂëĞĞºÅ¡£
+  * @retval ÎŞ¡£
+  * @note µ±Ç°ÊµÏÖÎª¿Õ£¬¿ÉÔÚ´Ë´¦Ìí¼Ó¶ÏÑÔ´íÎóµÄ¼ÇÂ¼»ò±¨¸æÂß¼­¡£
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* ¿ÉÔÚ´Ë´¦Ìí¼Ó¶ÏÑÔÊ§°ÜÎÄ¼şÃûºÍĞĞºÅµÄ¼ÇÂ¼»òÉÏ±¨´¦Àí£¬
+     ex: printf("²ÎÊı´íÎó£ºÎÄ¼ş %s£¬µÚ %d ĞĞ\r\n", file, line) */
   /* USER CODE END 6 */
 }
-#endif /* USE_FULL_ASSERT */
+#endif /* ½öÔÚÆôÓÃÍêÕû¶ÏÑÔ¹¦ÄÜÊ±±àÒë¡£ */

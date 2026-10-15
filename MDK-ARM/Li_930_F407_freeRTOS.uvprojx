@@ -489,6 +489,11 @@
               <FileType>1</FileType>
               <FilePath>..\Core\Src\MySaveLoadFile.c</FilePath>
             </File>
+            <File>
+              <FileName>StepControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\StepControl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

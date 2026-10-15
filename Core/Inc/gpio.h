@@ -44,6 +44,8 @@ void  BSP_LIGHT_CONTROL_On(uint8_t light);
 void  BSP_LIGHT_CONTROL_Off(uint8_t light);
 void BSP_DAC_HV_INIT(void);
 void BSP_Set_HV(uint16_t hv);
+void BSP_IR_Emit_Control(uint8_t stat);
+
 
 /* USER CODE END Prototypes */
 

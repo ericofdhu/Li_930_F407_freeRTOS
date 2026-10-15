@@ -66,6 +66,7 @@ li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/ff_gen_drv
 li_930_f407_freertos\freertos.o: ../Middlewares/Third_Party/FatFs/src/diskio.h
 li_930_f407_freertos\freertos.o: ../FATFS/Target/user_diskio.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/tmc5130a.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/TMC_5130.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/ads1256.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/usart2_process.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/usart3_process.h
@@ -77,3 +78,5 @@ li_930_f407_freertos\freertos.o: ..\WindowsManage\icon_8inch.h
 li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorWm_8inch.h
 li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorLcd.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/MySaveLoadFile.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/StepControl.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/wavelength_transfor.h

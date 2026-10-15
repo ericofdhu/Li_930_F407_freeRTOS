@@ -3,7 +3,7 @@
 #ifndef __TMC_5130_H
 #define __TMC_5130_H
 
-//#include "stm32f10x.h"
+#include <stdint.h>
 
 #define TMC5130_NORMAL_MOVE_SPEED				3000
 #define TMC5130_HOMING_MOVE_SPEED				500
@@ -47,14 +47,14 @@
 #define TMC5130_SW_MODE      0x34
 
 /* SW_MODE�Ĵ���λ���� - �ο��������� */
-#define SW_MODE_STOP_L_ENABLE    (1UL << 0)   /* ��ο�����ֹͣʹ�� */
+#define SW_MODE_STOP_L_ENABLE    (1UL << 0)   /* ��ο�����ֹͣʹ��? */
 #define SW_MODE_STOP_R_ENABLE    (1UL << 1)   /* �Ҳο�����ֹͣʹ�� */
-#define SW_MODE_POL_STOP_L       (1UL << 2)   /* ��ο����ؼ��� */
+#define SW_MODE_POL_STOP_L       (1UL << 2)   /* ��ο����ؼ���? */
 #define SW_MODE_POL_STOP_R       (1UL << 3)   /* �Ҳο����ؼ��� */
 #define SW_MODE_SWAP_LR          (1UL << 4)   /* ���Ҳο����ؽ��� */
-#define SW_MODE_LATCH_L_ACT      (1UL << 5)   /* ������ο����ض��� */
+#define SW_MODE_LATCH_L_ACT      (1UL << 5)   /* ������ο����ض���? */
 #define SW_MODE_LATCH_R_ACT      (1UL << 6)   /* �����Ҳο����ض��� */
-#define SW_MODE_LATCH_L_INACT    (1UL << 7)   /* ������ο����طǶ��� */
+#define SW_MODE_LATCH_L_INACT    (1UL << 7)   /* ������ο����طǶ���? */
 #define SW_MODE_LATCH_R_INACT    (1UL << 8)   /* �����Ҳο����طǶ��� */
 #define SW_MODE_EN_SOFTSTOP      (1UL << 9)   /* ʹ����ֹͣ */
 #define SW_MODE_EN_SOFTSTART     (1UL << 10)  /* ʹ�������� */

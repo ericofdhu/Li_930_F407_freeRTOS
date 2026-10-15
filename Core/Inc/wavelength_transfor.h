@@ -11,14 +11,14 @@ typedef struct {
 }WL_TRANS_TABLE;
 
 /**
- * @brief ����������Ͻ���ṹ��
+ * @brief 二次曲线拟合结果结构体。
  * 
- * ��ϵõ��Ķ��κ���Ϊ: y = a*x^2 + b*x + c
+ * 拟合得到的多项式形式为：y = a*x^2 + b*x + c。
  */
 typedef struct {
-    float a;  // x?��ϵ��
-    float b;  // x��ϵ��
-    float c;  // ������
+    float a;  // x^2 项系数
+    float b;  // x 项系数
+    float c;  // 常数项
 } QuadraticFitResult_t;
 
 

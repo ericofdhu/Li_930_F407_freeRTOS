@@ -5,7 +5,7 @@ li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source
 li_930_f407_freertos\colorwm_8inch.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 li_930_f407_freertos\colorwm_8inch.o: ..\WindowsManage\icon_8inch.h
 li_930_f407_freertos\colorwm_8inch.o: ..\WindowsManage\ColorLcd.h
-li_930_f407_freertos\colorwm_8inch.o: ..\WindowsManage\ColorWM_8inch.h
+li_930_f407_freertos\colorwm_8inch.o: ..\WindowsManage\ColorWm_8inch.h
 li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/FreeRTOSConfig.h
 li_930_f407_freertos\colorwm_8inch.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h

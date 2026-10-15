@@ -30,6 +30,7 @@
 /* USER CODE BEGIN Includes */
 #include "fatfs.h"
 #include "tmc5130a.h"
+#include "TMC_5130.h"
 #include "ads1256.h"
 //#include "debug_cli.h"
 #include "system_runtime.h"
@@ -39,6 +40,9 @@
 #include "TouchKey_8inch.h"
 #include "ColorWm_8inch.h"
 #include "MySaveLoadFile.h"
+#include "ads1256.h"
+#include "StepControl.h"
+#include "wavelength_transfor.h"
 
 /* USER CODE END Includes */
 
@@ -65,6 +69,7 @@ static uint8_t TouchKeyEventQueueReady;
 EventGroupHandle_t MyInitFlag = NULL;
 EventGroupHandle_t MyOsFlag = NULL;
 QueueHandle_t g_ActionQueue = NULL;
+QueueHandle_t g_WaveLengthStepperQueue = NULL;
 
 volatile int32_t CurWaveLen;//当前所处的波长
 volatile _SYS_ABS MySysAbs ;
@@ -77,8 +82,8 @@ volatile _SetScaleStruct SetScale;
 /* USER CODE END Variables */
 /* Definitions for StartTask */
 osThreadId_t StartTaskHandle;
-volatile TMC5130A_HomeResult TMC5130A_HomingResult =
-    TMC5130A_HOME_NOT_STARTED;
+// volatile TMC5130A_HomeResult TMC5130A_HomingResult =
+//     TMC5130A_HOME_NOT_STARTED;
 const osThreadAttr_t StartTask_attributes = {
   .name = "StartTask",
   .stack_size = 512 * 4,
@@ -92,6 +97,12 @@ const osThreadAttr_t ADS1256Task_attributes = {
 };
 osThreadId_t SysRunTaskHandle;
 osThreadId_t ActionTaskHandle;
+osThreadId_t WaveLengthStepperTaskHandle;
+const osThreadAttr_t WaveLengthStepperTask_attributes = {
+  .name = "WaveLengthStepper",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 const osThreadAttr_t ActionTask_attributes = {
   .name = "ActionTask",
   .stack_size = 256 * 4,
@@ -129,6 +140,7 @@ static void ActionTask(void *argument);
 static void DispTask(void *argument);
 static void USART3_ProcessTask(void *argument);
 static void USART2_ProcessTask(void *argument);
+void TaskWaveLengthStepper(void *p_arg);
 //static void StartTask_CheckSysconfigFile(void);
 //static void StartTask_ListRootFiles(void);
 
@@ -144,6 +156,12 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 
 
+/**
+ * @brief 创建并返回系统初始化事件组。
+ * @param 无。
+ * @retval 初始化事件组句柄；创建失败时返回 NULL。
+ * @note 已创建时直接返回现有事件组句柄。
+ */
 EventGroupHandle_t MyInitFlag_Init(void)
 {
 	if (MyInitFlag == NULL)
@@ -153,6 +171,12 @@ EventGroupHandle_t MyInitFlag_Init(void)
 	return MyInitFlag;
 }
 
+/**
+ * @brief 创建并返回系统运行事件组。
+ * @param 无。
+ * @retval 系统运行事件组句柄；创建失败时返回 NULL。
+ * @note 已创建时直接返回现有事件组句柄。
+ */
 EventGroupHandle_t MyOsFlag_Init(void)
 {
 	if (MyOsFlag == NULL)
@@ -165,7 +189,13 @@ EventGroupHandle_t MyOsFlag_Init(void)
 
 
 
- void vApplicationTickHook (void)
+ /**
+ * @brief 更新蜂鸣器的节拍计数并控制蜂鸣器输出引脚。
+ * @param 无。
+ * @retval 无。
+ * @note 本函数由 FreeRTOS 每个系统节拍自动调用。
+ */
+void vApplicationTickHook (void)
 {
   uint8_t buzzerOn;
 	buzzerOn = 0U;
@@ -192,6 +222,12 @@ EventGroupHandle_t MyOsFlag_Init(void)
 
 
 
+/**
+ * @brief 从 USART3 接收队列读取数据帧并以十六进制格式输出。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 数据帧接收错误时等待后继续处理。
+ */
 static void USART3_ProcessTask(void *argument)
 {
   USART3_ProcessFrame frame;
@@ -249,6 +285,12 @@ static void USART3_ProcessTask(void *argument)
   }
 }
 
+/**
+ * @brief 处理 USART2 接收帧并将触摸协议数据转换为触摸事件。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 同时将收到的数据帧以十六进制格式输出。
+ */
 static void USART2_ProcessTask(void *argument)
 {
   USART2_ProcessFrame frame;
@@ -350,10 +392,11 @@ static void USART2_ProcessTask(void *argument)
 }
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
+ * @brief 初始化 FreeRTOS 队列、事件组及应用任务。
+ * @param 无。
+ * @retval 无。
+ * @note 创建队列或关键任务失败时调用 Error_Handler。
+ */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 
@@ -378,6 +421,12 @@ void MX_FREERTOS_Init(void) {
   {
     Error_Handler();
   }
+  g_WaveLengthStepperQueue = xQueueCreate(
+      1U, sizeof(StepperCommandMessage_t));
+  if (g_WaveLengthStepperQueue == NULL)
+  {
+    Error_Handler();
+  }
   TouchKeyEventQueueReady =
       (TouchKeyEventQueue_Init() == osOK) ? 1U : 0U;
   TouchKey_Init();
@@ -389,6 +438,12 @@ void MX_FREERTOS_Init(void) {
   SysRunTaskHandle = osThreadNew(SysRunTask, NULL, &SysRunTask_attributes);
   ActionTaskHandle = osThreadNew(ActionTask, NULL, &ActionTask_attributes);
   if (ActionTaskHandle == NULL)
+  {
+    Error_Handler();
+  }
+  WaveLengthStepperTaskHandle = osThreadNew(
+      TaskWaveLengthStepper, NULL, &WaveLengthStepperTask_attributes);
+  if (WaveLengthStepperTaskHandle == NULL)
   {
     Error_Handler();
   }
@@ -406,10 +461,11 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_StartTaskFunc */
 /**
-  * @brief  Function implementing the StartTask thread.
-  * @param  argument: Not used
-  * @retval None
-  */
+ * @brief 执行系统启动初始化并启动应用运行任务。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；初始化后任务持续运行。
+ * @note 初始化文件系统、传感器、串口接收和显示相关组件。
+ */
 /* USER CODE END Header_StartTaskFunc */
 void StartTaskFunc(void *argument)
 {
@@ -424,27 +480,10 @@ void StartTaskFunc(void *argument)
     printf("Failed to initialize touch event queue\r\n");
   }
 
-  // MX_FATFS_Init();
-  // if (retUSER == 0U)
-  // {
-  //   USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
-  //   if (USERFatFSResult == FR_NO_FILESYSTEM)
-  //   {
-  //     USERFatFSResult = f_mkfs(USERPath, FM_ANY, 0U, formatWork,
-  //                              sizeof(formatWork));
-  //     if (USERFatFSResult == FR_OK)
-  //     {
-  //       USERFatFSResult = f_mount(&USERFatFS, USERPath, 1U);
-  //     }
-  //   }
-  // }
-  // else
-  // {
-  //   USERFatFSResult = FR_NOT_READY;
-  // }
 
-  	FileInit();
 
+  FileInit();
+	wl_table_init();
 
 
   ads1256InitResult = ADS1256_Init();
@@ -458,18 +497,15 @@ void StartTaskFunc(void *argument)
     }
   }
 
-//  tmc5130aInitResult = TMC5130A_Init();
-//  if (tmc5130aInitResult != 0U)
-//  {
-//    TMC5130A_HomingResult = TMC5130A_FindHome();
-//  }
-//  else
-//  {
-//    TMC5130A_HomingResult = TMC5130A_HOME_INIT_ERROR;
-//  }
 
-//  DWIN_StartResult = DWIN_Init();
-  // UI_ManagerStartResult = UI_Manager_Init();
+  if(TMC_5130_Init())
+  {
+    printf("TMC5130初始化成功\r\n");
+  }
+  else
+  {
+    printf("TMC5130初始化失败\r\n");
+  }
 
   USART3_ProcessStartResult = USART3_Process_Init();
   if (USART3_ProcessStartResult == HAL_OK)
@@ -512,6 +548,10 @@ void StartTaskFunc(void *argument)
     }
   }
 
+  DeviceInit();
+
+
+
   /* Infinite loop */
   for(;;)
   {
@@ -521,6 +561,12 @@ void StartTaskFunc(void *argument)
 }
 
 
+/**
+ * @brief 等待 ADS1256 数据就绪并读取采样值。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 读取失败时短暂延时后继续等待下一次采样。
+ */
 void ADS1256_SamplingTask(void *argument)
 {
   int32_t sample;
@@ -536,6 +582,12 @@ void ADS1256_SamplingTask(void *argument)
   }
 }
 
+/**
+ * @brief 周期性翻转系统运行指示灯。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 指示灯翻转间隔为 100 个系统节拍。
+ */
 void SysRunTask(void *argument)
 {
 
@@ -586,6 +638,12 @@ static void ActionTask(void *argument)
     }
   }
 }
+/**
+ * @brief 初始化界面并持续读取触摸事件以切换显示窗口。
+ * @param argument 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 触摸事件超时时刷新当前显示窗口。
+ */
 static void DispTask(void *argument)
 {
   uint8_t event;
@@ -598,7 +656,7 @@ static void DispTask(void *argument)
 
   osDelay(pdMS_TO_TICKS(1000)); 
 
-  ColorWindowsControl(WIN_NUM_MAIN_MENU, 0U);
+  ColorWindowsControl(WIN_NUM_INIT, 0U);
   DisplayWindow();
 
 
@@ -637,6 +695,114 @@ static void DispTask(void *argument)
   }
 }
 
+
+
+/**
+ * @brief 从波长步进电机命令队列接收命令并执行相应的电机动作。
+ * @param p_arg 任务参数，本任务不使用。
+ * @retval 无；任务持续运行。
+ * @note 命令通过 FreeRTOS 队列按值传递；动作结束后设置波长任务完成事件位。
+ */
+void TaskWaveLengthStepper(void *p_arg)
+{
+	StepperCommandMessage_t message;
+	BaseType_t queueStatus;
+	int32_t currentPosition;
+	int32_t targetPosition;
+	int32_t steps;
+	int32_t desWavelength;
+	float correctionWavelength;
+
+	(void)p_arg;
+
+	for (;;)
+	{
+		queueStatus = xQueueReceive(g_WaveLengthStepperQueue, &message,
+		                            portMAX_DELAY);
+		if (queueStatus != pdPASS)
+		{
+			printf("Failed to receive wavelength stepper command\r\n");
+			osDelay(1U);
+			continue;
+		}
+
+#if defined(STEPPER_DEBUG) && (STEPPER_DEBUG > 0)
+		if (MyOsFlag != NULL)
+		{
+			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
+		}
+		continue;
+#endif
+
+		switch (message.command)
+		{
+			case STEPPER_CMD_MOVE_TO_WAVELENGTH:
+				TMC5130_SetMaxSpeed(TMC5130_NORMAL_MOVE_SPEED);
+				currentPosition = WavelengthToPosition(CurWaveLen);
+				targetPosition = WavelengthToPosition(
+				    message.value.targetWavelength);
+				steps = targetPosition - currentPosition;
+				MoveNStep(WaveLenStepper, FORWARD, steps);
+				while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+				{
+					osDelay(pdMS_TO_TICKS(5U));
+				}
+				CurWaveLen = message.value.targetWavelength;
+				StepperControlStat[WaveLenStepper].Cnt = targetPosition;
+				break;
+
+			case STEPPER_CMD_INITIALIZE:
+				break;
+
+			case STEPPER_CMD_CORRECT_WAVELENGTH:
+				desWavelength = CurWaveLen;
+				correctionWavelength = message.value.correction;
+				if (correctionWavelength > 0.0f)
+				{
+					steps = (int32_t)(correctionWavelength * 10.0f) + 200;
+					MoveNStep(WaveLenStepper, FORWARD, steps);
+					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+					{
+						osDelay(pdMS_TO_TICKS(5U));
+					}
+						osDelay(pdMS_TO_TICKS(500U));
+					MoveNStep(WaveLenStepper, BACKWARD, 200);
+					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+					{
+						osDelay(pdMS_TO_TICKS(5U));
+					}
+				}
+				else if (correctionWavelength < 0.0f)
+				{
+					steps = (int32_t)(-correctionWavelength * 10.0f);
+					MoveNStep(WaveLenStepper, BACKWARD, steps);
+					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+					{
+						osDelay(pdMS_TO_TICKS(5U));
+					}
+				}
+				CurWaveLen = desWavelength;
+				break;
+
+			default:
+				printf("Unsupported wavelength stepper command: %u\r\n",
+				       (unsigned int)message.command);
+				break;
+		}
+
+		if (MyOsFlag != NULL)
+		{
+			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
+		}
+	}
+}
+
+/**
+ * @brief 设置蜂鸣器状态及需要保持开启的系统节拍数。
+ * @param ticks 蜂鸣器开启的系统节拍数；为零时关闭蜂鸣器。
+ * @retval 无。
+ * @note 蜂鸣器引脚由系统节拍钩子根据该状态驱动。
+ */
 void SysRun_SetBeep(uint32_t ticks)
 {
 //  taskENTER_CRITICAL();
@@ -645,6 +811,13 @@ void SysRun_SetBeep(uint32_t ticks)
 //  taskEXIT_CRITICAL();
 }
 
+/**
+ * @brief 获取蜂鸣器启用状态和剩余开启节拍数。
+ * @param enabled 非 NULL 时用于返回蜂鸣器启用状态。
+ * @param ticks 非 NULL 时用于返回剩余节拍数。
+ * @retval 无。
+ * @note 输出参数允许为 NULL，以忽略对应结果。
+ */
 void SysRun_GetBeep(uint8_t *enabled, uint32_t *ticks)
 {
 //  taskENTER_CRITICAL();

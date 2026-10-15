@@ -24,7 +24,7 @@
 
 #include "TouchKey_8inch.h"
 #include "ColorLcd.h"
-#include "ColorWM_8inch.h"
+#include "ColorWm_8inch.h"
 #include "icon_8inch.h"
 #include "fatfs.h"
 #include "wavelength_transfor.h"
@@ -190,6 +190,13 @@ const FATHER_WINDOWS_CONTROL_TABLE FatherWinTbl[] = {
 		WelcomeW,				
 		WelcomeW_Init},
 		
+//³õÊ¼»¯½çÃæ
+	{WIN_NUM_INIT,		
+		WIN_NUM_INIT_PIC,									
+		WindowInit_key_table,				
+		InitK,						
+		InitW,					
+		(void*)0},
 		
 
 	{WIN_NUM_MAIN_MENU,		
@@ -918,7 +925,7 @@ void InitW(void)
 			else if (tFlag == INIT_WL_ERR_FLAG)
 			{
 				stat = 5;
-				ShowMsgBox(200,160,"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½",300,2,SYS_MOVE_WL_FLAG);
+				ShowMsgBox(200,160,"²¨³¤³õÊ¼»¯´íÎó",300,2,SYS_MOVE_WL_FLAG);
 			}
 			else
 			{
@@ -938,7 +945,7 @@ void InitW(void)
 			else if (tFlag == INIT_WL_500_ERR_FLAG)
 			{
 				stat = 5;
-				ShowMsgBox(200,160,"ï¿½ï¿½ï¿½ï¿½500Ð£×¼ï¿½ï¿½ï¿½ï¿½",300,2,SYS_MOVE_WL_FLAG);
+				ShowMsgBox(200,160,"²¨³¤500Ð£×¼´íÎó",300,2,SYS_MOVE_WL_FLAG);
 			}
 			else
 			{

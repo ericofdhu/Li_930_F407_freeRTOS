@@ -3,8 +3,5 @@
     "terminal.integrated.env.windows": {
         "PATH": "C:\\Keil_v5\\ARM\\ARMCC\\bin;C:\\Keil_v5\\UV4;${env:PATH}"
     },
-    "C_Cpp.default.compileCommands": [
-        
-        ""
-    ]
+    "C_Cpp.default.intelliSenseMode": "windows-clang-arm"
 }

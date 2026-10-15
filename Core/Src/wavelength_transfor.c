@@ -7,23 +7,6 @@
 #define WL_TABLE_FILE_NAME "wl.txt"
 
 
-// const WL_TRANS_TABLE default_wl_table[10] = 
-// {
-//   {0,0},                      //1   0.0nm
-//   {2537,4685*8*39/504},                //2   253.7nm
-//   {3650,6820*8*39/504},                //3   365.0nm
-//   {4046,7555*8*39/504},                //4   404.6nm
-//   {4358,8145*8*39/504},                //5   435.8nm
-//   {5461,10310*8*39/504},                //6   546.1nm
-//   {3650*2,6820*2*8*39/504},            //7   365.0nm*2
-// //   {3650*3,6820*3*8*39/504},             //8   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//   {-1,-1},              //9   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//   {-1,-1},              //10   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//   {-1,-1},              //10   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-// };
-
-
-
 const WL_TRANS_TABLE default_wl_table[10] = 
 {
 //  {0,0},                      //1   0.0nm
@@ -33,10 +16,10 @@ const WL_TRANS_TABLE default_wl_table[10] =
   {4047,4733},                //4   404.6nm
   {4358,5098},                //5   435.8nm
   {5461,6444},                //6   546.1nm
-  {-1,-1},              //9   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  {-1,-1},              //10   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  {-1,-1},              //10   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-  {-1,-1},              //10   ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  {-1,-1},              //9   ²åÈëÒ»¸ö´óÊý¾Ý
+  {-1,-1},              //10   ²åÈëÒ»¸ö´óÊý¾Ý
+  {-1,-1},              //10   ²åÈëÒ»¸ö´óÊý¾Ý
+  {-1,-1},              //10   ²åÈëÒ»¸ö´óÊý¾Ý
 };
 
 
@@ -233,10 +216,10 @@ int WavelengthToPosition( int wl)
     int TABLE_LEN = get_wl_table_size();
 
 
-/* ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½ï¿½ */
+/* ¼ì²é±ß½çÇé¿ö */
     if (wl <= wl_table[0].wl)
     {
-        /* ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Î»ï¿½ï¿½ */
+        /* ²¨³¤Ð¡ÓÚµÈÓÚ×îÐ¡Öµ£¬·µ»Ø×îÐ¡Î»ÖÃ */
         // return wl_table[0].pos;
 
         wl1 = wl_table[0].wl;
@@ -244,13 +227,13 @@ int WavelengthToPosition( int wl)
         pos1 = wl_table[0].pos;
         pos2 = wl_table[1].pos;
         
-        /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */        
+        /* ÏßÐÔ²åÖµ¹«Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */        
         return pos1 + (int)((double)(wl - wl1) * (double)(pos2 - pos1) / (double)(wl2 - wl1)+0.5);
     }
     
     if (wl >= wl_table[TABLE_LEN - 1].wl)
     {
-        /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ */
+        /* ²¨³¤´óÓÚµÈÓÚ×î´óÖµ£¬·µ»Ø×î´óÎ»ÖÃ */
         // return wl_table[TABLE_LEN - 1].pos;
 
         wl1 = wl_table[TABLE_LEN - 2].wl;
@@ -258,25 +241,25 @@ int WavelengthToPosition( int wl)
         pos1 = wl_table[TABLE_LEN - 2].pos;
         pos2 = wl_table[TABLE_LEN - 1].pos;
         
-        /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */        
+        /* ÏßÐÔ²åÖµ¹«Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */        
         return pos1 + (int)((double)(wl - wl1) * (double)(pos2 - pos1) / (double)(wl2 - wl1)+0.5);
     }
     
-    /* ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ */
+    /* ¼ì²é²¨³¤ÔÚ±í¸ñ·¶Î§ÄÚµÄÏßÐÔ²åÖµ */
     for (i = 0; i < TABLE_LEN - 1; i++)
     {
         if (wl >= wl_table[i].wl && wl <= wl_table[i + 1].wl)
         {
-            /* ï¿½Òµï¿½ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Öµ */
+            /* ²¨³¤ÔÚ±í¸ñ·¶Î§ÄÚ£¬½øÐÐÏßÐÔ²åÖµ */
             wl1 = wl_table[i].wl;
             wl2 = wl_table[i + 1].wl;
             pos1 = wl_table[i].pos;
             pos2 = wl_table[i + 1].pos;
             
-            /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */
+            /* ÏßÐÔ²åÖµ¹«Ê½: pos = pos1 + (wl - wl1) * (pos2 - pos1) / (wl2 - wl1) */
             if (wl2 == wl1)
             {
-                /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ */
+                /* ²¨³¤ÏàµÈ£¬·µ»ØµÚÒ»¸öÎ»ÖÃ */
                 return pos1;
             }
             
@@ -284,7 +267,7 @@ int WavelengthToPosition( int wl)
         }
     }
     
-    /* Î´ï¿½Òµï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½Öµ */
+    /* Î´ÔÚ±í¸ñÖÐÆ¥Åäµ½£¬·µ»Ø´íÎóÖµ */
     return -1;
 
 }
@@ -298,46 +281,46 @@ int PositionToWavelength( int pos)
     int TABLE_LEN = get_wl_table_size();
 
 
-/* ï¿½ï¿½ï¿½ß½ï¿½ï¿½ï¿½ï¿½ */
+/* ¼ì²é±ß½çÇé¿ö */
     if (pos <= wl_table[0].pos)
     {
-        /* Î»ï¿½ï¿½Ð¡ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ */
+        /* Î»ÖÃÐ¡ÓÚµÈÓÚ×îÐ¡Öµ£¬·µ»Ø×îÐ¡²¨³¤ */
         wl1 = wl_table[0].wl;
         wl2 = wl_table[1].wl;
         pos1 = wl_table[0].pos;
         pos2 = wl_table[1].pos;     
         
-        /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */        
+        /* ÏßÐÔ²åÖµ¹«Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */        
         return wl1 + (int)((double)(pos - pos1) * (double)(wl2 - wl1) / (double)(pos2 - pos1)+0.5);
     }
     
     if (pos >= wl_table[TABLE_LEN - 1].pos)
     {
-        /* Î»ï¿½Ã³ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó²¨³ï¿½ */
+        /* Î»ÖÃ´óÓÚµÈÓÚ×î´óÖµ£¬·µ»Ø×î´ó²¨³¤ */
         wl1 = wl_table[TABLE_LEN - 2].wl;
         wl2 = wl_table[TABLE_LEN - 1].wl;
         pos1 = wl_table[TABLE_LEN - 2].pos;
         pos2 = wl_table[TABLE_LEN - 1].pos;     
         
-        /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */        
+        /* ÏßÐÔ²åÖµ¹«Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */        
         return wl1 + (int)((double)(pos - pos1) * (double)(wl2 - wl1) / (double)(pos2 - pos1)+0.5);
     }
     
-    /* ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ */
+    /* ¼ì²éÎ»ÖÃÔÚ±í¸ñ·¶Î§ÄÚµÄÏßÐÔ²åÖµ */
     for (i = 0; i < TABLE_LEN - 1; i++)
     {
         if (pos >= wl_table[i].pos && pos <= wl_table[i + 1].pos)
         {
-            /* ï¿½Òµï¿½ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô²ï¿½Öµ */
+            /* Î»ÖÃÔÚ±í¸ñ·¶Î§ÄÚ£¬½øÐÐÏßÐÔ²åÖµ */
             wl1 = wl_table[i].wl;
             wl2 = wl_table[i + 1].wl;
             pos1 = wl_table[i].pos;
             pos2 = wl_table[i + 1].pos;     
             
-            /* ï¿½ï¿½ï¿½Ô²ï¿½Öµï¿½ï¿½Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */
+            /* ÏßÐÔ²åÖµ¹«Ê½: wl = wl1 + (pos - pos1) * (wl2 - wl1) / (pos2 - pos1) */
             if (pos2 == pos1)
             {
-                /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã²¨ï¿½ï¿½ */
+                /* Î»ÖÃÏàµÈ£¬·µ»ØµÚÒ»¸ö²¨³¤ */
                 return wl1;
             }
             
@@ -345,143 +328,8 @@ int PositionToWavelength( int pos)
         }
     }
     
-    /* Î´ï¿½Òµï¿½Æ¥ï¿½ï¿½ï¿½ï¿½ï¿½ä£¬ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½Öµ */
+    /* Î´ÔÚ±í¸ñÖÐÆ¥Åäµ½£¬·µ»Ø´íÎóÖµ */
     return -1;
 }   
 
-//==========================================================================================================================================================
-//
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//
-//==========================================================================================================================================================
 
-
-
-// /**
-//  * @brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½
-//  * 
-//  * Ê¹ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½
-//  * ï¿½ï¿½Ïºï¿½ï¿½ï¿½ï¿½ï¿½Ê½: y = a*x? + b*x + c
-//  * 
-//  * @param data      ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¨WL_TRANS_TABLEï¿½ï¿½ï¿½Í£ï¿½
-//  * @param count     ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª3ï¿½ï¿½ï¿½ã£©
-//  * @param result    ï¿½ï¿½ï¿½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ï¿½a, b, cÏµï¿½ï¿½ï¿½ï¿½
-//  * @return          0ï¿½ï¿½Ê¾ï¿½É¹ï¿½ï¿½ï¿½-1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-2ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½
-//  */
-// int wl_quadratic_fit(const WL_TRANS_TABLE* data, int count, QuadraticFitResult_t* result)
-// {
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½Ô¼ï¿½ï¿½
-//     if (data == NULL || result == NULL) {
-//         return -1;
-//     }
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª3ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½
-//     if (count < 3) {
-//         return -2;
-//     }
-    
-//     float sum_x = 0.0f, sum_y = 0.0f;
-//     float sum_x2 = 0.0f, sum_xy = 0.0f;
-//     float sum_x3 = 0.0f, sum_x2y = 0.0f;
-//     float sum_x4 = 0.0f;
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û¼Óºï¿½
-//     for (int i = 0; i < count; i++) {
-//         float x = (float)data[i].wl;
-//         float y = (float)data[i].pos;
-        
-//         sum_x += x;
-//         sum_y += y;
-//         sum_x2 += x * x;
-//         sum_xy += x * y;
-//         sum_x3 += x * x * x;
-//         sum_x2y += x * x * y;
-//         sum_x4 += x * x * x * x;
-//     }
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ·½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½:
-//     // [n    sum_x  sum_x2] [c]   [sum_y  ]
-//     // [sum_x sum_x2 sum_x3] [b] = [sum_xy ]
-//     // [sum_x2 sum_x3 sum_x4] [a]   [sum_x2y]
-    
-//     float n = (float)count;
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ D
-//     float D = n * (sum_x2 * sum_x4 - sum_x3 * sum_x3)
-//             - sum_x * (sum_x * sum_x4 - sum_x3 * sum_x2)
-//             + sum_x2 * (sum_x * sum_x3 - sum_x2 * sum_x2);
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½Ç·ï¿½Ó½ï¿½ï¿½ã£¨ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-//     if (fabs(D) < 1e-10) {
-//         return -3;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì£¬ï¿½Þ·ï¿½ï¿½ï¿½ï¿½
-//     }
-    
-//     // ï¿½ï¿½ï¿½ï¿½ï¿½Î´Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
-//     float D_c = sum_y * (sum_x2 * sum_x4 - sum_x3 * sum_x3)
-//               - sum_xy * (sum_x * sum_x4 - sum_x3 * sum_x2)
-//               + sum_x2y * (sum_x * sum_x3 - sum_x2 * sum_x2);
-    
-//     float D_b = n * (sum_xy * sum_x4 - sum_x3 * sum_x2y)
-//               - sum_x * (sum_y * sum_x4 - sum_x2 * sum_x2y)
-//               + sum_x2 * (sum_y * sum_x3 - sum_xy * sum_x2);
-    
-//     float D_a = n * (sum_x2 * sum_x2y - sum_x3 * sum_xy)
-//               - sum_x * (sum_x * sum_x2y - sum_x3 * sum_y)
-//               + sum_x2 * (sum_x * sum_xy - sum_x2 * sum_y);
-    
-//     // ï¿½ï¿½ï¿½Ïµï¿½ï¿½
-//     result->c = D_c / D;
-//     result->b = D_b / D;
-//     result->a = D_a / D;
-    
-//     return 0;  // ï¿½É¹ï¿½
-// }
-
-
-// /**
-//  * @brief Ê¹ï¿½ï¿½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
-//  * 
-//  * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÃµï¿½ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½×ªï¿½ï¿½Öµ
-//  * 
-//  * @param result    ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½a, b, cÏµï¿½ï¿½ï¿½ï¿½
-//  * @param wavelength ï¿½ï¿½ï¿½ë²¨ï¿½ï¿½Öµ
-//  * @return          ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½×ªï¿½ï¿½Öµ
-//  */
-// // float wl_quadratic_interpolate(const QuadraticFitResult_t* result, int wavelength)
-// int WavelengthToPosition( int wl)
-// {
-
-//     QuadraticFitResult_t* result = &gFit_result;
-    
-//     float x = (float)(wl);
-//     return (int)(result->a * x * x + result->b * x + result->c);
-// }
-
-/**
- * @brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Ò»Õ¾Ê½ï¿½Ó¿Ú£ï¿½
- * 
- * @param data       ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
- * @param count      ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½
- * @param wavelength Òªï¿½ï¿½Öµï¿½Ä²ï¿½ï¿½ï¿½
- * @param output     ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
- * @return          0ï¿½ï¿½Ê¾ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
- */
-// int wl_quadratic_fit_and_interpolate(const WL_TRANS_TABLE* data, 
-//                                       int count, 
-//                                       int wavelength, 
-//                                       float* output)
-// {
-//     if (output == NULL) {
-//         return -1;
-//     }
-    
-//     QuadraticFitResult_t fit_result;
-//     int ret = wl_quadratic_fit(data, count, &fit_result);
-    
-//     if (ret == 0) {
-//         *output = wl_quadratic_interpolate(&fit_result, wavelength);
-//     }
-    
-//     return ret;
-// }
