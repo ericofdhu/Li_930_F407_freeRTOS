@@ -40,12 +40,12 @@ const TOUCH_KEY_SQUARE WindowWarmUp_key_table[]=
 
 const TOUCH_KEY_SQUARE WindowInit_key_table[]=
 {
-{0,		0,		100,		100,		KEY_BACK_DOOR,			0,		0,		0,		(SIMPLE_ICON*)ICON_BLANK},//T/ABS转锟斤拷
+{0,		0,		100,		100,		KEY_BACK_DOOR,			0,		0,		0,		(SIMPLE_ICON*)ICON_BLANK},// T/ABS 模式切换按钮。
 {0xffff,0xffff,	0xffff,	0xffff,	0xffff,							0,		0,		0,		(SIMPLE_ICON*)ICON_BLANK}
 };
 
 
-//锟斤拷锟剿碉拷
+// 主菜单按键区域。
 const TOUCH_KEY_SQUARE WindowMainMenu_key_table[]=
 {
 
@@ -156,7 +156,7 @@ const TOUCH_KEY_SQUARE WindowMontainValley_key_table[] =
 
 
 /////////////////////////////
-//锟斤拷锟斤拷MP系锟斤拷锟斤拷  锟斤拷锟皆斤拷锟芥按锟斤拷
+// 定量测试页面：MP 系数测试结果操作区域。
 const TOUCH_KEY_SQUARE WindowDingLiangCeShi_key_table[]=
 {
 {510,	100,			53,	100,		KEY_DING_LIANG_CESHI_LAST_PAGE,				0,		520,	100,						(SIMPLE_ICON*)ICON_BLANK},
@@ -183,7 +183,7 @@ const TOUCH_KEY_SQUARE WindowDingLiangCeShi_key_table[]=
 //	const uint16 Ytable[] = {135,164,193,221,249,277,305,333,361,389,417,445,473,501};
 
 
-//锟斤拷锟斤拷MP系锟斤拷锟斤拷  锟疥定
+// 定量测试页面：MP 系数标定区域。
 const TOUCH_KEY_SQUARE WindowDingLiangCeShiBiaoDing_key_table[]=
 {
 	
@@ -230,7 +230,7 @@ const TOUCH_KEY_SQUARE WindowDingLiangCeShiBiaoDing_key_table[]=
 {0xffff,0xffff,0xffff,0xffff,0xffff,0,		0,		0,		(SIMPLE_ICON*)ICON_BLANK}
 };
 
-//锟斤拷锟斤拷MP系锟斤拷锟斤拷  锟斤拷锟斤拷锟斤拷锟矫帮拷锟斤拷
+// 定量测试页面：MP 参数设置区域。
 const TOUCH_KEY_SQUARE WindowDingLiangMPPar_key_table[]=
 {
 {180,	130,			370,	175,		KEY_DING_LIANG_MPPAR_SET_WAVE,					0,		718,	173,						(SIMPLE_ICON*)ICON_BLANK},
@@ -253,7 +253,7 @@ const TOUCH_KEY_SQUARE WindowDingLiangMPPar_key_table[]=
 {0xffff,0xffff,0xffff,0xffff,0xffff,0,		0,		0,		(SIMPLE_ICON*)ICON_BLANK}
 };
 
-//锟斤拷锟斤拷MP系锟斤拷锟斤拷  锟斤拷实锟斤拷锟斤拷
+// 定量测试页面：MP 曲线显示区域。
 const TOUCH_KEY_SQUARE WindowDingLiangMPCurve_key_table[]=
 {
 //{101,	549,		220,	592,		KEY_DING_LIANG_MP_CURVE_FINISH,						1,		101,	549,		(SIMPLE_ICON*)ICON_FINISH_MP_BLACK},
@@ -267,7 +267,7 @@ const TOUCH_KEY_SQUARE WindowDingLiangMPCurve_key_table[]=
 
 
 
-//锟斤拷锟斤拷炔锟斤拷锟?
+// 信噪比测试页面。
 const TOUCH_KEY_SQUARE WindowSNRCeShi_key_table[]=
 {
 	
@@ -290,7 +290,7 @@ const TOUCH_KEY_SQUARE WindowSNRCeShi_key_table[]=
 
 
 
-//锟斤拷锟斤拷学锟斤拷锟斤拷
+// 动力学测试页面。
 const TOUCH_KEY_SQUARE WindowDongLiXueCeshi_key_table[]=
 {
 	
@@ -312,7 +312,7 @@ const TOUCH_KEY_SQUARE WindowDongLiXueCeshi_key_table[]=
 
 
 
-//锟斤拷锟斤拷学锟斤拷锟斤拷 锟斤拷锟斤拷锟斤拷锟斤拷
+// 动力学测试参数页面。
 const TOUCH_KEY_SQUARE WindowDongLiXuePar_key_table[]=
 {
 {292,	72,			130,	32,		KEY_DONG_LI_XUE_PAR_SET_WAVE,							0,		0,	0,		(SIMPLE_ICON*)ICON_BLANK},
@@ -490,7 +490,7 @@ const TOUCH_KEY_SQUARE WindowFastInit_key_table[]=
 
 
 
-//锟接达拷锟节帮拷锟斤拷锟斤拷
+// 子窗口按键区域。
 const TOUCH_KEY_SQUARE Child_W_34Mode_Select_key_table[]=
 {
 {500-455,	81-16,		525-455,	106-16,		KEY_34MODE_SELECT_3,			0,		14,		546,		(SIMPLE_ICON*)ICON_BLANK},
@@ -663,6 +663,11 @@ const TOUCH_KEY_SQUARE Child_W_Set_Scale_key_table[]=
 
 static osMessageQueueId_t TouchKeyEventQueue;
 
+/**
+ * @brief 创建触摸按键事件消息队列。
+ * @param 无。
+ * @retval osOK 队列已存在或创建成功；osErrorNoMemory 队列创建失败。
+ */
 osStatus_t TouchKeyEventQueue_Init(void)
 {
 	if (TouchKeyEventQueue != NULL)
@@ -675,6 +680,13 @@ osStatus_t TouchKeyEventQueue_Init(void)
 	return (TouchKeyEventQueue != NULL) ? osOK : osErrorNoMemory;
 }
 
+/**
+ * @brief 从触摸按键事件队列读取一个事件。
+ * @param event 接收事件编号的输出指针，不能为 NULL。
+ * @param timeout 等待队列消息的超时时间，单位为 RTOS 系统时钟节拍。
+ * @retval osOK 成功取到事件；其他值为 CMSIS-RTOS 队列接口返回的状态。
+ * @note 队列尚未初始化或 event 为 NULL 时返回 osErrorParameter。
+ */
 osStatus_t TouchKeyEventQueue_Get(uint8_t *event, uint32_t timeout)
 {
 	if ((event == NULL) || (TouchKeyEventQueue == NULL))
@@ -685,6 +697,12 @@ osStatus_t TouchKeyEventQueue_Get(uint8_t *event, uint32_t timeout)
 	return osMessageQueueGet(TouchKeyEventQueue, event, NULL, timeout);
 }
 
+/**
+ * @brief 将触摸事件放入事件队列；队列已满时丢弃旧事件以保留最新事件。
+ * @param event 要发送的触摸事件编号。
+ * @retval osStatus_t 返回 CMSIS-RTOS 消息队列发送操作的状态。
+ * @note 队列未初始化时返回 osErrorParameter；本函数不等待队列空间。
+ */
 static osStatus_t TouchKey_PostEvent(uint8_t event)
 {
 	osStatus_t status;
@@ -711,6 +729,12 @@ static osStatus_t TouchKey_PostEvent(uint8_t event)
 	return status;
 }
 
+/**
+ * @brief 初始化触摸按键状态及字母键盘名称输入类型。
+ * @param 无。
+ * @retval 无。
+ * @note 清除上次按键、当前按键、触发、按下和释放状态，并将名称输入类型设为默认值 0。
+ */
 void TouchKey_Init(void)
 {
 	TouchKey.back_keyassignments = 0xffff;
@@ -724,6 +748,12 @@ void TouchKey_Init(void)
 }
 
 
+/**
+ * @brief 解析触摸屏报文并更新按键状态、按键反馈及窗口事件队列。
+ * @param msg 指向至少 6 字节的触摸屏报文；首字节为 0xAA，第二字节 0x73 表示按下、0x72 表示释放。
+ * @retval 0 报文处理完成或报文类型未处理；1 输入指针无效或触摸事件入队失败。
+ * @note 按下报文中的坐标用于命中检测；命中按键时更新全局按键状态并通知当前父窗口或子窗口。
+ */
 uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 {
 	TOUCH_POINT pt;
@@ -734,7 +764,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 
 	if(msg[0] == 0xaa)
 	{
-		if (msg[1] == 0x73)//锟斤拷锟斤拷锟斤拷锟斤拷
+		if (msg[1] == 0x73)// 触摸按下事件。
 		{
 			pt.x = msg[2]*256+msg[3];
 			pt.y = msg[4]*256+msg[5];
@@ -758,7 +788,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 				if(TouchKey.Press == 0)
 				{
 					TouchKey.back_p = (TOUCH_KEY_SQUARE*)TouchKey.p;
-					TouchKey.back_keyassignments = TouchKey.back_p ->code;//锟斤拷锟芥当前锟斤拷锟铰的帮拷锟斤拷锟斤拷只锟叫碉拷锟斤拷一锟轿帮拷锟斤拷锟斤拷锟铰才伙拷锟斤拷锟?
+					TouchKey.back_keyassignments = TouchKey.back_p ->code;// 保存当前按下的按键；仅在按下沿更新一次。
 					BEEP_ONCE();
 					if(TouchKey.p->flag == 1)
 					{
@@ -800,7 +830,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 					else if(TouchKey.p->flag == 2)
 					{
 						ColorLcdDispIcon(
-													TouchKey.p->paint_x,//锟斤拷锟芥按锟斤拷锟斤拷应锟斤拷图片锟斤拷
+													TouchKey.p->paint_x,// 绘制按键对应的图标。
 													TouchKey.p->left,
 													TouchKey.p->top,
 													TouchKey.p->left+TouchKey.p->width,
@@ -808,9 +838,9 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 													TouchKey.p->left,
 													TouchKey.p->top);
 					}
-					TouchKey.Trg = 1;//锟斤拷锟斤拷锟斤拷锟铰憋拷志锟斤拷位
-					TouchKey.Press = 1;//锟斤拷锟斤拷锟斤拷住锟斤拷志锟斤拷位
-					TouchKey.Release = 0;//锟斤拷锟斤拷锟脚匡拷锟斤拷志锟斤拷锟斤拷
+					TouchKey.Trg = 1;// 置位触摸触发标志。
+					TouchKey.Press = 1;// 置位按下状态标志。
+					TouchKey.Release = 0;// 清除释放状态标志。
 					if (TouchKey_PostEvent(
 							(ColorWm.IsChildFlag == 0U) ?
 							TOUCH_KEY_EVENT_FATHER :
@@ -846,7 +876,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 			}
 				
 		}
-		else if (msg[1] == 0x72)//锟斤拷锟斤拷锟脚匡拷
+		else if (msg[1] == 0x72)// 触摸释放事件。
 		{
 			//pt.x = msg[2]*256+msg[3];
 			//pt.y = msg[4]*256+msg[5];
@@ -856,7 +886,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 			{
 				if(ColorWm.IsChildFlag == 0)
 				{
-					if(TouchKey.back_p->flag == 1)//锟叫帮拷压效锟斤拷锟斤拷
+					if(TouchKey.back_p->flag == 1)// 按键带有按下反馈效果。
 					{
 						ColorLcdDispIcon(		ColorWm.FatherPicNumber,
 											TouchKey.back_p->paint_x ,
@@ -866,7 +896,7 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 											TouchKey.back_p->paint_x ,
 											TouchKey.back_p->paint_y );
 					}
-					else if(TouchKey.back_p->flag == 2)//锟叫帮拷压效锟斤拷锟斤拷锟斤拷要锟叫伙拷锟斤拷一锟斤拷状态
+					else if(TouchKey.back_p->flag == 2)// 按键带有按下反馈，并需切换状态图标。
 					{
 						ColorLcdDispIcon(
 													ColorWm.FatherPicNumber,
@@ -877,10 +907,10 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 													TouchKey.p->left,
 													TouchKey.p->top);
 					}
-					else if(TouchKey.back_p->flag == 3)//锟叫帮拷压效锟斤拷锟斤拷锟斤拷要锟叫伙拷锟斤拷一锟斤拷状态
+					else if(TouchKey.back_p->flag == 3)// 按键带有按下反馈，并需切换状态图标。
 					{
 						ColorLcdDispIcon(
-													TouchKey.p->paint_y,//锟斤拷锟芥按锟斤拷锟斤拷应锟斤拷图片锟斤拷
+													TouchKey.p->paint_y,// 使用按键对应的图标编号重绘按键区域。
 													TouchKey.p->left,
 													TouchKey.p->top,
 													TouchKey.p->left+TouchKey.p->width,
@@ -936,6 +966,11 @@ uint8_t Get_TouchKeyAssignments(uint8_t* msg)
 
 
 
+/**
+ * @brief 根据触摸坐标查找当前父窗口、子窗口或二级子窗口中的按键区域。
+ * @param point 触摸屏坐标；命中子窗口时会按当前子窗口位置换算为局部坐标。
+ * @retval const TOUCH_KEY_SQUARE* 命中的按键区域表项；未命中或窗口无效时返回空指针。
+ */
 const TOUCH_KEY_SQUARE* AnalyseKeyCodate(TOUCH_POINT point)
 {
 	const TOUCH_KEY_SQUARE*  p=0;
