@@ -661,74 +661,150 @@ const TOUCH_KEY_SQUARE Child_W_Set_Scale_key_table[]=
 
 #define TOUCH_KEY_EVENT_QUEUE_LENGTH 1U
 
-static osMessageQueueId_t TouchKeyEventQueue;
+static osMessageQueueId_t TouchKeyFatherEventQueue;
+static osMessageQueueId_t TouchKeyChildEventQueue;
 
 /**
- * @brief 创建触摸按键事件消息队列。
+ * @brief 创建主窗口和子窗口各自使用的触摸事件队列。
  * @param 无。
- * @retval osOK 队列已存在或创建成功；osErrorNoMemory 队列创建失败。
+ * @retval 队列已存在或创建成功时返回 osOK；内存不足或删除旧队列失败时返回对应错误。
+ * @note 两个队列分别缓存最新的父窗口和子窗口事件，避免显示任务互相取走对方的事件。
  */
 osStatus_t TouchKeyEventQueue_Init(void)
 {
-	if (TouchKeyEventQueue != NULL)
+	osStatus_t status;
+
+	if ((TouchKeyFatherEventQueue != NULL) &&
+		(TouchKeyChildEventQueue != NULL))
 	{
 		return osOK;
 	}
 
-	TouchKeyEventQueue = osMessageQueueNew(
+	if (TouchKeyFatherEventQueue != NULL)
+	{
+		status = osMessageQueueDelete(TouchKeyFatherEventQueue);
+		if (status != osOK)
+		{
+			return status;
+		}
+		TouchKeyFatherEventQueue = NULL;
+	}
+	if (TouchKeyChildEventQueue != NULL)
+	{
+		status = osMessageQueueDelete(TouchKeyChildEventQueue);
+		if (status != osOK)
+		{
+			return status;
+		}
+		TouchKeyChildEventQueue = NULL;
+	}
+
+	TouchKeyFatherEventQueue = osMessageQueueNew(
 		TOUCH_KEY_EVENT_QUEUE_LENGTH, sizeof(uint8_t), NULL);
-	return (TouchKeyEventQueue != NULL) ? osOK : osErrorNoMemory;
+	if (TouchKeyFatherEventQueue == NULL)
+	{
+		return osErrorNoMemory;
+	}
+
+	TouchKeyChildEventQueue = osMessageQueueNew(
+		TOUCH_KEY_EVENT_QUEUE_LENGTH, sizeof(uint8_t), NULL);
+	if (TouchKeyChildEventQueue == NULL)
+	{
+		status = osMessageQueueDelete(TouchKeyFatherEventQueue);
+		if (status != osOK)
+		{
+			return status;
+		}
+		TouchKeyFatherEventQueue = NULL;
+		return osErrorNoMemory;
+	}
+
+	return osOK;
 }
 
 /**
- * @brief 从触摸按键事件队列读取一个事件。
- * @param event 接收事件编号的输出指针，不能为 NULL。
+ * @brief 从指定窗口对应的触摸事件队列中等待并读取一个事件。
+ * @param eventType 要等待的事件类型，仅支持 TOUCH_KEY_EVENT_FATHER 或 TOUCH_KEY_EVENT_CHILD。
+ * @param event 用于接收事件编号的输出指针，不得为 NULL。
  * @param timeout 等待队列消息的超时时间，单位为 RTOS 系统时钟节拍。
- * @retval osOK 成功取到事件；其他值为 CMSIS-RTOS 队列接口返回的状态。
- * @note 队列尚未初始化或 event 为 NULL 时返回 osErrorParameter。
+ * @retval 返回 CMSIS-RTOS 消息队列接口的状态；参数或事件类型无效时返回 osErrorParameter。
  */
-osStatus_t TouchKeyEventQueue_Get(uint8_t *event, uint32_t timeout)
+osStatus_t TouchKeyEventQueue_Get(uint8_t eventType, uint8_t *event, uint32_t timeout)
 {
-	if ((event == NULL) || (TouchKeyEventQueue == NULL))
+	osMessageQueueId_t eventQueue;
+
+	if (event == NULL)
 	{
 		return osErrorParameter;
 	}
 
-	return osMessageQueueGet(TouchKeyEventQueue, event, NULL, timeout);
+	switch (eventType)
+	{
+		case TOUCH_KEY_EVENT_FATHER:
+			eventQueue = TouchKeyFatherEventQueue;
+			break;
+		case TOUCH_KEY_EVENT_CHILD:
+			eventQueue = TouchKeyChildEventQueue;
+			break;
+		default:
+			return osErrorParameter;
+	}
+
+	if (eventQueue == NULL)
+	{
+		return osErrorParameter;
+	}
+
+	return osMessageQueueGet(eventQueue, event, NULL, timeout);
 }
 
 /**
- * @brief 将触摸事件放入事件队列；队列已满时丢弃旧事件以保留最新事件。
- * @param event 要发送的触摸事件编号。
- * @retval osStatus_t 返回 CMSIS-RTOS 消息队列发送操作的状态。
- * @note 队列未初始化时返回 osErrorParameter；本函数不等待队列空间。
+ * @brief 将触摸事件投递到对应窗口的队列，并在队列已满时保留最新事件。
+ * @param event 要投递的触摸事件编号。
+ * @retval 返回 CMSIS-RTOS 消息队列接口的状态；二级子窗口事件不再触发窗口重绘。
+ * @note 父窗口和子窗口使用独立队列；队列满时丢弃该窗口的旧事件后再写入新事件。
  */
 static osStatus_t TouchKey_PostEvent(uint8_t event)
 {
+	osMessageQueueId_t eventQueue;
 	osStatus_t status;
 	uint8_t pendingEvent;
 
-	if (TouchKeyEventQueue == NULL)
+	if (event == TOUCH_KEY_EVENT_SECOND_CHILD)
+	{
+		return osOK;
+	}
+
+	switch (event)
+	{
+		case TOUCH_KEY_EVENT_FATHER:
+			eventQueue = TouchKeyFatherEventQueue;
+			break;
+		case TOUCH_KEY_EVENT_CHILD:
+			eventQueue = TouchKeyChildEventQueue;
+			break;
+		default:
+			return osErrorParameter;
+	}
+
+	if (eventQueue == NULL)
 	{
 		return osErrorParameter;
 	}
 
-	status = osMessageQueuePut(TouchKeyEventQueue, &event, 0U, 0U);
+	status = osMessageQueuePut(eventQueue, &event, 0U, 0U);
 	if (status == osErrorResource)
 	{
-		/* Keep the newest touch update when input arrives faster than rendering. */
-		status = osMessageQueueGet(TouchKeyEventQueue, &pendingEvent,
-								   NULL, 0U);
+		status = osMessageQueueGet(eventQueue, &pendingEvent, NULL, 0U);
 		if ((status != osOK) && (status != osErrorResource))
 		{
 			return status;
 		}
-		status = osMessageQueuePut(TouchKeyEventQueue, &event, 0U, 0U);
+		status = osMessageQueuePut(eventQueue, &event, 0U, 0U);
 	}
 
 	return status;
 }
-
 /**
  * @brief 初始化触摸按键状态及字母键盘名称输入类型。
  * @param 无。

@@ -65,6 +65,7 @@
 volatile BeepCtrl_t Beep = {0U, 0U};
 volatile SYS_FLAG SysFlag = {0U};
 static uint8_t TouchKeyEventQueueReady;
+static osMutexId_t DisplayMutex;
 //volatile DebugCLI_Status DebugCLI_StartResult = DEBUG_CLI_ERROR_RTOS;
 EventGroupHandle_t MyInitFlag = NULL;
 EventGroupHandle_t MyOsFlag = NULL;
@@ -80,73 +81,80 @@ volatile _SetScaleStruct SetScale;
 
 
 /* USER CODE END Variables */
-/* Definitions for StartTask */
-osThreadId_t StartTaskHandle;
+/* Definitions for Task_Start */
+osThreadId_t Task_Start_Handle;
 // volatile TMC5130A_HomeResult TMC5130A_HomingResult =
 //     TMC5130A_HOME_NOT_STARTED;
-const osThreadAttr_t StartTask_attributes = {
-  .name = "StartTask",
+const osThreadAttr_t Task_Start_attributes = {
+  .name = "Task_Start",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-osThreadId_t ADS1256TaskHandle;
-const osThreadAttr_t ADS1256Task_attributes = {
-  .name = "ADS1256Task",
+osThreadId_t Task_ADS1256_Handle;
+const osThreadAttr_t Task_ADS1256_attributes = {
+  .name = "Task_ADS1256",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
-osThreadId_t SysRunTaskHandle;
-osThreadId_t ActionTaskHandle;
-osThreadId_t WaveLengthStepperTaskHandle;
-const osThreadAttr_t WaveLengthStepperTask_attributes = {
-  .name = "WaveLengthStepper",
+osThreadId_t Task_SysRun_Handle;
+osThreadId_t Task_Action_Handle;
+osThreadId_t Task_WaveLengthStepper_Handle;
+const osThreadAttr_t Task_WaveLengthStepper_attributes = {
+  .name = "Task_WaveLengthStepper",
   .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-const osThreadAttr_t ActionTask_attributes = {
-  .name = "ActionTask",
+const osThreadAttr_t Task_Action_attributes = {
+  .name = "Task_Action",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-const osThreadAttr_t SysRunTask_attributes = {
-  .name = "SysRun",
+const osThreadAttr_t Task_SysRun_attributes = {
+  .name = "Task_SysRun",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityBelowNormal,
 };
-osThreadId_t DispTaskHandle;
-const osThreadAttr_t DispTask_attributes = {
-  .name = "DispTask",
+osThreadId_t Task_Disp_Handle;
+const osThreadAttr_t Task_Disp_attributes = {
+  .name = "Task_Disp",
   .stack_size = 2048 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-osThreadId_t USART3_ProcessTaskHandle;
-const osThreadAttr_t USART3_ProcessTask_attributes = {
-  .name = "USART3_Process",
+osThreadId_t Task_ChildDisp_Handle;
+const osThreadAttr_t Task_ChildDisp_attributes = {
+  .name = "Task_ChildDisp",
+  .stack_size = 2048 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+osThreadId_t Task_USART3_Process_Handle;
+const osThreadAttr_t Task_USART3_Process_attributes = {
+  .name = "Task_USART3_Process",
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-osThreadId_t USART2_ProcessTaskHandle;
-const osThreadAttr_t USART2_ProcessTask_attributes = {
-  .name = "USART2_Process",
+osThreadId_t Task_USART2_Process_Handle;
+const osThreadAttr_t Task_USART2_Process_attributes = {
+  .name = "Task_USART2_Process",
   .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-void ADS1256_SamplingTask(void *argument);
-void SysRunTask(void *argument);
-static void ActionTask(void *argument);
-static void DispTask(void *argument);
-static void USART3_ProcessTask(void *argument);
-static void USART2_ProcessTask(void *argument);
-void TaskWaveLengthStepper(void *p_arg);
-//static void StartTask_CheckSysconfigFile(void);
-//static void StartTask_ListRootFiles(void);
+void Task_ADS1256_Sampling(void *argument);
+void Task_SysRun(void *argument);
+static void Task_Action(void *argument);
+static void Task_Disp(void *argument);
+static void Task_ChildDisp(void *argument);
+static void Task_USART3_Process(void *argument);
+static void Task_USART2_Process(void *argument);
+void Task_WaveLengthStepper(void *p_arg);
+//static void Task_Start_CheckSysconfigFile(void);
+//static void Task_Start_ListRootFiles(void);
 
 /* USER CODE END FunctionPrototypes */
 
-void StartTaskFunc(void *argument);
+void Task_StartFunc(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -228,7 +236,7 @@ void vApplicationTickHook (void)
  * @retval 无；任务持续运行。
  * @note 数据帧接收错误时等待后继续处理。
  */
-static void USART3_ProcessTask(void *argument)
+static void Task_USART3_Process(void *argument)
 {
   USART3_ProcessFrame frame;
   char output[USART3_PROCESS_MAX_FRAME_LENGTH * 3U + 48U];
@@ -291,7 +299,7 @@ static void USART3_ProcessTask(void *argument)
  * @retval 无；任务持续运行。
  * @note 同时将收到的数据帧以十六进制格式输出。
  */
-static void USART2_ProcessTask(void *argument)
+static void Task_USART2_Process(void *argument)
 {
   USART2_ProcessFrame frame;
   uint8_t touchMessage[USART2_PROCESS_MAX_FRAME_LENGTH + 1U];
@@ -433,17 +441,17 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of StartTask */
-  StartTaskHandle = osThreadNew(StartTaskFunc, NULL, &StartTask_attributes);
-  SysRunTaskHandle = osThreadNew(SysRunTask, NULL, &SysRunTask_attributes);
-  ActionTaskHandle = osThreadNew(ActionTask, NULL, &ActionTask_attributes);
-  if (ActionTaskHandle == NULL)
+  /* creation of Task_Start */
+  Task_Start_Handle = osThreadNew(Task_StartFunc, NULL, &Task_Start_attributes);
+  Task_SysRun_Handle = osThreadNew(Task_SysRun, NULL, &Task_SysRun_attributes);
+  Task_Action_Handle = osThreadNew(Task_Action, NULL, &Task_Action_attributes);
+  if (Task_Action_Handle == NULL)
   {
     Error_Handler();
   }
-  WaveLengthStepperTaskHandle = osThreadNew(
-      TaskWaveLengthStepper, NULL, &WaveLengthStepperTask_attributes);
-  if (WaveLengthStepperTaskHandle == NULL)
+  Task_WaveLengthStepper_Handle = osThreadNew(
+      Task_WaveLengthStepper, NULL, &Task_WaveLengthStepper_attributes);
+  if (Task_WaveLengthStepper_Handle == NULL)
   {
     Error_Handler();
   }
@@ -459,22 +467,22 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartTaskFunc */
+/* USER CODE BEGIN Header_Task_StartFunc */
 /**
  * @brief 执行系统启动初始化并启动应用运行任务。
  * @param argument 任务参数，本任务不使用。
  * @retval 无；初始化后任务持续运行。
  * @note 初始化文件系统、传感器、串口接收和显示相关组件。
  */
-/* USER CODE END Header_StartTaskFunc */
-void StartTaskFunc(void *argument)
+/* USER CODE END Header_Task_StartFunc */
+void Task_StartFunc(void *argument)
 {
 //  static uint8_t formatWork[_MAX_SS];
   ADS1256_Status ads1256InitResult;
 
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
-  /* USER CODE BEGIN StartTaskFunc */
+  /* USER CODE BEGIN Task_StartFunc */
   if (TouchKeyEventQueueReady == 0U)
   {
     printf("Failed to initialize touch event queue\r\n");
@@ -489,9 +497,9 @@ void StartTaskFunc(void *argument)
   ads1256InitResult = ADS1256_Init();
   if (ads1256InitResult == ADS1256_OK)
   {
-    ADS1256TaskHandle = osThreadNew(ADS1256_SamplingTask, NULL,
-                                    &ADS1256Task_attributes);
-    if (ADS1256TaskHandle == NULL)
+    Task_ADS1256_Handle = osThreadNew(Task_ADS1256_Sampling, NULL,
+                                    &Task_ADS1256_attributes);
+    if (Task_ADS1256_Handle == NULL)
     {
       ADS1256_LastStatus = ADS1256_ERROR_RTOS;
     }
@@ -510,9 +518,9 @@ void StartTaskFunc(void *argument)
   USART3_ProcessStartResult = USART3_Process_Init();
   if (USART3_ProcessStartResult == HAL_OK)
   {
-    USART3_ProcessTaskHandle = osThreadNew(
-        USART3_ProcessTask, NULL, &USART3_ProcessTask_attributes);
-    if (USART3_ProcessTaskHandle == NULL)
+    Task_USART3_Process_Handle = osThreadNew(
+        Task_USART3_Process, NULL, &Task_USART3_Process_attributes);
+    if (Task_USART3_Process_Handle == NULL)
     {
       printf("Failed to create USART3 process task\r\n");
     }
@@ -531,19 +539,34 @@ void StartTaskFunc(void *argument)
   }
   else
   {
-    USART2_ProcessTaskHandle = osThreadNew(
-        USART2_ProcessTask, NULL, &USART2_ProcessTask_attributes);
-    if (USART2_ProcessTaskHandle == NULL)
+    Task_USART2_Process_Handle = osThreadNew(
+        Task_USART2_Process, NULL, &Task_USART2_Process_attributes);
+    if (Task_USART2_Process_Handle == NULL)
     {
       printf("Failed to create USART2 process task\r\n");
     }
 
     if (TouchKeyEventQueueReady != 0U)
     {
-      DispTaskHandle = osThreadNew(DispTask, NULL, &DispTask_attributes);
-      if (DispTaskHandle == NULL)
+      DisplayMutex = osMutexNew(NULL);
+      if (DisplayMutex == NULL)
       {
-        printf("Failed to create display task\r\n");
+        printf("Failed to create display mutex\r\n");
+      }
+      else
+      {
+        Task_Disp_Handle = osThreadNew(Task_Disp, NULL, &Task_Disp_attributes);
+        if (Task_Disp_Handle == NULL)
+        {
+          printf("Failed to create parent display task\r\n");
+        }
+
+        Task_ChildDisp_Handle = osThreadNew(
+            Task_ChildDisp, NULL, &Task_ChildDisp_attributes);
+        if (Task_ChildDisp_Handle == NULL)
+        {
+          printf("Failed to create child display task\r\n");
+        }
       }
     }
   }
@@ -557,7 +580,7 @@ void StartTaskFunc(void *argument)
   {
     osDelay(1000U);
   }
-  /* USER CODE END StartTaskFunc */
+  /* USER CODE END Task_StartFunc */
 }
 
 
@@ -567,7 +590,7 @@ void StartTaskFunc(void *argument)
  * @retval 无；任务持续运行。
  * @note 读取失败时短暂延时后继续等待下一次采样。
  */
-void ADS1256_SamplingTask(void *argument)
+void Task_ADS1256_Sampling(void *argument)
 {
   int32_t sample;
 
@@ -588,7 +611,7 @@ void ADS1256_SamplingTask(void *argument)
  * @retval 无；任务持续运行。
  * @note 指示灯翻转间隔为 100 个系统节拍。
  */
-void SysRunTask(void *argument)
+void Task_SysRun(void *argument)
 {
 
   (void)argument;
@@ -605,7 +628,7 @@ void SysRunTask(void *argument)
  * @retval 无；任务持续运行，直至系统调度器停止。
  * @note 当前已实现 MSG_SCAN：设置波长扫描运行标志；未知消息类型会记录错误。
  */
-static void ActionTask(void *argument)
+static void Task_Action(void *argument)
 {
   uint8_t actionMessage[COLOR_WM_MESSAGE_SIZE];
   BaseType_t queueStatus;
@@ -639,61 +662,129 @@ static void ActionTask(void *argument)
   }
 }
 /**
- * @brief 初始化界面并持续读取触摸事件以切换显示窗口。
- * @param argument 任务参数，本任务不使用。
- * @retval 无；任务持续运行。
- * @note 触摸事件超时时刷新当前显示窗口。
+ * @brief 初始化主窗口，并等待主窗口触摸事件后刷新主窗口显示。
+ * @param argument FreeRTOS/CMSIS-RTOS 任务参数，本任务不使用。
+ * @retval 无；任务持续运行以处理主窗口显示事件。
+ * @note 主窗口及子窗口共用 LCD，绘制期间使用 DisplayMutex 防止并发访问。
  */
-static void DispTask(void *argument)
+static void Task_Disp(void *argument)
 {
   uint8_t event;
   osStatus_t status;
 
   (void)argument;
 
-  ColorWindowsControl(WIN_NUM_WELCOME, 0U);
-  DisplayWindow();
+  status = osMutexAcquire(DisplayMutex, osWaitForever);
+  if (status == osOK)
+  {
+    ColorWindowsControl(WIN_NUM_WELCOME, 0U);
+    DisplayWindow();
+    status = osMutexRelease(DisplayMutex);
+    if (status != osOK)
+    {
+      printf("Failed to release display mutex after welcome screen: %ld\r\n",
+             (long)status);
+    }
+  }
+  else
+  {
+    printf("Failed to acquire display mutex for welcome screen: %ld\r\n",
+           (long)status);
+  }
 
-  osDelay(pdMS_TO_TICKS(1000)); 
+  osDelay(pdMS_TO_TICKS(1000U));
 
-  ColorWindowsControl(WIN_NUM_INIT, 0U);
-  DisplayWindow();
-
-
+  status = osMutexAcquire(DisplayMutex, osWaitForever);
+  if (status == osOK)
+  {
+    ColorWindowsControl(WIN_NUM_INIT, 0U);
+    DisplayWindow();
+    status = osMutexRelease(DisplayMutex);
+    if (status != osOK)
+    {
+      printf("Failed to release display mutex after init screen: %ld\r\n",
+             (long)status);
+    }
+  }
+  else
+  {
+    printf("Failed to acquire display mutex for init screen: %ld\r\n",
+           (long)status);
+  }
 
   for (;;)
   {
-    status = TouchKeyEventQueue_Get(&event, 1000U);
-    if (status == osErrorTimeout)
+    status = TouchKeyEventQueue_Get(
+        TOUCH_KEY_EVENT_FATHER, &event, pdMS_TO_TICKS(200U));
+    if ((status != osOK) && (status != osErrorTimeout))
     {
-//      printf("Touch event queue receive error: %ld\r\n", (long)status);
-      DisplayWindow();
+      printf("Failed to receive parent window event: %ld\r\n", (long)status);
       osDelay(1U);
-      // continue;
+      continue;
     }
-    else
+
+    status = osMutexAcquire(DisplayMutex, osWaitForever);
+    if (status != osOK)
     {
-
-      switch (event)
-      {
-        case TOUCH_KEY_EVENT_FATHER:
-          DisplayWindow();
-          break;
-        case TOUCH_KEY_EVENT_CHILD:
-          DisplayChildWindow();
-          break;
-        case TOUCH_KEY_EVENT_SECOND_CHILD:
-          DisplaySecondChildWindow();
-          break;
-        default:
-          printf("Invalid touch event: %u\r\n", (unsigned int)event);
-          break;
-      }
-
+      printf("Failed to acquire display mutex for parent window: %ld\r\n",
+             (long)status);
+      osDelay(1U);
+      continue;
     }
 
+    DisplayWindow();
+    status = osMutexRelease(DisplayMutex);
+    if (status != osOK)
+    {
+      printf("Failed to release display mutex for parent window: %ld\r\n",
+             (long)status);
+    }
   }
 }
+
+/**
+ * @brief 等待子窗口触摸事件，并调用子窗口绘制回调刷新显示。
+ * @param argument FreeRTOS/CMSIS-RTOS 任务参数，本任务不使用。
+ * @retval 无；任务持续运行以处理子窗口显示事件。
+ * @note 二级子窗口事件不会进入子窗口队列，因此本任务只绘制一级子窗口。
+ */
+static void Task_ChildDisp(void *argument)
+{
+  uint8_t event;
+  osStatus_t status;
+
+  (void)argument;
+
+  for (;;)
+  {
+    status = TouchKeyEventQueue_Get(
+        TOUCH_KEY_EVENT_CHILD, &event, pdMS_TO_TICKS(200U));
+    if ((status != osOK) && (status != osErrorTimeout))
+    {
+      printf("Failed to receive child window event: %ld\r\n", (long)status);
+      osDelay(1U);
+      continue;
+    }
+
+    status = osMutexAcquire(DisplayMutex, osWaitForever);
+    if (status != osOK)
+    {
+      printf("Failed to acquire display mutex for child window: %ld\r\n",
+             (long)status);
+      osDelay(1U);
+      continue;
+    }
+
+    DisplayChildWindow();
+    status = osMutexRelease(DisplayMutex);
+    if (status != osOK)
+    {
+      printf("Failed to release display mutex for child window: %ld\r\n",
+             (long)status);
+    }
+  }
+}
+
 
 
 
@@ -703,7 +794,7 @@ static void DispTask(void *argument)
  * @retval 无；任务持续运行。
  * @note 命令通过 FreeRTOS 队列按值传递；动作结束后设置波长任务完成事件位。
  */
-void TaskWaveLengthStepper(void *p_arg)
+void Task_WaveLengthStepper(void *p_arg)
 {
 	StepperCommandMessage_t message;
 	BaseType_t queueStatus;

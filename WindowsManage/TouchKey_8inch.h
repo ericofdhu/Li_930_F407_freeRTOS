@@ -700,7 +700,7 @@ extern const TOUCH_KEY_SQUARE Child_MsgBox_key_table[];
 void TouchKey_Init(void);
 uint8_t Get_TouchKeyAssignments(uint8_t	* msg);
 osStatus_t TouchKeyEventQueue_Init(void);
-osStatus_t TouchKeyEventQueue_Get(uint8_t *event, uint32_t timeout);
+osStatus_t TouchKeyEventQueue_Get(uint8_t eventType, uint8_t *event, uint32_t timeout);
 const TOUCH_KEY_SQUARE* AnalyseKeyCodate(TOUCH_POINT point);
 
 #define TOUCH_KEY_EVENT_FATHER       0U
