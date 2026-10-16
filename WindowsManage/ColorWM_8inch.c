@@ -39,6 +39,7 @@
 #include "MyLib.h"
 #include "MyPinYin.h"
 #include "MySaveLoadFile.h"
+#include "gpio.h"	
 
 
 
@@ -214,6 +215,21 @@ const FATHER_WINDOWS_CONTROL_TABLE FatherWinTbl[] = {
 		GuPuCeShiW,		
 		GuPuCeShiW_Init},
 	
+//光谱测试参数设置
+	{WIN_NUM_GUPU_PAR,			
+		WIN_NUM_GUPU_PAR_PIC,						
+		WindowGuangPuPar_key_table,				
+		GuPuParSetK,
+		GuPuParSetW,	
+		GuPuParSetW_Init},
+
+	//存储加载
+	{WIN_NUM_SAVE_LOAD,			
+		WIN_NUM_SAVE_LOAD_PIC,						
+		WindowSaveLoad_key_table,				
+		SaveLoadK,
+		SaveLoadW,	
+		SaveLoadW_Init},
 
 		
 	{0xff,0,0,0,0}
@@ -267,14 +283,25 @@ const _FRAME TM_FRAME = {DRAW_FRAME_LEFT,DRAW_FRAME_RIGHT,DRAW_FRAME_TOP,DRAW_FR
 uint8_t GetCurrentTaskPrio(void)
 {
 	/* The FreeRTOS display runs in one task; use the active window layer. */
-	if (ColorWm.IsChildFlag == 0U)
+	const char *pcCurrentTaskName = pcTaskGetName(NULL);
+
+	if(strcmp(pcCurrentTaskName, "Task_Disp") == 0)
 	{
 		return 0U;
 	}
-	if (ColorWm.IsChildFlag == 1U)
+	else if(strcmp(pcCurrentTaskName, "Task_ChildDisp") == 0)
 	{
 		return 1U;
 	}
+
+	// if (ColorWm.IsChildFlag == 0U)
+	// {
+	// 	return 0U;
+	// }
+	// if (ColorWm.IsChildFlag == 1U)
+	// {
+	// 	return 1U;
+	// }
 	return 2U;
 }
 
@@ -632,7 +659,7 @@ void EnterDigitalKeyBoard(uint16_t xpos,uint16_t ypos,uint8_t DataType,
 	DigitalKeyboard.RetDataType = DataType;
 	DigitalKeyboard.RetStatus = 0U;
 
-	status = ColorWM_ClearWindowMessage((uint8_t)(msg_id + 1U));
+	status = ColorWM_ClearWindowMessage(msg_id);
 	if (status != osOK)
 	{
 		printf("Failed to clear keyboard result queue: %ld\r\n",
@@ -729,18 +756,20 @@ void ExitDigitalKeyBoard(void)
 			message[0] = (isInRange != 0U) ? MSG_CONFIRM : MSG_PAR_ERR;
 		}
 	}
+	
+	DigitalKeyboard.RetStatus = (message[0] == MSG_CONFIRM) ? 1U : 0U;
+	DigitalKeyboard.len = 0U;
+	DigitalKeyboard.Str[0] = '\0';
+	ColorWindowsJumpInChild(CHILD_WIN_NUM_DIGITAL_KEYBOARD);
+	
 
-	status = ColorWM_PostWindowMessage(msg_id, message);
+	status = ColorWM_PostWindowMessage(msg_id-1, message);
 	if (status != osOK)
 	{
 		printf("Failed to post keyboard result: %ld\r\n", (long)status);
 		return;
 	}
 
-	DigitalKeyboard.RetStatus = (message[0] == MSG_CONFIRM) ? 1U : 0U;
-	DigitalKeyboard.len = 0U;
-	DigitalKeyboard.Str[0] = '\0';
-	ColorWindowsJumpInChild(CHILD_WIN_NUM_DIGITAL_KEYBOARD);
 }
 
 /**
@@ -1389,6 +1418,7 @@ void GuPuCeShiK(void)
 			if(ColorWm.FatherMenuNumber == 0)
 			{	
 
+				ColorWm.FatherPageNumber = 1;//敏感度
 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
 				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,3,1);
 			}
@@ -1688,825 +1718,789 @@ void GuPuCeShiK(void)
 }
 
 
-// void GuPuParSetW_Init(void)
-// {
-// 	char str[30];
+void GuPuParSetW_Init(void)
+{
+	char str[30];
 	
-// 	if (GuPuCeShiStruct.Speed== SCAN_SPEED_SLOW)	
-// 	{
-// 		ColorLcdDispIcon_Ext1(ICON_SPEED_SLOW_SELECT,ICON_SPEED_SLOW_SELECT->left,ICON_SPEED_SLOW_SELECT->top);
-// 	}
-// 	else if (GuPuCeShiStruct.Speed== SCAN_SPEED_MIDDLE)	
-// 	{
-// 		ColorLcdDispIcon_Ext1(ICON_SPEED_MIDDLE_SELECT,ICON_SPEED_MIDDLE_SELECT->left,ICON_SPEED_MIDDLE_SELECT->top);
-// 	}
-// 	else if (GuPuCeShiStruct.Speed== SCAN_SPEED_FAST)	
-// 	{
-// 		ColorLcdDispIcon_Ext1(ICON_SPEED_FAST_SELECT,ICON_SPEED_FAST_SELECT->left,ICON_SPEED_FAST_SELECT->top);
-// 	}
+	if (GuPuCeShiStruct.Speed== SCAN_SPEED_SLOW)	
+	{
+		ColorLcdDispIcon_Ext1(ICON_SPEED_SLOW_SELECT,ICON_SPEED_SLOW_SELECT->left,ICON_SPEED_SLOW_SELECT->top);
+	}
+	else if (GuPuCeShiStruct.Speed== SCAN_SPEED_MIDDLE)	
+	{
+		ColorLcdDispIcon_Ext1(ICON_SPEED_MIDDLE_SELECT,ICON_SPEED_MIDDLE_SELECT->left,ICON_SPEED_MIDDLE_SELECT->top);
+	}
+	else if (GuPuCeShiStruct.Speed== SCAN_SPEED_FAST)	
+	{
+		ColorLcdDispIcon_Ext1(ICON_SPEED_FAST_SELECT,ICON_SPEED_FAST_SELECT->left,ICON_SPEED_FAST_SELECT->top);
+	}
 	
-// 	if (GuPuCeShiStruct.Interval== Unit_0_1nm)	
-// 	{
-// 		ColorLcdDispIcon_Ext1(ICON_INTERVAL_01_SELECT,ICON_INTERVAL_01_SELECT->left,ICON_INTERVAL_01_SELECT->top);
-// 	}
-// 	else if (GuPuCeShiStruct.Interval== Unit_1nm)	
-// 	{
-// 		ColorLcdDispIcon_Ext1(ICON_INTERVAL_10_SELECT,ICON_INTERVAL_10_SELECT->left,ICON_INTERVAL_10_SELECT->top);
-// 	}
-	
-
-// 	sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenStart/Unit_1nm,
-// 							GuPuCeShiStruct.WaveLenStart%Unit_1nm
-// 						);
-// 		ColorLcdSendString(222,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-
-
-// 	sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenEnd/Unit_1nm,
-// 						GuPuCeShiStruct.WaveLenEnd%Unit_1nm
-// 						);
-// 	ColorLcdSendString(407,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-	
-// 	sprintf(str,"%4d",GuPuCeShiStruct.data_E_Start);
-// 	ColorLcdSendString(222,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 	sprintf(str,"%4d",GuPuCeShiStruct.data_E_End);
-// 	ColorLcdSendString(407,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-
-
-
-// 	if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_1)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT1_SELECT);
-// 	}
-// 	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_2)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT2_SELECT);
-// 	}
-// 	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_3)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT3_SELECT);
-// 	}
-// 	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_4)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT4_SELECT);
-// 	}
-	
-// 	if(SysPara.LightPowerS.pmt_on_off == PMT_ON)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_PMT_ON_SELECT);
-// 	}
-// 	else
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_PMT_OFF_SELECT);
-// 	}
-	
-// 	sprintf(str,"%4d",SysPara.LightPowerS.pmt_voltage);
-// 	ColorLcdSendString(222,426,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-
-// 	if(SysPara.LightPowerS.gain == PMT_GAIN_1)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_GAIN1_SELECT);
-// 	}
-// 	else if (SysPara.LightPowerS.gain == PMT_GAIN_2)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_GAIN2_SELECT);	
-// 	}
-// 	else if (SysPara.LightPowerS.gain == PMT_GAIN_4)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_GAIN4_SELECT);
-// 	}
-// 	else if (SysPara.LightPowerS.gain == PMT_GAIN_8)
-// 	{
-// 		ColorLcdDispIcon_Ext1_1(ICON_GAIN8_SELECT);
-// 	}
-
-
-
-// }
-
-// void GuPuParSetW(void)
-// {
-	
-// 	if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_KEY_BOARD)
-// 	{
-// 		uint8* msg;
-// 		uint8 err=0;
-// 		char str[20];
-// 		uint8 msg_id=0;
-// 		msg_id = GetCurrentTaskPrio();
-// 		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-// 		if(err == OS_NO_ERR)
-// 		{
-// 			if(msg[0] == MSG_CONFIRM)
-// 			{
-				
-// 				int32 tmp=0;	
-// 				memcpy((uint8*)&tmp,(uint8*)&msg[1],4);
-
-// 				if(ColorWm.FatherPageNumber == 1)
-// 				{
-// 					// memcpy((uint8*)&GuPuCeShiStruct.WaveLenStart,(uint8*)&msg[1],4);
-// 					GuPuCeShiStruct.WaveLenStart = tmp;
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 2)
-// 				{
-// 					// memcpy((uint8*)&GuPuCeShiStruct.WaveLenEnd,(uint8*)&msg[1],4);
-// 					GuPuCeShiStruct.WaveLenEnd = tmp;
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 3)
-// 				{
-// 					// memcpy((uint8*)&GuPuCeShiStruct.data_E_Start,(uint8*)&msg[1],4);
-// 					GuPuCeShiStruct.data_E_Start = tmp;
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 4)
-// 				{
-// 					// memcpy((uint8*)&GuPuCeShiStruct.data_E_End,(uint8*)&msg[1],4);
-// 					GuPuCeShiStruct.data_E_End = tmp;
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 5)
-// 				{
-// 					// memcpy((uint8*)&SysPara.LightPowerS.pmt_voltage,(uint8*)&msg[1],4);
-// 					SysPara.LightPowerS.pmt_voltage = tmp;
-// 					if(	SysPara.LightPowerS.pmt_on_off == PMT_ON)
-// 					{
-// 						BSP_Set_HV(SysPara.LightPowerS.pmt_voltage);
-// 					}
-// 				}
-// 				ColorWm.FatherMenuNumber = 0;
-// 				GuPuParSetW_Init();
-// 			}
-// 			else if(msg[0] == MSG_PAR_ERR)
-// 			{
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_CHILD_WIN;
-
-// 			}
-// 			else if(msg[0] == MSG_CANCLE)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 				GuPuParSetW_Init();
-// 			}
-// 		}
-// 		else
-// 		{
-// 				if(ColorWm.FatherPageNumber == 1)
-// 				{
-
-// 					sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenStart/Unit_1nm,
-// 											GuPuCeShiStruct.WaveLenStart%Unit_1nm
-// 										);
-// 					ColorLcdSendString(222,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 2)
-// 				{
-
-// 					sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenEnd/Unit_1nm,
-// 										GuPuCeShiStruct.WaveLenEnd%Unit_1nm
-// 										);
-// 					ColorLcdSendString(407,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 3)
-// 				{
-// 						sprintf(str,"%4d",GuPuCeShiStruct.data_E_Start);
-// 						ColorLcdSendString(222,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 4)
-// 				{
-// 						sprintf(str,"%4d",GuPuCeShiStruct.data_E_End);
-// 						ColorLcdSendString(407,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 				}
-// 				else if(ColorWm.FatherPageNumber == 5)
-// 				{
-// 						sprintf(str,"%4d",SysPara.LightPowerS.pmt_voltage);
-// 						ColorLcdSendString(222,426,COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8*)str);
-// 				}
-
-// 		}
-// 	}
-	
-// 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_CHILD_WIN)
-// 	{
-		
-// 		uint8* msg;
-// 		uint8 err=0;
-// 		uint8 msg_id=0;
-// 		msg_id = GetCurrentTaskPrio();
-// 		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-// 		if(err == OS_NO_ERR)
-// 		{
-// 			if(msg[0] == MSG_CONFIRM)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 			}
-// 			else if(msg[0] == MSG_CANCLE)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 			}
-// 			GuPuParSetW_Init();
-// 		}
-		
-// 	}
-
-
+	if (GuPuCeShiStruct.Interval== Unit_0_1nm)	
+	{
+		ColorLcdDispIcon_Ext1(ICON_INTERVAL_01_SELECT,ICON_INTERVAL_01_SELECT->left,ICON_INTERVAL_01_SELECT->top);
+	}
+	else if (GuPuCeShiStruct.Interval== Unit_1nm)	
+	{
+		ColorLcdDispIcon_Ext1(ICON_INTERVAL_10_SELECT,ICON_INTERVAL_10_SELECT->left,ICON_INTERVAL_10_SELECT->top);
+	}
 	
 
-// }
-
-// void GuPuParSetK(void)
-// {
-// 	CPU_SR        cpu_sr;
-// 	uint32 tmp_key = 0;
-// 	if(TouchKey.Release== 1)
-// 	{
-// 		OS_ENTER_CRITICAL();
-// 		tmp_key = TouchKey.back_keyassignments;
-// 		OS_EXIT_CRITICAL();
-// 		if (tmp_key == KEY_SET_GUPU_CONFIRM)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				UpdateSysParameter();
-// 				ColorWindowsControl(WIN_NUM_GUPU_CESHI,0);
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_CANCLE)
-// 		{
-			
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				ColorWindowsControl(WIN_NUM_GUPU_CESHI,0);
-// 			}
-// 		}
-
-// 		else if (tmp_key == KEY_SET_GUPU_SPEED_SLOW)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_SPEED_SLOW_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-				
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_ALL_NOT_SELECT,175,294);
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_SLOW_SELECT,175,294);
-// 				GuPuCeShiStruct.Speed = SCAN_SPEED_SLOW;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_SPEED_MIDDLE)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_SPEED_MIDDLE_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_ALL_NOT_SELECT,175,294);
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_MIDDLE_SELECT,314,294);
-// 				GuPuCeShiStruct.Speed = SCAN_SPEED_MIDDLE;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_SPEED_FAST)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_SPEED_FAST_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_ALL_NOT_SELECT,175,294);
-// //				ColorLcdDispIcon_Ext1(ICON_SPEED_FAST_SELECT,464,294);
-// 				GuPuCeShiStruct.Speed = SCAN_SPEED_FAST;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_INTERVAL_01)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_INTERVAL_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_INTERVAL_01_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// //				ColorLcdDispIcon_Ext1(ICON_INTERVAL_ALL_NOT_SELECT,174,355);
-// //				ColorLcdDispIcon_Ext1(ICON_INTERVAL_01_SELECT,174,355);
-// 				GuPuCeShiStruct.Interval = Unit_0_1nm;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_INTERVAL_10)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_INTERVAL_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_INTERVAL_10_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// //				ColorLcdDispIcon_Ext1(ICON_INTERVAL_ALL_NOT_SELECT,174,355);
-// //				ColorLcdDispIcon_Ext1(ICON_INTERVAL_10_SELECT,309,355);
-// 				GuPuCeShiStruct.Interval = Unit_1nm;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_1)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT1_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.emit_light = EMIT_LIGHT_1;
-// 				BSP_Light_Sel(1);
-				
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_2)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT2_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.emit_light = EMIT_LIGHT_2;
-// 				BSP_Light_Sel(2);
-				
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_3)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT3_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.emit_light = EMIT_LIGHT_3;
-// 				BSP_Light_Sel(3);
-				
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_4)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT4_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.emit_light = EMIT_LIGHT_4;
-// 				BSP_Light_Sel(4);
-// 			}
-// 		}
-		
-// 		else if (tmp_key == KEY_SET_GUPU_PMT_ON)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_PMT_NONE_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				ColorLcdDispIcon_Ext1_1(ICON_PMT_ON_SELECT);
-// 				SysPara.LightPowerS.pmt_on_off = PMT_ON;
-				
-// 				BSP_Set_HV(SysPara.LightPowerS.pmt_voltage);
-				
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_PMT_OFF)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_PMT_NONE_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_PMT_OFF_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.pmt_on_off = PMT_OFF;
-// 				BSP_Set_HV(0);
-// 			}
-// 		}
-		
-// 		else if (tmp_key == KEY_SET_GUPU_GAIN_1)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_GAIN1_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.gain = PMT_GAIN_1;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_GAIN_2)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_GAIN2_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.gain = PMT_GAIN_2;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_GAIN_4)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_GAIN4_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.gain = PMT_GAIN_4;
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_GAIN_8)	
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-// 				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				p = (SIMPLE_ICON*)ICON_GAIN8_SELECT;
-// 				ColorLcdDispIcon_Ext1(p,p->left,p->top);
-// 				SysPara.LightPowerS.gain = PMT_GAIN_8;
-// 			}
-// 		}
-		
-// 		else if (tmp_key == KEY_SET_GUPU_WL_START)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
-// 				EnterDigitalKeyBoard(500,155,DATA_TYPE_WAVELEN,MAX_WAVELEN,MIN_WAVELEN);
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_WL_END)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
-// 				EnterDigitalKeyBoard(500,155,DATA_TYPE_WAVELEN,MAX_WAVELEN,MIN_WAVELEN);
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_DATA_START)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
-// 				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,5000,0);
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_DATA_END)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
-				
-// 				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,5000,0);
-// 			}
-// 		}
-// 		else if (tmp_key == KEY_SET_GUPU_PMT_VOLTAGE)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{	
-
-// 				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
-				
-// 				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,1000,0);
-// 			}
-// 		}
-		
-		
-		
-// 		TouchKey.Release = 0;
-// 	}
-
-// }
+	sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenStart/Unit_1nm,
+							GuPuCeShiStruct.WaveLenStart%Unit_1nm
+						);
+		ColorLcdSendString(222,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8_t*)str);
 
 
-// void SaveLoadW_Init(void)
-// {
-
-// 	uint8 i = 0;
-// 	char str[25];
-// 	SysLoadAllFileNames(g_save_load_type);
-// 	for(i=0;i<MAX_FILE_SAVE_NUM;i++)
-// 	{
-// 		if(FileNameList[i].name[0]!='\0')
-// 		{	
-// 			sprintf(str,"%-20s",FileNameList[i].name);
-// 			ColorLcdSendString(  	WindowSaveLoad_key_table[i].left,
-// 														WindowSaveLoad_key_table[i].top,
-// 														COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_WHITE,
-// 														(uint8*)str);
-// 		}
-// 		OSTimeDly(3);
-// 	}
-// }
-
-
-// void SaveLoadW(void)
-// {
-// //	uint8 tIndex=0;
-// //	char str[15];
+	sprintf(str,"%4d.%d",	GuPuCeShiStruct.WaveLenEnd/Unit_1nm,
+						GuPuCeShiStruct.WaveLenEnd%Unit_1nm
+						);
+	ColorLcdSendString(407,170,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8_t*)str);
 	
-
-// 	{
-
-// 	}
-
-// 	{
-// 		uint8* msg;
-// 		uint8 err=0;
-// 		uint8 tIndex=0xff;
-// 		uint8 msg_id=0;
-// 		msg_id = GetCurrentTaskPrio();
-// 		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-// 		if(err == OS_NO_ERR)
-// 		{
-
-// 			{
-
-// 				FileNameList[tIndex].select = 0;
-// 				if(tIndex!=0xff)
-// 				{
-// 					// SysSaveScanLine((char*)&msg[1],tIndex);
-// 					SysSaveFiles(g_save_load_type, tIndex, (char*)&msg[1], "12345",5);
-// 				}
-// 				ColorWm.FatherMenuNumber = 0;
-// 				SaveLoadW_Init();
-
-// 			}
-// 			else if(msg[0] == MSG_CANCLE)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 				SaveLoadW_Init();
-// 			}
-// 		}
-
-// 		{
-
-// 			if(tIndex != 0xff)
-// 			{
-// 				char str[25];
-
-// 				ColorLcdSendString(  	WindowSaveLoad_key_table[tIndex].left,
-// 															WindowSaveLoad_key_table[tIndex].top,
-// 															COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON| GB2312,0X02,COLOR_BLUE,COLOR_WHITE,
-// 															(uint8*)str);
-// 			}
-// 		}
-// 	}
-// 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_RENAME_WIN)
-// 	{
-		
-// 		uint8* msg;
-// 		uint8 err=0;
-// 		uint8 tIndex=0xff;
-// 		uint8 msg_id=0;
-// 		msg_id = GetCurrentTaskPrio();
-// 		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-// 		if(err == OS_NO_ERR)
-// 		{
-
-// 			{
-
-// 				FileNameList[tIndex].select = 0;
-// 				if(tIndex!=0xff)
-// 				{
-// 					// SysRenameScanLine((char*)&msg[1],tIndex);
-// 					SysRenameFileByTypeAndName(g_save_load_type, FileNameList[tIndex].name, (char*)&msg[1]);
-// 				}
-// 				ColorWm.FatherMenuNumber = 0;
-// 				SaveLoadW_Init();
-
-// 			}
-// 			else if(msg[0] == MSG_CANCLE)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 				SaveLoadW_Init();
-// 			}
-// 		}
-
-// 		{
-
-// 			if(tIndex != 0xff)
-// 			{
-// 				char str[25];
-
-// 				ColorLcdSendString(  	WindowSaveLoad_key_table[tIndex].left,
-// 															WindowSaveLoad_key_table[tIndex].top,
-// 															COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON| GB2312,
-// 															0X02,
-// 															COLOR_BLUE,
-// 															COLOR_WHITE,
-// 															(uint8*)str);
-// 			}
-// 		}
-
-// 	}
-// 	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_MSG_BOX)
-// 	{
-// 		uint8* msg;
-// 		uint8 err=0;
-// 		uint8 msg_id=0;
-// 		msg_id = GetCurrentTaskPrio();
-// 		msg =(uint8*)OSMboxPend(WindowMbox[msg_id+1],OS_TICKS_PER_SEC/25,&err);
-// 		if(err == OS_NO_ERR)
-// 		{
-// 			if(msg[0] == MSG_CONFIRM)
-// 			{
-// 				ColorWm.FatherMenuNumber = 0;
-// 				SaveLoadW_Init();
-// 			}
-			
-// 		}
-// 	}
-
-// }
-
-// void SaveLoadK(void)
-// {
-// 	CPU_SR        cpu_sr;
-// 	uint32 tmp_key = 0;
-
-// 	if(TouchKey.Trg == 1)
-// 	{
-// 		OS_ENTER_CRITICAL();
-// 		tmp_key = TouchKey.current_keyassignments;
-// 		OS_EXIT_CRITICAL();
-// 		if(tmp_key == KEY_SAVE_LOAD_CLOSE)
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0)
-// 			{
-// 				if(g_save_load_type == SAVE_LOAD_TYPE_GUANG_PU)
-// 				{
-// 					ColorWindowsControl(WIN_NUM_GUPU_CESHI,3);
-// 				}	
-// 				else if(g_save_load_type == SAVE_LOAD_TYPE_DING_LIANG)
-// 				{
-// 					ColorWindowsControl(WIN_NUM_DING_LIANG_CESHI,0);
-// 				}
-// 				else if(g_save_load_type == SAVE_LOAD_TYPE_DONG_LI_XUE)
-// 				{
-// 					ColorWindowsControl(WIN_NUM_DONG_LI_XUE_CESHI,3);
-// 				}
-// 			}
-// 		}
-
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 0 || ColorWm.FatherMenuNumber == 1)
-// 			{
-// 				uint16 tIndex = 0xff;
-// 				char str[15];
+	sprintf(str,"%4d",GuPuCeShiStruct.data_E_Start);
+	ColorLcdSendString(222,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8_t*)str);
+	sprintf(str,"%4d",GuPuCeShiStruct.data_E_End);
+	ColorLcdSendString(407,212,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8_t*)str);
 
 
 
-// 				{
-// 					FileNameList[tIndex].select = 0;
-// 					sprintf(str,"%-20s",FileNameList[tIndex].name);
-// 					ColorLcdSendString(  	
-// 										WindowSaveLoad_key_table[tIndex].left,
-// 										WindowSaveLoad_key_table[tIndex].top,
-// 										COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_WHITE,
-// 										(uint8*)str);
-// 				}
+	if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_1)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT1_SELECT);
+	}
+	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_2)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT2_SELECT);
+	}
+	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_3)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT3_SELECT);
+	}
+	else if(SysPara.LightPowerS.emit_light == EMIT_LIGHT_4)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_EMIT_LIGHT4_SELECT);
+	}
+	
+	if(SysPara.LightPowerS.pmt_on_off == PMT_ON)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_PMT_ON_SELECT);
+	}
+	else
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_PMT_OFF_SELECT);
+	}
+	
+	sprintf(str,"%4d",SysPara.LightPowerS.pmt_voltage);
+	ColorLcdSendString(222,426,COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_GRAY,(uint8_t*)str);
 
-				
-
-// 				FileNameList[tIndex].select = 1;
-// 				sprintf(str,"%-20s",FileNameList[tIndex].name);
-// 				ColorLcdSendString(  	WindowSaveLoad_key_table[tIndex].left,
-// 															WindowSaveLoad_key_table[tIndex].top,
-// 															COLOR_LCD_LIB_24_24,FCOLOR_ON|BCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_WHITE,
-// 															(uint8*)str);
-// 				ColorWm.FatherMenuNumber = 1;
-// 			}
-// 		}
-// 	}
-// 	else if (TouchKey.Release == 1)
-// 	{
-// 		OS_ENTER_CRITICAL();
-// 		tmp_key = TouchKey.back_keyassignments;
-// 		OS_EXIT_CRITICAL();
-// 		if (tmp_key == KEY_SAVE_LOAD_SAVE)
-// 		{
-
-// 			{
-
-// //				{
-// 					uint8 tIndex = 0xff;
-// 					uint16 xpos=0;
-// 					uint16 ypos=0;
-
-// 					if(tIndex != 0xff)
-// 					{
-// 						xpos = 80;
-// 						if((tIndex%15)<7)
-// 						{	
-// 							ypos = WindowSaveLoad_key_table[tIndex].top + 30;
-// 						}
-// 						else
-// 						{	
-// 							ypos = WindowSaveLoad_key_table[tIndex].top -285;
-// 						}
-
-// 						ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_SAVE_NAME_WIN;
-
-// 					}
-// //				}
-// 			}
-// 		}
-
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 1)
-// 			{
-// 				uint8 i = 0;
-// 				for(i=0;i<MAX_FILE_SAVE_NUM;i++)
-// 				{
-// 					if(FileNameList[i].select == 1)
-// 					{
-// 						if(strlen(FileNameList[i].name) != 0)
-// 						{
-// 							// SysLoadScanLineRedrawPar(i);
-// 							uint32 ret_len = 0;
-
-// 							ret_len = SysLoadFileByTypeAndName(g_save_load_type, i,(char*)FileNameList[i].name, &ret_len);
-// 							if(g_save_load_type == SAVE_LOAD_TYPE_GUANG_PU)
-// 							{
-// 								ColorWindowsControl(WIN_NUM_GUPU_CESHI,3);
-// 							}	
-// 							else if(g_save_load_type == SAVE_LOAD_TYPE_DING_LIANG)
-// 							{
-// 								ColorWindowsControl(WIN_NUM_DING_LIANG_CESHI,0);
-// 							}
-// 							else if(g_save_load_type == SAVE_LOAD_TYPE_DONG_LI_XUE)
-// 							{
-// 								ColorWindowsControl(WIN_NUM_DONG_LI_XUE_CESHI,3);
-// 							}
-
-// 						}
-// 						break;
-// 					}
-// 				}
-// 			}
-// 		}
-
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 1)
-// 			{
-// 					uint8 tIndex = 0xff;
-
-// //					memset(FileNameList[tIndex].name,0x00,10);
-// 					// SysDeleteScanLine(tIndex);
-// 					SysDeleteFileByTypeAndName(g_save_load_type,tIndex,FileNameList[tIndex].name);
-
-
-// 					{
-// 						char str[21];
-// 						FileNameList[tIndex].select = 0;
-// 						memset(str,' ',20);
-// 						str[20] = '\0';
-// 						ColorLcdSendString(  	
-// 											WindowSaveLoad_key_table[tIndex].left,
-// 											WindowSaveLoad_key_table[tIndex].top,
-// 											COLOR_LCD_LIB_24_24,FCOLOR_ON|GB2312,0X02,COLOR_BLUE,COLOR_WHITE,
-// 											(uint8*)str);
-// 					}
-
-
-// 					SaveLoadW_Init();
-// 			}
-// 			ColorWm.FatherMenuNumber = 0;
-// 		}
-
-// 		{
-// 			if(ColorWm.FatherMenuNumber == 1)
-// 			{
-// 					uint8 tIndex = 0xff;
-// 					uint16 xpos=0;
-// 					uint16 ypos=0;
-
-// 					if(tIndex != 0xff && strlen(FileNameList[tIndex].name) != 0)
-// 					{
-// 						xpos = 80;
-// 						if((tIndex%15)<7)
-// 						{	
-// 							ypos = WindowSaveLoad_key_table[tIndex].top + 30;
-// 						}
-// 						else
-// 						{	
-// 							ypos = WindowSaveLoad_key_table[tIndex].top -285;
-// 						}
-// 						ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_RENAME_WIN;
-
-// 					}
-// 			}
-// 		}
-// 		TouchKey.Release = 0;
-// 	}
-// }
+	if(SysPara.LightPowerS.gain == PMT_GAIN_1)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_GAIN1_SELECT);
+	}
+	else if (SysPara.LightPowerS.gain == PMT_GAIN_2)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_GAIN2_SELECT);	
+	}
+	else if (SysPara.LightPowerS.gain == PMT_GAIN_4)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_GAIN4_SELECT);
+	}
+	else if (SysPara.LightPowerS.gain == PMT_GAIN_8)
+	{
+		ColorLcdDispIcon_Ext1_1(ICON_GAIN8_SELECT);
+	}
 
 
 
+}
 
+void GuPuParSetW(void)
+{
+	uint8_t msg_id = GetCurrentTaskPrio();
+
+	if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_KEY_BOARD)
+	{
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		char str[20];
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			msg_id, message, pdMS_TO_TICKS(40U));
+
+		if (status == osOK)
+		{
+			if (message[0] == MSG_CONFIRM)
+			{
+				int32_t tmp = 0;
+				memcpy(&tmp, &message[1], sizeof(tmp));
+
+				if (ColorWm.FatherPageNumber == 1U)
+				{
+					GuPuCeShiStruct.WaveLenStart = tmp;
+				}
+				else if (ColorWm.FatherPageNumber == 2U)
+				{
+					GuPuCeShiStruct.WaveLenEnd = tmp;
+				}
+				else if (ColorWm.FatherPageNumber == 3U)
+				{
+					GuPuCeShiStruct.data_E_Start = tmp;
+				}
+				else if (ColorWm.FatherPageNumber == 4U)
+				{
+					GuPuCeShiStruct.data_E_End = tmp;
+				}
+				else if (ColorWm.FatherPageNumber == 5U)
+				{
+					SysPara.LightPowerS.pmt_voltage = tmp;
+					if (SysPara.LightPowerS.pmt_on_off == PMT_ON)
+					{
+						BSP_Set_HV(SysPara.LightPowerS.pmt_voltage);
+					}
+				}
+				ColorWm.FatherMenuNumber = 0U;
+				GuPuParSetW_Init();
+			}
+			else if (message[0] == MSG_PAR_ERR)
+			{
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_CHILD_WIN;
+			}
+			else if (message[0] == MSG_CANCLE)
+			{
+				ColorWm.FatherMenuNumber = 0U;
+				GuPuParSetW_Init();
+			}
+		}
+		else
+		{
+			if (status != osErrorTimeout)
+			{
+				printf("Failed to receive parameter keyboard result: %ld\r\n",
+				       (long)status);
+			}
+			if (ColorWm.FatherPageNumber == 1U)
+			{
+				sprintf(str, "%4d.%d", GuPuCeShiStruct.WaveLenStart / Unit_1nm,
+				        GuPuCeShiStruct.WaveLenStart % Unit_1nm);
+				ColorLcdSendString(222, 170, COLOR_LCD_LIB_24_24,
+						   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02, COLOR_BLUE,
+						   COLOR_GRAY, (uint8_t *)str);
+			}
+			else if (ColorWm.FatherPageNumber == 2U)
+			{
+				sprintf(str, "%4d.%d", GuPuCeShiStruct.WaveLenEnd / Unit_1nm,
+				        GuPuCeShiStruct.WaveLenEnd % Unit_1nm);
+				ColorLcdSendString(407, 170, COLOR_LCD_LIB_24_24,
+						   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02, COLOR_BLUE,
+						   COLOR_GRAY, (uint8_t *)str);
+			}
+			else if (ColorWm.FatherPageNumber == 3U)
+			{
+				sprintf(str, "%4d", GuPuCeShiStruct.data_E_Start);
+				ColorLcdSendString(222, 212, COLOR_LCD_LIB_24_24,
+						   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02, COLOR_BLUE,
+						   COLOR_GRAY, (uint8_t *)str);
+			}
+			else if (ColorWm.FatherPageNumber == 4U)
+			{
+				sprintf(str, "%4d", GuPuCeShiStruct.data_E_End);
+				ColorLcdSendString(407, 212, COLOR_LCD_LIB_24_24,
+						   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02, COLOR_BLUE,
+						   COLOR_GRAY, (uint8_t *)str);
+			}
+			else if (ColorWm.FatherPageNumber == 5U)
+			{
+				sprintf(str, "%4d", SysPara.LightPowerS.pmt_voltage);
+				ColorLcdSendString(222, 426, COLOR_LCD_LIB_24_24,
+						   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02, COLOR_BLUE,
+						   COLOR_GRAY, (uint8_t *)str);
+			}
+		}
+	}
+	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_CHILD_WIN)
+	{
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			(uint8_t)(msg_id + 1U), message, pdMS_TO_TICKS(40U));
+
+		if (status == osOK)
+		{
+			if ((message[0] == MSG_CONFIRM) || (message[0] == MSG_CANCLE))
+			{
+				ColorWm.FatherMenuNumber = 0U;
+			}
+			GuPuParSetW_Init();
+		}
+		else if (status != osErrorTimeout)
+		{
+			printf("Failed to receive parameter child-window result: %ld\r\n",
+			       (long)status);
+		}
+	}
+}
+
+void GuPuParSetK(void)
+{
+	uint32_t tmp_key = 0U;
+	uint8_t key_released = 0U;
+	taskENTER_CRITICAL();
+	if (TouchKey.Release == 1U)
+	{
+		tmp_key = TouchKey.back_keyassignments;
+		TouchKey.Release = 0U;
+		key_released = 1U;
+	}
+	taskEXIT_CRITICAL();
+
+	if (key_released != 0U)
+	{
+		if (tmp_key == KEY_SET_GUPU_CONFIRM)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				UpdateSysParameter();
+				ColorWindowsControl(WIN_NUM_GUPU_CESHI,0);
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_CANCLE)
+		{
+
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				ColorWindowsControl(WIN_NUM_GUPU_CESHI,0);
+			}
+		}
+
+		else if (tmp_key == KEY_SET_GUPU_SPEED_SLOW)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_SPEED_SLOW_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				GuPuCeShiStruct.Speed = SCAN_SPEED_SLOW;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_SPEED_MIDDLE)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_SPEED_MIDDLE_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				GuPuCeShiStruct.Speed = SCAN_SPEED_MIDDLE;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_SPEED_FAST)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_SPEED_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_SPEED_FAST_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				GuPuCeShiStruct.Speed = SCAN_SPEED_FAST;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_INTERVAL_01)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_INTERVAL_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_INTERVAL_01_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				GuPuCeShiStruct.Interval = Unit_0_1nm;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_INTERVAL_10)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_INTERVAL_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_INTERVAL_10_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				GuPuCeShiStruct.Interval = Unit_1nm;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_1)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT1_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.emit_light = EMIT_LIGHT_1;
+				BSP_Light_Sel(1);
+
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_2)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT2_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.emit_light = EMIT_LIGHT_2;
+				BSP_Light_Sel(2);
+
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_3)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT3_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.emit_light = EMIT_LIGHT_3;
+				BSP_Light_Sel(3);
+
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_EMIT_LIGHT_4)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_EMIT_LIGHT_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_EMIT_LIGHT4_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.emit_light = EMIT_LIGHT_4;
+				BSP_Light_Sel(4);
+			}
+		}
+
+		else if (tmp_key == KEY_SET_GUPU_PMT_ON)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_PMT_NONE_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				ColorLcdDispIcon_Ext1_1(ICON_PMT_ON_SELECT);
+				SysPara.LightPowerS.pmt_on_off = PMT_ON;
+
+				BSP_Set_HV(SysPara.LightPowerS.pmt_voltage);
+
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_PMT_OFF)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_PMT_NONE_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_PMT_OFF_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.pmt_on_off = PMT_OFF;
+				BSP_Set_HV(0);
+			}
+		}
+
+		else if (tmp_key == KEY_SET_GUPU_GAIN_1)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_GAIN1_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.gain = PMT_GAIN_1;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_GAIN_2)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_GAIN2_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.gain = PMT_GAIN_2;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_GAIN_4)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_GAIN4_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.gain = PMT_GAIN_4;
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_GAIN_8)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+				SIMPLE_ICON* p = (SIMPLE_ICON*)ICON_GAIN_ALL_NOT_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				p = (SIMPLE_ICON*)ICON_GAIN8_SELECT;
+				ColorLcdDispIcon_Ext1(p,p->left,p->top);
+				SysPara.LightPowerS.gain = PMT_GAIN_8;
+			}
+		}
+
+		else if (tmp_key == KEY_SET_GUPU_WL_START)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+
+				ColorWm.FatherPageNumber = 1;//起始波长
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
+				EnterDigitalKeyBoard(500,155,DATA_TYPE_WAVELEN,MAX_WAVELEN,MIN_WAVELEN);
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_WL_END)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+
+				ColorWm.FatherPageNumber = 2;//结束波长
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
+				EnterDigitalKeyBoard(500,155,DATA_TYPE_WAVELEN,MAX_WAVELEN,MIN_WAVELEN);
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_DATA_START)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+
+				ColorWm.FatherPageNumber = 3;//起始数据
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
+				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,5000,0);
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_DATA_END)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+
+				ColorWm.FatherPageNumber = 4;//结束数据
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
+
+				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,5000,0);
+			}
+		}
+		else if (tmp_key == KEY_SET_GUPU_PMT_VOLTAGE)
+		{
+			if(ColorWm.FatherMenuNumber == 0)
+			{
+
+				ColorWm.FatherPageNumber = 5;//PMT电压
+				ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_KEY_BOARD;
+
+				EnterDigitalKeyBoard(500,155,DATA_TYPE_NORMAL,1000,0);
+			}
+		}
+
+
+
+	}
+
+}
+
+
+void SaveLoadW_Init(void)
+{
+	uint8_t i;
+	char str[MAX_FILE_NAME_LEN + 5U];
+	uint8_t status = SysLoadAllFileNames(g_save_load_type);
+
+	if (status >= 0xFEU)
+	{
+		printf("Failed to load save/load file names: %u\r\n", status);
+	}
+
+	for (i = 0U; i < MAX_FILE_SAVE_NUM; i++)
+	{
+		if (FileNameList[i].name[0] != '\0')
+		{
+			(void)snprintf(str, sizeof(str), "%-20s", FileNameList[i].name);
+			ColorLcdSendString(WindowSaveLoad_key_table[i].left,
+			                   WindowSaveLoad_key_table[i].top,
+			                   COLOR_LCD_LIB_24_24, FCOLOR_ON|GB2312, 0X02,
+			                   COLOR_BLUE, COLOR_WHITE, (uint8_t *)str);
+		}
+		else
+		{
+			ColorLcdSendString(WindowSaveLoad_key_table[i].left,
+			                   WindowSaveLoad_key_table[i].top,
+			                   COLOR_LCD_LIB_24_24, FCOLOR_ON|GB2312, 0X02,
+			                   COLOR_BLUE, COLOR_WHITE, (uint8_t *)"                                    ");
+		}
+		osDelay(pdMS_TO_TICKS(3U));
+	}
+}
+
+void SaveLoadW(void)
+{
+	uint8_t msg_id = GetCurrentTaskPrio();
+	uint8_t selectedIndex = 0xFFU;
+	uint8_t i;
+
+	for (i = 0U; i < MAX_FILE_SAVE_NUM; i++)
+	{
+		if (FileNameList[i].select == 1U)
+		{
+			selectedIndex = i;
+			break;
+		}
+	}
+
+	if ((ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_SAVE_NAME_WIN) ||
+	    (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_RENAME_WIN))
+	{
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			(uint8_t)(msg_id), message, pdMS_TO_TICKS(40U));
+
+		if (status == osOK)
+		{
+			if (message[0] == MSG_CANCLE)
+			{
+				ColorWm.FatherMenuNumber = 0U;
+				SaveLoadW_Init();
+			}
+			else if (message[0] == MSG_CONFIRM)
+			{
+				char *newName = (char *)&message[1];
+				char *nameEnd = (char *)memchr(newName, '\0',
+				                               COLOR_WM_MESSAGE_SIZE - 1U);
+
+				if ((selectedIndex >= MAX_FILE_SAVE_NUM) ||
+				    (nameEnd == NULL) || (newName[0] == '\0') ||
+				    ((size_t)(nameEnd - newName) > MAX_FILE_NAME_LEN))
+				{
+					printf("Invalid save/load file name or selection\r\n");
+				}
+				else
+				{
+					uint8_t result;
+
+					if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_SAVE_NAME_WIN)
+					{
+						result = SysSaveFiles(g_save_load_type, selectedIndex,
+						                      newName, NULL, 0U);
+					}
+					else if (FileNameList[selectedIndex].name[0] != '\0')
+					{
+						result = SysRenameFileByTypeAndName(
+							g_save_load_type, FileNameList[selectedIndex].name,
+							newName);
+					}
+					else
+					{
+						result = 0xFFU;
+					}
+
+					if (result != 0U)
+					{
+						printf("Save/load file operation failed: %u\r\n", result);
+					}
+					ColorWm.FatherMenuNumber = 0U;
+					SaveLoadW_Init();
+				}
+			}
+		}
+		else if (status != osErrorTimeout)
+		{
+			printf("Failed to receive save/load keyboard result: %ld\r\n",
+			       (long)status);
+		}
+	}
+	else if (ColorWm.FatherMenuNumber == MENU_NUMBER_WAIT_MSG_BOX)
+	{
+		uint8_t message[COLOR_WM_MESSAGE_SIZE] = {0U};
+		osStatus_t status = ColorWM_WindowMessageReceive(
+			(uint8_t)(msg_id + 1U), message, pdMS_TO_TICKS(40U));
+
+		if (status == osOK)
+		{
+			if ((message[0] == MSG_CONFIRM) || (message[0] == MSG_CANCLE))
+			{
+				ColorWm.FatherMenuNumber = 0U;
+				SaveLoadW_Init();
+			}
+		}
+		else if (status != osErrorTimeout)
+		{
+			printf("Failed to receive save/load message-box result: %ld\r\n",
+			       (long)status);
+		}
+	}
+}
+
+void SaveLoadK(void)
+{
+	uint16_t pressedKey = 0xFFFFU;
+	uint16_t releasedKey = 0xFFFFU;
+	uint8_t hasPress = 0U;
+	uint8_t hasRelease = 0U;
+	uint8_t selectedIndex = 0xFFU;
+	uint8_t i;
+
+	taskENTER_CRITICAL();
+	if (TouchKey.Trg == 1U)
+	{
+		pressedKey = TouchKey.current_keyassignments;
+		hasPress = 1U;
+	}
+	if (TouchKey.Release == 1U)
+	{
+		releasedKey = TouchKey.back_keyassignments;
+		TouchKey.Release = 0U;
+		hasRelease = 1U;
+	}
+	taskEXIT_CRITICAL();
+
+	if ((hasPress != 0U) && (pressedKey == KEY_SAVE_LOAD_CLOSE) &&
+	    (ColorWm.FatherMenuNumber == 0U))
+	{
+		if (g_save_load_type == SAVE_LOAD_TYPE_GUANG_PU)
+		{
+			ColorWindowsControl(WIN_NUM_GUPU_CESHI, 3U);
+		}
+		else if (g_save_load_type == SAVE_LOAD_TYPE_DING_LIANG)
+		{
+			ColorWindowsControl(WIN_NUM_DING_LIANG_CESHI, 0U);
+		}
+		else if (g_save_load_type == SAVE_LOAD_TYPE_DONG_LI_XUE)
+		{
+			ColorWindowsControl(WIN_NUM_DONG_LI_XUE_CESHI, 3U);
+		}
+		return;
+	}
+
+	if ((hasPress != 0U) &&
+	    (pressedKey >= KEY_SAVE_LOAD_FILE0) &&
+	    (pressedKey <= KEY_SAVE_LOAD_FILE13))
+	{
+		selectedIndex = (uint8_t)(pressedKey - KEY_SAVE_LOAD_FILE0);
+		if (selectedIndex < MAX_FILE_SAVE_NUM)
+		{
+			for (i = 0U; i < MAX_FILE_SAVE_NUM; i++)
+			{
+				if (FileNameList[i].select == 1U)
+				{
+					char str[MAX_FILE_NAME_LEN + 5U];
+					(void)snprintf(str, sizeof(str), "%-20s",
+					               FileNameList[i].name);
+					ColorLcdSendString(WindowSaveLoad_key_table[i].left,
+					                   WindowSaveLoad_key_table[i].top,
+					                   COLOR_LCD_LIB_24_24, FCOLOR_ON|GB2312, 0X02,
+					                   COLOR_BLUE, COLOR_WHITE, (uint8_t *)str);
+				}
+				FileNameList[i].select = 0U;
+			}
+			FileNameList[selectedIndex].select = 1U;
+			{
+				char str[MAX_FILE_NAME_LEN + 5U];
+				(void)snprintf(str, sizeof(str), "%-20s",
+				               FileNameList[selectedIndex].name);
+				ColorLcdSendString(WindowSaveLoad_key_table[selectedIndex].left,
+				                   WindowSaveLoad_key_table[selectedIndex].top,
+				                   COLOR_LCD_LIB_24_24,
+				                   FCOLOR_ON|BCOLOR_ON|GB2312, 0X02,
+				                   COLOR_BLUE, COLOR_WHITE, (uint8_t *)str);
+			}
+			ColorWm.FatherMenuNumber = 1U;
+		}
+	}
+
+	if (hasRelease == 0U)
+	{
+		return;
+	}
+
+	for (i = 0U; i < MAX_FILE_SAVE_NUM; i++)
+	{
+		if (FileNameList[i].select == 1U)
+		{
+			selectedIndex = i;
+			break;
+		}
+	}
+
+	if (releasedKey == KEY_SAVE_LOAD_SAVE)
+	{
+		if (selectedIndex < MAX_FILE_SAVE_NUM)
+		{
+			uint16_t ypos = (selectedIndex < 7U) ?
+				(uint16_t)(WindowSaveLoad_key_table[selectedIndex].top + 30U) :
+				(uint16_t)(WindowSaveLoad_key_table[selectedIndex].top - 285U);
+
+			ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_SAVE_NAME_WIN;
+			EnterAlphabetKeyBoard(80U, ypos, MAX_FILE_NAME_LEN);
+		}
+	}
+	else if (releasedKey == KEY_SAVE_LOAD_LOAD)
+	{
+		if ((ColorWm.FatherMenuNumber == 1U) &&
+		    (selectedIndex < MAX_FILE_SAVE_NUM) &&
+		    (FileNameList[selectedIndex].name[0] != '\0'))
+		{
+			uint32_t readLength = 0U;
+			uint8_t result = SysLoadFileByTypeAndName(
+				g_save_load_type, selectedIndex,
+				FileNameList[selectedIndex].name, &readLength);
+
+			if (result != 0U)
+			{
+				printf("Failed to load save/load file: %u\r\n", result);
+			}
+			else if (g_save_load_type == SAVE_LOAD_TYPE_GUANG_PU)
+			{
+				ColorWindowsControl(WIN_NUM_GUPU_CESHI, 3U);
+			}
+			else if (g_save_load_type == SAVE_LOAD_TYPE_DING_LIANG)
+			{
+				ColorWindowsControl(WIN_NUM_DING_LIANG_CESHI, 0U);
+			}
+			else if (g_save_load_type == SAVE_LOAD_TYPE_DONG_LI_XUE)
+			{
+				ColorWindowsControl(WIN_NUM_DONG_LI_XUE_CESHI, 3U);
+			}
+		}
+	}
+	else if (releasedKey == KEY_SAVE_LOAD_DELETE)
+	{
+		if ((ColorWm.FatherMenuNumber == 1U) &&
+		    (selectedIndex < MAX_FILE_SAVE_NUM) &&
+		    (FileNameList[selectedIndex].name[0] != '\0'))
+		{
+			uint8_t result = SysDeleteFileByTypeAndName(
+				g_save_load_type, selectedIndex,
+				FileNameList[selectedIndex].name);
+
+			if (result != 0U)
+			{
+				printf("Failed to delete save/load file: %u\r\n", result);
+			}
+			ColorWm.FatherMenuNumber = 0U;
+			SaveLoadW_Init();
+		}
+	}
+	else if (releasedKey == KEY_SAVE_LOAD_RENAME)
+	{
+		if ((ColorWm.FatherMenuNumber == 1U) &&
+		    (selectedIndex < MAX_FILE_SAVE_NUM) &&
+		    (FileNameList[selectedIndex].name[0] != '\0'))
+		{
+			uint16_t ypos = (selectedIndex < 7U) ?
+				(uint16_t)(WindowSaveLoad_key_table[selectedIndex].top + 30U) :
+				(uint16_t)(WindowSaveLoad_key_table[selectedIndex].top - 285U);
+
+			ColorWm.FatherMenuNumber = MENU_NUMBER_WAIT_RENAME_WIN;
+			EnterAlphabetKeyBoard(80U, ypos, MAX_FILE_NAME_LEN);
+		}
+	}
+}
 // //====================
 
 // //====================
@@ -5493,6 +5487,9 @@ void Child_DigitalKeyboardK(void)
 
 #define HZ_PAGE_NUM			6
 
+#define ALPHABET_KB_X_OFFSET	20
+#define ALPHABET_KB_Y_OFFSET	10
+
 /**
  * @brief 绘制字母键盘的语言选择标志。
  * @return 无返回值。
@@ -5500,33 +5497,35 @@ void Child_DigitalKeyboardK(void)
  */
 void Child_AlphabetKeyboardW_Init(void)
 {
-	uint16_t xpos=0;
-	uint16_t ypos=0;
+//	uint16_t xpos=0;
+//	uint16_t ypos=0;
 
-	if (ColorWm.IsChildFlag == 1U)
-	{
-		xpos = ColorWm.ChildWin_Xpos;
-		ypos = ColorWm.ChildWin_Ypos;
-	}
-	else if (ColorWm.IsChildFlag == 2U)
-	{
-		xpos = ColorWm.SecondChildWin_Xpos;
-		ypos = ColorWm.SecondChildWin_Ypos;
-	}
+//	if (ColorWm.IsChildFlag == 1U)
+//	{
+//		xpos = ColorWm.ChildWin_Xpos;
+//		ypos = ColorWm.ChildWin_Ypos;
+//	}
+//	else if (ColorWm.IsChildFlag == 2U)
+//	{
+//		xpos = ColorWm.SecondChildWin_Xpos;
+//		ypos = ColorWm.SecondChildWin_Ypos;
+//	}
 
-	if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
-	{
-		ColorLcdDispIcon_Ext1(ICON_ALPH_CN,
-								KEY_ALPH_EN_CN_BLACK->left + xpos,
-								KEY_ALPH_EN_CN_BLACK->top + ypos);
+	AlphabetKeyboard.NameType = ENGLISH_LANGUAGE;
+
+	// if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
+	// {
+	// 	ColorLcdDispIcon_Ext1(ICON_ALPH_CN,
+	// 							KEY_ALPH_EN_CN_BLACK->left + xpos,
+	// 							KEY_ALPH_EN_CN_BLACK->top + ypos);
 			
-	}
-	else
-	{
-		ColorLcdDispIcon_Ext1(ICON_ALPH_EN,
-								KEY_ALPH_EN_CN_BLACK->left + xpos,
-								KEY_ALPH_EN_CN_BLACK->top + ypos);
-	}
+	// }
+	// else
+	// {
+	// 	ColorLcdDispIcon_Ext1(ICON_ALPH_EN,
+	// 							KEY_ALPH_EN_CN_BLACK->left + xpos,
+	// 							KEY_ALPH_EN_CN_BLACK->top + ypos);
+	// }
 
 }
 
@@ -5538,63 +5537,67 @@ void Child_AlphabetKeyboardW_Init(void)
 void Child_AlphabetKeyboardW(void)
 {
 
-	uint8_t i=0;
-	if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
-	{
-		ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
-							COLOR_LCD_LIB_24_24,
-							FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
-							COLOR_BLUE,
-							COLOR_WHITE,
-							(uint8_t*)"                                    ");
+//	uint8_t i=0;
+	// if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
+	// {
+	// 	ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
+	// 						COLOR_LCD_LIB_24_24,
+	// 						FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
+	// 						COLOR_BLUE,
+	// 						COLOR_WHITE,
+	// 						(uint8_t*)"                                    ");
 
-		for(i=0;i<HZ_PAGE_NUM;i++)
-		{
-			if(i+AlphabetKeyboard.DispPage*HZ_PAGE_NUM>= AlphabetKeyboard.HZ_num)
-			{
-				break;
-			}
-			AlphabetKeyboard.DispBuff[i*5] = i+'1';
-			AlphabetKeyboard.DispBuff[i*5+1] = '.';
-			AlphabetKeyboard.DispBuff[i*5+2] = AlphabetKeyboard.HZ_String[(AlphabetKeyboard.DispPage*HZ_PAGE_NUM+i)*2];
-			AlphabetKeyboard.DispBuff[i*5+3] = AlphabetKeyboard.HZ_String[(AlphabetKeyboard.DispPage*HZ_PAGE_NUM+i)*2+1];
-			AlphabetKeyboard.DispBuff[i*5+4] = ' ';
-			AlphabetKeyboard.DispBuff[i*5+5] = '\0';
-		}
+	// 	for(i=0;i<HZ_PAGE_NUM;i++)
+	// 	{
+	// 		if(i+AlphabetKeyboard.DispPage*HZ_PAGE_NUM>= AlphabetKeyboard.HZ_num)
+	// 		{
+	// 			break;
+	// 		}
+	// 		AlphabetKeyboard.DispBuff[i*5] = i+'1';
+	// 		AlphabetKeyboard.DispBuff[i*5+1] = '.';
+	// 		AlphabetKeyboard.DispBuff[i*5+2] = AlphabetKeyboard.HZ_String[(AlphabetKeyboard.DispPage*HZ_PAGE_NUM+i)*2];
+	// 		AlphabetKeyboard.DispBuff[i*5+3] = AlphabetKeyboard.HZ_String[(AlphabetKeyboard.DispPage*HZ_PAGE_NUM+i)*2+1];
+	// 		AlphabetKeyboard.DispBuff[i*5+4] = ' ';
+	// 		AlphabetKeyboard.DispBuff[i*5+5] = '\0';
+	// 	}
 		
-		if(AlphabetKeyboard.HZ_num != 0)
-		{
-			ColorLcdSendString(ColorWm.ChildWin_Xpos+104,	ColorWm.ChildWin_Ypos+20,
-							COLOR_LCD_LIB_24_24,
-							FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
-							COLOR_BLUE,
-							COLOR_WHITE,
-							(uint8_t*)AlphabetKeyboard.DispBuff);//
-		}
-		ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
-						COLOR_LCD_LIB_24_24,
-						FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
-						COLOR_BLUE,
-						COLOR_WHITE,
-						(uint8_t*)AlphabetKeyboard.PinYinStr);//
+	// 	if(AlphabetKeyboard.HZ_num != 0)
+	// 	{
+	// 		ColorLcdSendString(ColorWm.ChildWin_Xpos+104,	ColorWm.ChildWin_Ypos+20,
+	// 						COLOR_LCD_LIB_24_24,
+	// 						FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
+	// 						COLOR_BLUE,
+	// 						COLOR_WHITE,
+	// 						(uint8_t*)AlphabetKeyboard.DispBuff);//
+	// 	}
+	// 	ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
+	// 					COLOR_LCD_LIB_24_24,
+	// 					FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
+	// 					COLOR_BLUE,
+	// 					COLOR_WHITE,
+	// 					(uint8_t*)AlphabetKeyboard.PinYinStr);//
 
 		
 		
-	}
-	else
+	// }
+	// else
 	{
-		ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
+		char disp_buff[30];
+		memset(disp_buff, ' ', sizeof(disp_buff));
+		disp_buff[sizeof(disp_buff) - 1] = '\0';
+		sprintf(disp_buff, "%-29s", AlphabetKeyboard.EnStr);
+		ColorLcdSendString(ColorWm.ChildWin_Xpos+ALPHABET_KB_X_OFFSET,	ColorWm.ChildWin_Ypos+ALPHABET_KB_Y_OFFSET,
 							COLOR_LCD_LIB_24_24,
 							FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
 							COLOR_BLUE,
 							COLOR_WHITE,
-							(uint8_t*)"                                    ");
-		ColorLcdSendString(ColorWm.ChildWin_Xpos+20,	ColorWm.ChildWin_Ypos+20,
-						COLOR_LCD_LIB_24_24,
-						FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
-						COLOR_BLUE,
-						COLOR_WHITE,
-						(uint8_t*)AlphabetKeyboard.EnStr);//
+							(uint8_t*)disp_buff);
+		// ColorLcdSendString(ColorWm.ChildWin_Xpos+ALPHABET_KB_X_OFFSET,	ColorWm.ChildWin_Ypos+ALPHABET_KB_Y_OFFSET,
+		// 				COLOR_LCD_LIB_24_24,
+		// 				FCOLOR_ON|BCOLOR_ON|GB2312,0X02,
+		// 				COLOR_BLUE,
+		// 				COLOR_WHITE,
+		// 				(uint8_t*)AlphabetKeyboard.EnStr);//
 	}
 
 }
@@ -5610,56 +5613,53 @@ void Child_AlphabetKeyboardK(void)
 	uint32_t tmp_key = 0U;
 	if(TouchKey.Trg== 1)
 	{
-		uint16_t xpos;
-		uint16_t ypos;
+		// uint16_t xpos;
+		// uint16_t ypos;
 
-		if (ColorWm.IsChildFlag == 1U)
-		{
-			xpos = ColorWm.ChildWin_Xpos;
-			ypos = ColorWm.ChildWin_Ypos;
-		}
-		else if (ColorWm.IsChildFlag == 2U)
-		{
-			xpos = ColorWm.SecondChildWin_Xpos;
-			ypos = ColorWm.SecondChildWin_Ypos;
-		}
-		else
-		{
-			return;
-		}
+		// if (ColorWm.IsChildFlag == 1U)
+		// {
+		// 	xpos = ColorWm.ChildWin_Xpos;
+		// 	ypos = ColorWm.ChildWin_Ypos;
+		// }
+		// else if (ColorWm.IsChildFlag == 2U)
+		// {
+		// 	xpos = ColorWm.SecondChildWin_Xpos;
+		// 	ypos = ColorWm.SecondChildWin_Ypos;
+		// }
+		// else
+		// {
+		// 	return;
+		// }
 
-		taskENTER_CRITICAL();
-		tmp_key = TouchKey.back_keyassignments;
-		taskEXIT_CRITICAL();
-		if (tmp_key == KEY_ALPHABET_EN_CN)
-		{
-			if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
-			{
-				AlphabetKeyboard.NameType = ENGLISH_LANGUAGE;
-				AlphabetKeyboard.HZ_num = 0;
-				AlphabetKeyboard.Enlen = 0;
-				AlphabetKeyboard.EnStr[AlphabetKeyboard.Enlen] = '\0';
-				AlphabetKeyboard.DispPage = 0;
-				ColorLcdDispIcon_Ext1(ICON_ALPH_EN,
-										TouchKey.p->left + xpos,
-										TouchKey.p->top + ypos);
+		// taskENTER_CRITICAL();
+		// tmp_key = TouchKey.back_keyassignments;
+		// taskEXIT_CRITICAL();
+		// if (tmp_key == KEY_ALPHABET_EN_CN)
+		// {
+		// 	if(AlphabetKeyboard.NameType == CHINESE_LANGUAGE)
+		// 	{
+		// 		AlphabetKeyboard.NameType = ENGLISH_LANGUAGE;
+		// 		AlphabetKeyboard.HZ_num = 0;
+		// 		AlphabetKeyboard.Enlen = 0;
+		// 		AlphabetKeyboard.EnStr[AlphabetKeyboard.Enlen] = '\0';
+		// 		AlphabetKeyboard.DispPage = 0;
+		// 		ColorLcdDispIcon_Ext1(ICON_ALPH_EN,
+		// 								TouchKey.p->left + xpos,
+		// 								TouchKey.p->top + ypos);
 					
-			}
-			else
-			{
-				AlphabetKeyboard.NameType = CHINESE_LANGUAGE;
-				AlphabetKeyboard.HZ_num = 0;
-				AlphabetKeyboard.PinYinlen = 0;
-				AlphabetKeyboard.PinYinStr[AlphabetKeyboard.PinYinlen] = '\0';
-				AlphabetKeyboard.DispPage = 0;
-				ColorLcdDispIcon_Ext1(ICON_ALPH_CN,
-										TouchKey.p->left + xpos,
-										TouchKey.p->top + ypos);
-			}
-			
-			
-			
-		}
+		// 	}
+		// 	else
+		// 	{
+		// 		AlphabetKeyboard.NameType = CHINESE_LANGUAGE;
+		// 		AlphabetKeyboard.HZ_num = 0;
+		// 		AlphabetKeyboard.PinYinlen = 0;
+		// 		AlphabetKeyboard.PinYinStr[AlphabetKeyboard.PinYinlen] = '\0';
+		// 		AlphabetKeyboard.DispPage = 0;
+		// 		ColorLcdDispIcon_Ext1(ICON_ALPH_CN,
+		// 								TouchKey.p->left + xpos,
+		// 								TouchKey.p->top + ypos);
+		// 	}
+		// }
 	}
 	else if (TouchKey.Release == 1)
 	{
@@ -5868,7 +5868,7 @@ void Child_AlphabetKeyboardK(void)
 			message[0] = MSG_CONFIRM;
 			messageLength = (uint8_t)(AlphabetKeyboard.len + 1U);
 			memcpy(&message[1], AlphabetKeyboard.Str, messageLength);
-			status = ColorWM_WindowMessageSend(msg_id, message);
+			status = ColorWM_WindowMessageSend(msg_id-1, message);
 			if (status != osOK)
 			{
 				printf("Failed to post alphabet keyboard result: %ld\r\n",
@@ -5885,7 +5885,7 @@ void Child_AlphabetKeyboardK(void)
 			osStatus_t status;
 
 			message[0] = MSG_CANCLE;
-			status = ColorWM_WindowMessageSend(msg_id, message);
+			status = ColorWM_WindowMessageSend(msg_id-1, message);
 			if (status != osOK)
 			{
 				printf("Failed to post alphabet keyboard cancel: %ld\r\n",

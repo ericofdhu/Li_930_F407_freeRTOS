@@ -540,7 +540,7 @@
 #define KEY_ALPHABET_CLOSE							 							0Xa729
 #define KEY_ALPHABET_UP							 								0Xa72A
 #define KEY_ALPHABET_DOWN							 							0Xa72B
-#define KEY_ALPHABET_EN_CN							 							0Xa72C
+// #define KEY_ALPHABET_EN_CN							 							0Xa72C
 #define KEY_ALPHABET_CAP							 							0Xa72D
 #define KEY_ALPHABET_SLASH							 							0Xa72E
 

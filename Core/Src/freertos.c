@@ -117,25 +117,25 @@ const osThreadAttr_t Task_SysRun_attributes = {
 osThreadId_t Task_Disp_Handle;
 const osThreadAttr_t Task_Disp_attributes = {
   .name = "Task_Disp",
-  .stack_size = 2048 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 osThreadId_t Task_ChildDisp_Handle;
 const osThreadAttr_t Task_ChildDisp_attributes = {
   .name = "Task_ChildDisp",
-  .stack_size = 2048 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 osThreadId_t Task_USART3_Process_Handle;
 const osThreadAttr_t Task_USART3_Process_attributes = {
   .name = "Task_USART3_Process",
-  .stack_size = 1024 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 osThreadId_t Task_USART2_Process_Handle;
 const osThreadAttr_t Task_USART2_Process_attributes = {
   .name = "Task_USART2_Process",
-  .stack_size = 1024 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 

@@ -75,3 +75,4 @@ li_930_f407_freertos\colorwm_8inch.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MyLib.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MyPinYin.h
 li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/MySaveLoadFile.h
+li_930_f407_freertos\colorwm_8inch.o: ../Core/Inc/gpio.h
