@@ -1,6 +1,7 @@
 # Keil build outputs
 **/Objects/
 **/Listings/
+MDK-ARM/List/
 *.axf
 *.hex
 *.bin
