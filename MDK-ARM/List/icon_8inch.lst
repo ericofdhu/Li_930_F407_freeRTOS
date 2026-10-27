@@ -1,0 +1,1503 @@
+L 1 "..\WindowsManage\icon_8inch.c"
+N#include "icon_8inch.h"
+L 1 "..\WindowsManage\icon_8inch.h" 1
+N//
+N#ifndef ICON_8INCH_H
+N#define ICON_8INCH_H
+N
+N#include <stdint.h>
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+N/* Copyright (C) ARM Ltd., 1999,2014 */
+N/* All rights reserved */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N
+N#ifndef __stdint_h
+N#define __stdint_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N  #ifdef __INT64_TYPE__
+S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
+S    #define __INT64 __INT64_TYPE__
+N  #else
+N    /* armcc has builtin '__int64' which can be used in --strict mode */
+N    #define __INT64 __int64
+N    #define __INT64_C_SUFFIX__ ll
+N  #endif
+N  #define __PASTE2(x, y) x ## y
+N  #define __PASTE(x, y) __PASTE2(x, y)
+N  #define __INT64_C(x)  __ESCAPE__(__PASTE(x, __INT64_C_SUFFIX__))
+N  #define __UINT64_C(x)  __ESCAPE__(__PASTE(x ## u, __INT64_C_SUFFIX__))
+N  #if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
+X  #if 0L || (1L && !0L)
+N    /* armclang and non-strict armcc allow 'long long' in system headers */
+N    #define __LONGLONG long long
+N  #else
+S    /* strict armcc has '__int64' */
+S    #define __LONGLONG __int64
+N  #endif
+N
+N  #ifndef __STDINT_DECLS
+N  #define __STDINT_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S      namespace std {
+S          #define __CLIBNS std::
+S          extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N
+N/*
+N * 'signed' is redundant below, except for 'signed char' and if
+N * the typedef is used to declare a bitfield.
+N */
+N
+N    /* 7.18.1.1 */
+N
+N    /* exact-width signed integer types */
+Ntypedef   signed          char int8_t;
+Ntypedef   signed short     int int16_t;
+Ntypedef   signed           int int32_t;
+Ntypedef   signed       __INT64 int64_t;
+Xtypedef   signed       __int64 int64_t;
+N
+N    /* exact-width unsigned integer types */
+Ntypedef unsigned          char uint8_t;
+Ntypedef unsigned short     int uint16_t;
+Ntypedef unsigned           int uint32_t;
+Ntypedef unsigned       __INT64 uint64_t;
+Xtypedef unsigned       __int64 uint64_t;
+N
+N    /* 7.18.1.2 */
+N
+N    /* smallest type of at least n bits */
+N    /* minimum-width signed integer types */
+Ntypedef   signed          char int_least8_t;
+Ntypedef   signed short     int int_least16_t;
+Ntypedef   signed           int int_least32_t;
+Ntypedef   signed       __INT64 int_least64_t;
+Xtypedef   signed       __int64 int_least64_t;
+N
+N    /* minimum-width unsigned integer types */
+Ntypedef unsigned          char uint_least8_t;
+Ntypedef unsigned short     int uint_least16_t;
+Ntypedef unsigned           int uint_least32_t;
+Ntypedef unsigned       __INT64 uint_least64_t;
+Xtypedef unsigned       __int64 uint_least64_t;
+N
+N    /* 7.18.1.3 */
+N
+N    /* fastest minimum-width signed integer types */
+Ntypedef   signed           int int_fast8_t;
+Ntypedef   signed           int int_fast16_t;
+Ntypedef   signed           int int_fast32_t;
+Ntypedef   signed       __INT64 int_fast64_t;
+Xtypedef   signed       __int64 int_fast64_t;
+N
+N    /* fastest minimum-width unsigned integer types */
+Ntypedef unsigned           int uint_fast8_t;
+Ntypedef unsigned           int uint_fast16_t;
+Ntypedef unsigned           int uint_fast32_t;
+Ntypedef unsigned       __INT64 uint_fast64_t;
+Xtypedef unsigned       __int64 uint_fast64_t;
+N
+N    /* 7.18.1.4 integer types capable of holding object pointers */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+Stypedef   signed       __INT64 intptr_t;
+Stypedef unsigned       __INT64 uintptr_t;
+N#else
+Ntypedef   signed           int intptr_t;
+Ntypedef unsigned           int uintptr_t;
+N#endif
+N
+N    /* 7.18.1.5 greatest-width integer types */
+Ntypedef   signed     __LONGLONG intmax_t;
+Xtypedef   signed     long long intmax_t;
+Ntypedef unsigned     __LONGLONG uintmax_t;
+Xtypedef unsigned     long long uintmax_t;
+N
+N
+N#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.2.1 */
+N
+N    /* minimum values of exact-width signed integer types */
+N#define INT8_MIN                   -128
+N#define INT16_MIN                -32768
+N#define INT32_MIN          (~0x7fffffff)   /* -2147483648 is unsigned */
+N#define INT64_MIN  __INT64_C(~0x7fffffffffffffff) /* -9223372036854775808 is unsigned */
+N
+N    /* maximum values of exact-width signed integer types */
+N#define INT8_MAX                    127
+N#define INT16_MAX                 32767
+N#define INT32_MAX            2147483647
+N#define INT64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of exact-width unsigned integer types */
+N#define UINT8_MAX                   255
+N#define UINT16_MAX                65535
+N#define UINT32_MAX           4294967295u
+N#define UINT64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.2 */
+N
+N    /* minimum values of minimum-width signed integer types */
+N#define INT_LEAST8_MIN                   -128
+N#define INT_LEAST16_MIN                -32768
+N#define INT_LEAST32_MIN          (~0x7fffffff)
+N#define INT_LEAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of minimum-width signed integer types */
+N#define INT_LEAST8_MAX                    127
+N#define INT_LEAST16_MAX                 32767
+N#define INT_LEAST32_MAX            2147483647
+N#define INT_LEAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of minimum-width unsigned integer types */
+N#define UINT_LEAST8_MAX                   255
+N#define UINT_LEAST16_MAX                65535
+N#define UINT_LEAST32_MAX           4294967295u
+N#define UINT_LEAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.3 */
+N
+N    /* minimum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MIN           (~0x7fffffff)
+N#define INT_FAST16_MIN          (~0x7fffffff)
+N#define INT_FAST32_MIN          (~0x7fffffff)
+N#define INT_FAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MAX             2147483647
+N#define INT_FAST16_MAX            2147483647
+N#define INT_FAST32_MAX            2147483647
+N#define INT_FAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of fastest minimum-width unsigned integer types */
+N#define UINT_FAST8_MAX            4294967295u
+N#define UINT_FAST16_MAX           4294967295u
+N#define UINT_FAST32_MAX           4294967295u
+N#define UINT_FAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.4 */
+N
+N    /* minimum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MIN INT64_MIN
+N#else
+N#define INTPTR_MIN INT32_MIN
+N#endif
+N
+N    /* maximum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MAX INT64_MAX
+N#else
+N#define INTPTR_MAX INT32_MAX
+N#endif
+N
+N    /* maximum value of pointer-holding unsigned integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define UINTPTR_MAX UINT64_MAX
+N#else
+N#define UINTPTR_MAX UINT32_MAX
+N#endif
+N
+N    /* 7.18.2.5 */
+N
+N    /* minimum value of greatest-width signed integer type */
+N#define INTMAX_MIN  __ESCAPE__(~0x7fffffffffffffffll)
+N
+N    /* maximum value of greatest-width signed integer type */
+N#define INTMAX_MAX  __ESCAPE__(9223372036854775807ll)
+N
+N    /* maximum value of greatest-width unsigned integer type */
+N#define UINTMAX_MAX __ESCAPE__(18446744073709551615ull)
+N
+N    /* 7.18.3 */
+N
+N    /* limits of ptrdiff_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define PTRDIFF_MIN INT64_MIN
+S#define PTRDIFF_MAX INT64_MAX
+N#else
+N#define PTRDIFF_MIN INT32_MIN
+N#define PTRDIFF_MAX INT32_MAX
+N#endif
+N
+N    /* limits of sig_atomic_t */
+N#define SIG_ATOMIC_MIN (~0x7fffffff)
+N#define SIG_ATOMIC_MAX   2147483647
+N
+N    /* limit of size_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define SIZE_MAX UINT64_MAX
+N#else
+N#define SIZE_MAX UINT32_MAX
+N#endif
+N
+N    /* limits of wchar_t */
+N    /* NB we have to undef and redef because they're defined in both
+N     * stdint.h and wchar.h */
+N#undef WCHAR_MIN
+N#undef WCHAR_MAX
+N
+N#if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X#if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S  #define WCHAR_MIN   0
+S  #define WCHAR_MAX   0xffffffffU
+N#else
+N  #define WCHAR_MIN   0
+N  #define WCHAR_MAX   65535
+N#endif
+N
+N    /* limits of wint_t */
+N#define WINT_MIN (~0x7fffffff)
+N#define WINT_MAX 2147483647
+N
+N#endif /* __STDC_LIMIT_MACROS */
+N
+N#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.4.1 macros for minimum-width integer constants */
+N#define INT8_C(x)   (x)
+N#define INT16_C(x)  (x)
+N#define INT32_C(x)  (x)
+N#define INT64_C(x)  __INT64_C(x)
+N
+N#define UINT8_C(x)  (x ## u)
+N#define UINT16_C(x) (x ## u)
+N#define UINT32_C(x) (x ## u)
+N#define UINT64_C(x) __UINT64_C(x)
+N
+N    /* 7.18.4.2 macros for greatest-width integer constants */
+N#define INTMAX_C(x)  __ESCAPE__(x ## ll)
+N#define UINTMAX_C(x) __ESCAPE__(x ## ull)
+N
+N#endif /* __STDC_CONSTANT_MACROS */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDINT_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDINT_NO_EXPORTS
+S      using ::std::int8_t;
+S      using ::std::int16_t;
+S      using ::std::int32_t;
+S      using ::std::int64_t;
+S      using ::std::uint8_t;
+S      using ::std::uint16_t;
+S      using ::std::uint32_t;
+S      using ::std::uint64_t;
+S      using ::std::int_least8_t;
+S      using ::std::int_least16_t;
+S      using ::std::int_least32_t;
+S      using ::std::int_least64_t;
+S      using ::std::uint_least8_t;
+S      using ::std::uint_least16_t;
+S      using ::std::uint_least32_t;
+S      using ::std::uint_least64_t;
+S      using ::std::int_fast8_t;
+S      using ::std::int_fast16_t;
+S      using ::std::int_fast32_t;
+S      using ::std::int_fast64_t;
+S      using ::std::uint_fast8_t;
+S      using ::std::uint_fast16_t;
+S      using ::std::uint_fast32_t;
+S      using ::std::uint_fast64_t;
+S      using ::std::intptr_t;
+S      using ::std::uintptr_t;
+S      using ::std::intmax_t;
+S      using ::std::uintmax_t;
+S    #endif
+N  #endif /* __cplusplus */
+N
+N#undef __INT64
+N#undef __LONGLONG
+N
+N#endif /* __stdint_h */
+N
+N/* end of stdint.h */
+L 6 "..\WindowsManage\icon_8inch.h" 2
+N
+N// #include "cmsis_os2.h"
+N
+N
+N
+Ntypedef struct {
+N	uint16_t cut_num;	//剪切的照片号
+N	uint16_t  left;     
+N	uint16_t   top;
+N	uint16_t   width;
+N	uint16_t   height;
+N}SIMPLE_ICON;
+N
+N
+Ntypedef struct {
+N	uint8_t num;
+N	SIMPLE_ICON* icon;
+N
+N}COLOR_NUMBER_TABLE;
+N
+Nextern const COLOR_NUMBER_TABLE  ColorLargeNumberTable[];
+Nextern const COLOR_NUMBER_TABLE  ColorMiddleNumberTable[];
+Nextern const COLOR_NUMBER_TABLE  ColorSmallNumberTable[];
+Nextern const COLOR_NUMBER_TABLE  ColorDigitalNumberTable[];
+N
+N
+N
+N#define ICON_CUT_PIC_NUM_1	1U
+N#define ICON_CUT_PIC_NUM_2	2U
+N#define ICON_CUT_PIC_NUM_3	3U
+N#define ICON_CUT_PIC_NUM_4	4U
+N#define ICON_CUT_PIC_NUM_5	5U
+N#define ICON_CUT_PIC_NUM_6	6U
+N#define ICON_CUT_PIC_NUM_7	7U
+N#define ICON_CUT_PIC_NUM_8	8U
+N#define ICON_CUT_PIC_NUM_9	9U
+N#define ICON_CUT_PIC_NUM_10	10U
+N#define ICON_CUT_PIC_NUM_11	11U
+N#define ICON_CUT_PIC_NUM_12	12U
+N#define ICON_CUT_PIC_NUM_13	13U
+N#define ICON_CUT_PIC_NUM_14	14U
+N#define ICON_CUT_PIC_NUM_15	15U
+N#define ICON_CUT_PIC_NUM_16	16U
+N#define ICON_CUT_PIC_NUM_17	17U
+N#define ICON_CUT_PIC_NUM_18	18U
+N#define ICON_CUT_PIC_NUM_19	19U
+N#define ICON_CUT_PIC_NUM_20	20U
+N#define ICON_CUT_PIC_NUM_21	21U
+N#define ICON_CUT_PIC_NUM_22	22U
+N#define ICON_CUT_PIC_NUM_23	23U
+N#define ICON_CUT_PIC_NUM_24	24U
+N#define ICON_CUT_PIC_NUM_25	25U
+N#define ICON_CUT_PIC_NUM_26	26U
+N#define ICON_CUT_PIC_NUM_27	27U
+N#define ICON_CUT_PIC_NUM_28	28U
+N#define ICON_CUT_PIC_NUM_29	29U
+N#define ICON_CUT_PIC_NUM_30	30U
+N#define ICON_CUT_PIC_NUM_31	31U
+N#define ICON_CUT_PIC_NUM_32	32U
+N#define ICON_CUT_PIC_NUM_33	33U
+N#define ICON_CUT_PIC_NUM_34	34U
+N#define ICON_CUT_PIC_NUM_35	35U
+N#define ICON_CUT_PIC_NUM_36	36U
+N#define ICON_CUT_PIC_NUM_37	37U
+N#define ICON_CUT_PIC_NUM_38	38U
+N#define ICON_CUT_PIC_NUM_39	39U
+N#define ICON_CUT_PIC_NUM_40	40U
+N#define ICON_CUT_PIC_NUM_41	41U
+N#define ICON_CUT_PIC_NUM_42	42U
+N#define ICON_CUT_PIC_NUM_43	43U
+N#define ICON_CUT_PIC_NUM_44	44U
+N#define ICON_CUT_PIC_NUM_45	45U
+N#define ICON_CUT_PIC_NUM_46	46U
+N#define ICON_CUT_PIC_NUM_47	47U
+N#define ICON_CUT_PIC_NUM_48	48U
+N#define ICON_CUT_PIC_NUM_49	49U
+N#define ICON_CUT_PIC_NUM_50	50U
+N
+N
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_BLANK[];
+Nextern const SIMPLE_ICON ICON_PROGRESS_BAR[];
+Nextern const SIMPLE_ICON ICON_CONNECT_PC[];
+N
+Nextern const SIMPLE_ICON ICON_GUANG_DU_BLACK[];
+Nextern const SIMPLE_ICON ICON_GUANG_PU_BLACK[];
+Nextern const SIMPLE_ICON ICON_DING_LIANG_BLACK[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_BLACK[];
+Nextern const SIMPLE_ICON ICON_DUO_BO_CHANG_BLACK[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_SET_BLACK[];
+N
+Nextern const SIMPLE_ICON ICON_MESSAGE_BOX[];
+N
+N
+N
+N
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_SET_PARA_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_SET_SCALE_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_DISP_MONTAIN_VALLY_GUANGPU_BLACK[]	;
+Nextern const SIMPLE_ICON ICON_TEST_GUANGPU_BLACK[]	;
+Nextern const SIMPLE_ICON ICON_SAVE_LOAD_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_PRINT_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_CURSOR_LEFT_BLACK[];
+Nextern const SIMPLE_ICON ICON_CURSOR_RIGHT_BLACK[];
+Nextern const SIMPLE_ICON ICON_CELL_LEFT_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_CELL_CHOOSE_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_CELL_RIGHT_GUANGPU_BLACK[];
+Nextern const SIMPLE_ICON ICON_CLR_DATA_BLACK[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_STOP_GUANGPU[];
+Nextern const SIMPLE_ICON ICON_TEST_GUANGPU[];
+Nextern const SIMPLE_ICON ICON_M1[];
+Nextern const SIMPLE_ICON ICON_M2[];
+N
+Nextern const SIMPLE_ICON ICON_VALLEY_UP_BLACK[];
+Nextern const SIMPLE_ICON ICON_VALLEY_DOWN_BLACK[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_STOP_BASE_LINE_GUANGPU[];
+Nextern const SIMPLE_ICON ICON_TEST_BASE_LINE_GUANGPU[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_PRINT_DING_LIANG_BIAODING_BLACK[];
+Nextern const SIMPLE_ICON ICON_AUTO_ZERO_DING_LIANG_BLACK[];
+Nextern const SIMPLE_ICON ICON_BIAO_DING_DING_LIANG_BLACK[];
+Nextern const SIMPLE_ICON ICON_LAST_PAGE_DING_LIANG_BLACK[];
+Nextern const SIMPLE_ICON ICON_NEXT_PAGE_DING_LIANG_BLACK[];
+N
+N
+N
+N
+N//动力学测试参数设置
+N//扫描时间单位选择
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_MINUTE[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_SECOND[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_NONE[];
+N
+N//激发光源
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT1_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT2_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT3_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT4_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT_ALL_NOT_SELECT[];
+N
+N//增益
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_GAIN1_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_GAIN2_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_GAIN4_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_GAIN8_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_GAIN_ALL_NOT_SELECT[];
+N
+N//倍增管状态
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_PMT_ON_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_PMT_OFF_SELECT[];
+Nextern const SIMPLE_ICON ICON_DONG_LI_XUE_PMT_NONE_SELECT[];
+N
+N
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_BIAO_DING_EN_BASE[];
+Nextern const SIMPLE_ICON ICON_BIAO_DING_DIS_BASE[];
+N
+N
+N
+N
+N
+N
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_INIT_BALCK[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_BALCK_CURRENT_BALCK[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_LANGUAGE_CHOOSE_BALCK[]	;
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_SLIT_BALCK[];
+N
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_D2_ON[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_WU_ON[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_D2_OFF[];
+Nextern const SIMPLE_ICON ICON_SYSTEM_CONFIG_WU_OFF[];
+N
+Nextern const SIMPLE_ICON* TestUnitIconTable[];
+N
+Nextern const SIMPLE_ICON ICON_FINISH_MP_BLACK[];
+Nextern const SIMPLE_ICON ICON_DISP_DATA_MP_BLACK[];
+Nextern const SIMPLE_ICON ICON_DISP_CURVE_MP_BLACK[];
+N
+Nextern const SIMPLE_ICON ICON_MULTI_ML_T_A_BLACK[];
+Nextern const SIMPLE_ICON ICON_MULTI_ML_CLR_DATA_BLACK[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_BAD_FACE[];
+Nextern const SIMPLE_ICON ICON_MESSAGE_BOX2[];
+N
+N
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_1[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_2[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_3[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_4[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_5[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_6[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_7[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_8[];
+N
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_9[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_0[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_A[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_PERCANTAGE[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_POINT[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_MINUS[];
+Nextern const SIMPLE_ICON ICON_LARGE_NUMBER_SPACE[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_0[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_1[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_2[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_3[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_4[];
+N
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_5[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_6[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_7[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_8[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_9[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_A[];
+N
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_POINT[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_NM[];
+N
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_PERCANTAGE[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_MINUS[];
+Nextern const SIMPLE_ICON ICON_MIDDLE_NUMBER_SPACE[];
+N
+N
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_0[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_1[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_2[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_3[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_4[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_5[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_6[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_7[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_8[];
+Nextern const SIMPLE_ICON ICON_SMALL_NUMBER_9[];
+N
+Nextern  const SIMPLE_ICON ICON_SMALL_NUMBER_POINT[];
+Nextern  const SIMPLE_ICON ICON_SMALL_NUMBER_NM[];
+Nextern  const SIMPLE_ICON ICON_SMALL_NUMBER_SPACE[];
+Nextern  const SIMPLE_ICON ICON_SMALL_NUMBER_PERCANTAGE[];
+Nextern  const SIMPLE_ICON ICON_SMALL_NUMBER_MINUS[];
+N
+N
+N
+N
+N
+N//键盘数字
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_0[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_1[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_2[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_3[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_4[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_5[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_6[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_7[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_8[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_9[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_POINT[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_SPACE[];
+Nextern const SIMPLE_ICON ICON_DIGITAL_NUMBER_SIGN[];
+N
+N
+N
+N//字母键盘
+N//字母键盘按键效果
+Nextern const SIMPLE_ICON KEY_ALPH_1_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_2_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_3_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_4_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_5_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_6_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_7_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_8_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_9_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_0_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_CE_BLACK[];
+N
+Nextern const SIMPLE_ICON KEY_ALPH_Q_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_W_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_E_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_R_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_T_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_Y_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_U_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_I_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_O_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_P_BLACK[];
+N
+N
+Nextern const SIMPLE_ICON KEY_ALPH_A_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_S_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_D_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_F_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_G_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_H_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_J_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_K_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_L_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_POINT_BLACK[];
+N
+N
+Nextern const SIMPLE_ICON KEY_ALPH_Z_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_X_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_C_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_V_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_B_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_N_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_M_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_DOWN_LINE_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_SPACE_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_EN_CN_BLACK[];
+N
+N
+Nextern const SIMPLE_ICON KEY_ALPH_ENTER_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_UP_BLACK[];
+Nextern const SIMPLE_ICON KEY_ALPH_DOWN_BLACK[];
+N
+Nextern const SIMPLE_ICON ICON_ALPH_EN[];
+Nextern const SIMPLE_ICON ICON_ALPH_CN[];
+N
+N
+N
+Nextern const SIMPLE_ICON ICON_SELECT_OK[];
+Nextern const SIMPLE_ICON ICON_SELECT_NOT_OK[];
+N
+N
+N
+N
+N
+N//光谱测试参数设置
+N//参数设置
+N//扫描速度选择
+Nextern const SIMPLE_ICON ICON_SPEED_SLOW_SELECT[];
+Nextern const SIMPLE_ICON ICON_SPEED_MIDDLE_SELECT[];
+Nextern const SIMPLE_ICON ICON_SPEED_FAST_SELECT[];
+Nextern const SIMPLE_ICON ICON_SPEED_ALL_NOT_SELECT[];
+N//扫描间隔选择
+Nextern const SIMPLE_ICON ICON_INTERVAL_01_SELECT[];
+Nextern const SIMPLE_ICON ICON_INTERVAL_10_SELECT[];
+Nextern const SIMPLE_ICON ICON_INTERVAL_ALL_NOT_SELECT[];
+N
+N//激发光源
+Nextern const SIMPLE_ICON ICON_EMIT_LIGHT1_SELECT[];
+Nextern const SIMPLE_ICON ICON_EMIT_LIGHT2_SELECT[];
+Nextern const SIMPLE_ICON ICON_EMIT_LIGHT3_SELECT[];
+Nextern const SIMPLE_ICON ICON_EMIT_LIGHT4_SELECT[];
+Nextern const SIMPLE_ICON ICON_EMIT_LIGHT_ALL_NOT_SELECT[];
+N
+N//倍增管状态
+Nextern const SIMPLE_ICON ICON_PMT_ON_SELECT[];
+Nextern const SIMPLE_ICON ICON_PMT_OFF_SELECT[];
+Nextern const SIMPLE_ICON ICON_PMT_NONE_SELECT[];
+N
+N//增益
+Nextern const SIMPLE_ICON ICON_GAIN1_SELECT[];
+Nextern const SIMPLE_ICON ICON_GAIN2_SELECT[];
+Nextern const SIMPLE_ICON ICON_GAIN4_SELECT[];
+Nextern const SIMPLE_ICON ICON_GAIN8_SELECT[];
+Nextern const SIMPLE_ICON ICON_GAIN_ALL_NOT_SELECT[];
+N
+N
+N
+N
+N
+N
+N//子窗口图标
+Nextern const SIMPLE_ICON CWindow_34MODE_SELECT[];
+Nextern const SIMPLE_ICON CWindow_Language[];
+Nextern const SIMPLE_ICON CWindow_SET_SLIT[];
+Nextern const SIMPLE_ICON CWindow_DIGITAL_KEYBOARD[];
+Nextern const SIMPLE_ICON CWindow_ALPHABET_KEYBOARD[];
+Nextern const SIMPLE_ICON CWindow_SET_SCALE[];
+Nextern const SIMPLE_ICON CWindow_SET_GUPU_PAR[];
+Nextern const SIMPLE_ICON CWindow_Montain_Valley[];
+Nextern const SIMPLE_ICON CWindow_Save_Load_GuPu[];
+N
+Nextern const SIMPLE_ICON CWindow_MsgBox[];
+N
+N
+N
+N
+N// extern const SIMPLE_ICON ICON_CHINESE_SELECT[];
+N// extern const SIMPLE_ICON ICON_ENGLISH_SELECT[];
+N// extern const SIMPLE_ICON ICON_SPAIN_SELECT[];
+N// extern const SIMPLE_ICON ICON_PORTUGAL_SELECT[];
+N
+N
+N
+Nextern const SIMPLE_ICON KEY_DIGITAL_0_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_POINT_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_1_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_2_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_3_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_4_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_5_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_6_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_7_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_8_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_9_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_CE_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_SIGN_BLACK[];
+Nextern const SIMPLE_ICON KEY_DIGITAL_ENTER_BLACK[];
+N
+N
+N//消息框的消息
+Nextern const SIMPLE_ICON DISP_MSG1[];
+Nextern const SIMPLE_ICON DISP_MSG2[];
+Nextern const SIMPLE_ICON DISP_MSG3[];
+Nextern const SIMPLE_ICON DISP_MSG4[];
+Nextern const SIMPLE_ICON DISP_MSG5[];
+Nextern const SIMPLE_ICON DISP_MSG6[];
+Nextern const SIMPLE_ICON DISP_MSG7[];
+Nextern const SIMPLE_ICON DISP_MSG8[];
+Nextern const SIMPLE_ICON DISP_MSG9[];
+Nextern const SIMPLE_ICON DISP_MSG10[];
+Nextern const SIMPLE_ICON DISP_MSG11[];
+Nextern const SIMPLE_ICON DISP_MSG12[];
+Nextern const SIMPLE_ICON DISP_MSG13[];
+Nextern const SIMPLE_ICON DISP_MSG14[];
+Nextern const SIMPLE_ICON DISP_MSG15[];
+Nextern const SIMPLE_ICON DISP_MSG16[];
+Nextern const SIMPLE_ICON DISP_MSG17[];
+Nextern const SIMPLE_ICON DISP_MSG18[];
+Nextern const SIMPLE_ICON DISP_MSG19[];
+Nextern const SIMPLE_ICON DISP_MSG20[];
+Nextern const SIMPLE_ICON DISP_MSG21[];
+Nextern const SIMPLE_ICON DISP_MSG22[];
+Nextern const SIMPLE_ICON DISP_MSG23[];
+Nextern const SIMPLE_ICON DISP_MSG24[];
+Nextern const SIMPLE_ICON DISP_MSG25[];
+Nextern const SIMPLE_ICON DISP_MSG26[];
+Nextern const SIMPLE_ICON DISP_MSG27[];
+Nextern const SIMPLE_ICON DISP_MSG28[];
+N
+N
+N#endif
+L 2 "..\WindowsManage\icon_8inch.c" 2
+N
+N
+N
+Nconst SIMPLE_ICON ICON_BLANK[]= 								{0,		0,		0,		0,		0};
+Nconst SIMPLE_ICON ICON_PROGRESS_BAR[]= 				{ICON_CUT_PIC_NUM_1,		191,		507,		191+24,		507+40};
+Xconst SIMPLE_ICON ICON_PROGRESS_BAR[]= 				{1U,		191,		507,		191+24,		507+40};
+Nconst SIMPLE_ICON ICON_CONNECT_PC[] = 				{ICON_CUT_PIC_NUM_1,		270,		385,		270+270,	385+110};
+Xconst SIMPLE_ICON ICON_CONNECT_PC[] = 				{1U,		270,		385,		270+270,	385+110};
+N
+N//主菜单界面的ICON
+Nconst SIMPLE_ICON ICON_GUANG_DU_BLACK[]= 					{ICON_CUT_PIC_NUM_4,		340,	130,		450,	235};
+Xconst SIMPLE_ICON ICON_GUANG_DU_BLACK[]= 					{4U,		340,	130,		450,	235};
+Nconst SIMPLE_ICON ICON_GUANG_PU_BLACK[]= 					{ICON_CUT_PIC_NUM_4,		460,	195,		570,	300};
+Xconst SIMPLE_ICON ICON_GUANG_PU_BLACK[]= 					{4U,		460,	195,		570,	300};
+Nconst SIMPLE_ICON ICON_DING_LIANG_BLACK[]= 				{ICON_CUT_PIC_NUM_4,		345,	260,		452,	365};
+Xconst SIMPLE_ICON ICON_DING_LIANG_BLACK[]= 				{4U,		345,	260,		452,	365};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_BLACK[]= 			{ICON_CUT_PIC_NUM_4,		115,	255,		225,	360};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_BLACK[]= 			{4U,		115,	255,		225,	360};
+Nconst SIMPLE_ICON ICON_DUO_BO_CHANG_BLACK[]= 			{ICON_CUT_PIC_NUM_4,		115,	385,		225,	495};
+Xconst SIMPLE_ICON ICON_DUO_BO_CHANG_BLACK[]= 			{4U,		115,	385,		225,	495};
+Nconst SIMPLE_ICON ICON_SYSTEM_SET_BLACK[]= 				{ICON_CUT_PIC_NUM_4,		230,	320,		340,	425};
+Xconst SIMPLE_ICON ICON_SYSTEM_SET_BLACK[]= 				{4U,		230,	320,		340,	425};
+N
+N//光度测试界面的icon
+Nconst SIMPLE_ICON ICON_AUTO_ZERO_GUANGDU_BLACK[]= 		{ICON_CUT_PIC_NUM_6,		590,	500,		670,	600};
+Xconst SIMPLE_ICON ICON_AUTO_ZERO_GUANGDU_BLACK[]= 		{6U,		590,	500,		670,	600};
+Nconst SIMPLE_ICON ICON_PRINT_GUANGDU_BLACK[]= 			{ICON_CUT_PIC_NUM_6,		680,	500,		770,	600};
+Xconst SIMPLE_ICON ICON_PRINT_GUANGDU_BLACK[]= 			{6U,		680,	500,		770,	600};
+Nconst SIMPLE_ICON ICON_T_ABS_GUANGDU_BLACK[]= 			{ICON_CUT_PIC_NUM_6,		615,	180,		770,	240};
+Xconst SIMPLE_ICON ICON_T_ABS_GUANGDU_BLACK[]= 			{6U,		615,	180,		770,	240};
+Nconst SIMPLE_ICON ICON_DISP_MODE_GUANGDU_BLACK[]= 		{ICON_CUT_PIC_NUM_6,		461,	185,		603,	235};
+Xconst SIMPLE_ICON ICON_DISP_MODE_GUANGDU_BLACK[]= 		{6U,		461,	185,		603,	235};
+N//const SIMPLE_ICON ICON_SET_SLIT_GUANGDU_BLACK[]= 	{ICON_CUT_PIC_NUM_6,		395,	417,		535,	467};
+Nconst SIMPLE_ICON ICON_MAIN_MENU_BLACK[]= 				{ICON_CUT_PIC_NUM_6,		700,	0,			800,	100};
+Xconst SIMPLE_ICON ICON_MAIN_MENU_BLACK[]= 				{6U,		700,	0,			800,	100};
+Nconst SIMPLE_ICON ICON_CELL_LEFT_GUANGDU_BLACK[]= 		{ICON_CUT_PIC_NUM_6,		335,	415,		415,	470};
+Xconst SIMPLE_ICON ICON_CELL_LEFT_GUANGDU_BLACK[]= 		{6U,		335,	415,		415,	470};
+Nconst SIMPLE_ICON ICON_CELL_CHOOSE_GUANGDU_BLACK[]= 		{ICON_CUT_PIC_NUM_6,		420,	415,		570,	470};
+Xconst SIMPLE_ICON ICON_CELL_CHOOSE_GUANGDU_BLACK[]= 		{6U,		420,	415,		570,	470};
+Nconst SIMPLE_ICON ICON_CELL_RIGHT_GUANGDU_BLACK[]= 		{ICON_CUT_PIC_NUM_6,		575,	415,		660,	470};
+Xconst SIMPLE_ICON ICON_CELL_RIGHT_GUANGDU_BLACK[]= 		{6U,		575,	415,		660,	470};
+N
+N
+N
+N
+Nconst SIMPLE_ICON ICON_M1[]													= {ICON_CUT_PIC_NUM_6,		717,	410,		75,		38};
+Xconst SIMPLE_ICON ICON_M1[]													= {6U,		717,	410,		75,		38};
+Nconst SIMPLE_ICON ICON_M2[]													= {ICON_CUT_PIC_NUM_7,		717,	410,		75,		38};
+Xconst SIMPLE_ICON ICON_M2[]													= {7U,		717,	410,		75,		38};
+N
+Nconst SIMPLE_ICON ICON_VALLEY_UP_BLACK[]= 									{ICON_CUT_PIC_NUM_11,		670,	135,		702,	287};
+Xconst SIMPLE_ICON ICON_VALLEY_UP_BLACK[]= 									{11U,		670,	135,		702,	287};
+Nconst SIMPLE_ICON ICON_VALLEY_DOWN_BLACK[]= 								{ICON_CUT_PIC_NUM_11,		670,	300,		702,	452};
+Xconst SIMPLE_ICON ICON_VALLEY_DOWN_BLACK[]= 								{11U,		670,	300,		702,	452};
+N
+N
+N
+Nconst SIMPLE_ICON ICON_STOP_GUANGPU[]							= {ICON_CUT_PIC_NUM_8,		533,	525,		180,	65};
+Xconst SIMPLE_ICON ICON_STOP_GUANGPU[]							= {8U,		533,	525,		180,	65};
+Nconst SIMPLE_ICON ICON_TEST_GUANGPU[]							= {ICON_CUT_PIC_NUM_6,		533,	525,		180,	65};
+Xconst SIMPLE_ICON ICON_TEST_GUANGPU[]							= {6U,		533,	525,		180,	65};
+N
+N//const SIMPLE_ICON ICON_STOP_BASE_LINE_GUANGPU[]				= {ICON_CUT_PIC_NUM_11,		674,	545,		792,	595};
+Nconst SIMPLE_ICON ICON_STOP_BASE_LINE_GUANGPU[]					= {ICON_CUT_PIC_NUM_11,		715,	170,		795,	250};
+Xconst SIMPLE_ICON ICON_STOP_BASE_LINE_GUANGPU[]					= {11U,		715,	170,		795,	250};
+Nconst SIMPLE_ICON ICON_TEST_BASE_LINE_GUANGPU[]					= {ICON_CUT_PIC_NUM_7,		715,	170,		795,	250};
+Xconst SIMPLE_ICON ICON_TEST_BASE_LINE_GUANGPU[]					= {7U,		715,	170,		795,	250};
+N
+N
+N//光谱存储界面的icon
+Nconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_SAVE_BLACK[]				= {ICON_CUT_PIC_NUM_8,		703,	177,	776,	252};
+Xconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_SAVE_BLACK[]				= {8U,		703,	177,	776,	252};
+Nconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_LOAD_BLACK[]				= {ICON_CUT_PIC_NUM_8,		703,	265,	776,	340};
+Xconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_LOAD_BLACK[]				= {8U,		703,	265,	776,	340};
+Nconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_DELATE_BLACK[]			= {ICON_CUT_PIC_NUM_8,		703,	417,	776,	492};
+Xconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_DELATE_BLACK[]			= {8U,		703,	417,	776,	492};
+Nconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_RENAME_BLACK[]			= {ICON_CUT_PIC_NUM_8,		703,	505,	776,	580};
+Xconst SIMPLE_ICON ICON_SAVE_LOAD_GUPU_RENAME_BLACK[]			= {8U,		703,	505,	776,	580};
+N
+N
+N//定量测试
+N//定量测试k系数法参数设置界面icon
+N
+N
+Nconst SIMPLE_ICON ICON_PRINT_DING_LIANG_BIAODING_BLACK[]	= {ICON_CUT_PIC_NUM_22,		704,	504,	704+72,	504+72};
+Xconst SIMPLE_ICON ICON_PRINT_DING_LIANG_BIAODING_BLACK[]	= {22U,		704,	504,	704+72,	504+72};
+Nconst SIMPLE_ICON ICON_AUTO_ZERO_DING_LIANG_BLACK[]				= {ICON_CUT_PIC_NUM_16,		718,	173,			791,	247};
+Xconst SIMPLE_ICON ICON_AUTO_ZERO_DING_LIANG_BLACK[]				= {16U,		718,	173,			791,	247};
+Nconst SIMPLE_ICON ICON_BIAO_DING_DING_LIANG_BLACK[]				= {ICON_CUT_PIC_NUM_16,		465,	345,			590,	390};
+Xconst SIMPLE_ICON ICON_BIAO_DING_DING_LIANG_BLACK[]				= {16U,		465,	345,			590,	390};
+Nconst SIMPLE_ICON ICON_LAST_PAGE_DING_LIANG_BLACK[]				= {ICON_CUT_PIC_NUM_11,		640,	150,			673,	280};
+Xconst SIMPLE_ICON ICON_LAST_PAGE_DING_LIANG_BLACK[]				= {11U,		640,	150,			673,	280};
+Nconst SIMPLE_ICON ICON_NEXT_PAGE_DING_LIANG_BLACK[]				= {ICON_CUT_PIC_NUM_11,		640,	390,			673,	510};
+Xconst SIMPLE_ICON ICON_NEXT_PAGE_DING_LIANG_BLACK[]				= {11U,		640,	390,			673,	510};
+N
+N
+Nconst SIMPLE_ICON ICON_SYSTEM_CONFIG_INIT_BALCK[]							= {ICON_CUT_PIC_NUM_36,		610,	530,			785,	590};
+Xconst SIMPLE_ICON ICON_SYSTEM_CONFIG_INIT_BALCK[]							= {36U,		610,	530,			785,	590};
+Nconst SIMPLE_ICON ICON_SYSTEM_CONFIG_BALCK_CURRENT_BALCK[]		= {ICON_CUT_PIC_NUM_36,		20,		530,			190,	590};
+Xconst SIMPLE_ICON ICON_SYSTEM_CONFIG_BALCK_CURRENT_BALCK[]		= {36U,		20,		530,			190,	590};
+Nconst SIMPLE_ICON ICON_SYSTEM_CONFIG_LANGUAGE_CHOOSE_BALCK[]	= {ICON_CUT_PIC_NUM_36,		200,	530,			350,	590};
+Xconst SIMPLE_ICON ICON_SYSTEM_CONFIG_LANGUAGE_CHOOSE_BALCK[]	= {36U,		200,	530,			350,	590};
+Nconst SIMPLE_ICON ICON_SYSTEM_CONFIG_SLIT_BALCK[]							= {ICON_CUT_PIC_NUM_36,		360,	530,			510,	590};
+Xconst SIMPLE_ICON ICON_SYSTEM_CONFIG_SLIT_BALCK[]							= {36U,		360,	530,			510,	590};
+N
+N
+N
+N
+N
+N
+Nconst SIMPLE_ICON ICON_FINISH_MP_BLACK[]					= {ICON_CUT_PIC_NUM_16,		541,	475,			658,	517};
+Xconst SIMPLE_ICON ICON_FINISH_MP_BLACK[]					= {16U,		541,	475,			658,	517};
+Nconst SIMPLE_ICON ICON_DISP_DATA_MP_BLACK[]				= {ICON_CUT_PIC_NUM_16,		666,	539,			782,	581};
+Xconst SIMPLE_ICON ICON_DISP_DATA_MP_BLACK[]				= {16U,		666,	539,			782,	581};
+Nconst SIMPLE_ICON ICON_DISP_CURVE_MP_BLACK[]			= {ICON_CUT_PIC_NUM_16,		666,	475,			782,	516};
+Xconst SIMPLE_ICON ICON_DISP_CURVE_MP_BLACK[]			= {16U,		666,	475,			782,	516};
+N
+Nconst SIMPLE_ICON ICON_MULTI_ML_T_A_BLACK[]				= {ICON_CUT_PIC_NUM_26,		139,	546,			259,	591};
+Xconst SIMPLE_ICON ICON_MULTI_ML_T_A_BLACK[]				= {26U,		139,	546,			259,	591};
+Nconst SIMPLE_ICON ICON_MULTI_ML_CLR_DATA_BLACK[]		= {ICON_CUT_PIC_NUM_26,		139,	546,		139+120,	546+45};
+Xconst SIMPLE_ICON ICON_MULTI_ML_CLR_DATA_BLACK[]		= {26U,		139,	546,		139+120,	546+45};
+N
+N
+N
+N
+Nconst SIMPLE_ICON ICON_MESSAGE_BOX1[]= 				{0,		0,		0,		0,		0};
+Nconst SIMPLE_ICON ICON_MESSAGE_BOX2[]= 				{0,		0,		0,		0,		0};
+Nconst SIMPLE_ICON ICON_MESSAGE_BOX3[]= 				{0,		0,		0,		0,		0};
+N
+N//const SIMPLE_ICON ICON_MESSAGE_BOX[]= 	{17,		14,		14,		398,		94};
+N
+N//大数字
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_0[]= 					{ICON_CUT_PIC_NUM_41,		40,		270,		120,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_0[]= 					{41U,		40,		270,		120,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_1[]= 					{ICON_CUT_PIC_NUM_41,		145,	270,		225,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_1[]= 					{41U,		145,	270,		225,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_2[]= 					{ICON_CUT_PIC_NUM_41,		245,	270,		325,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_2[]= 					{41U,		245,	270,		325,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_3[]= 					{ICON_CUT_PIC_NUM_41,		350,	270,		430,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_3[]= 					{41U,		350,	270,		430,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_4[]= 					{ICON_CUT_PIC_NUM_41,		455,	270,		535,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_4[]= 					{41U,		455,	270,		535,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_5[]= 					{ICON_CUT_PIC_NUM_41,		560,	270,		640,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_5[]= 					{41U,		560,	270,		640,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_6[]= 					{ICON_CUT_PIC_NUM_41,		660,	270,		740,	370};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_6[]= 					{41U,		660,	270,		740,	370};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_7[]= 					{ICON_CUT_PIC_NUM_41,		40,		152,		120,	252};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_7[]= 					{41U,		40,		152,		120,	252};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_8[]= 					{ICON_CUT_PIC_NUM_41,		145,	152,		225,	252};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_8[]= 					{41U,		145,	152,		225,	252};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_9[]= 					{ICON_CUT_PIC_NUM_41,		254,	152,		334,	252};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_9[]= 					{41U,		254,	152,		334,	252};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_POINT[]= 				{ICON_CUT_PIC_NUM_41,		350,	152,		430,	252};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_POINT[]= 				{41U,		350,	152,		430,	252};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_A[]=					{ICON_CUT_PIC_NUM_41,		200,		485,		300,	585};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_A[]=					{41U,		200,		485,		300,	585};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_PERCANTAGE[]=			{ICON_CUT_PIC_NUM_41,		305,		485,		405,	585};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_PERCANTAGE[]=			{41U,		305,		485,		405,	585};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_MINUS[]= 				{ICON_CUT_PIC_NUM_41,		115,		485,		195,	585};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_MINUS[]= 				{41U,		115,		485,		195,	585};
+Nconst SIMPLE_ICON ICON_LARGE_NUMBER_SPACE[]= 				{ICON_CUT_PIC_NUM_41,		440,		485,		520,	585};
+Xconst SIMPLE_ICON ICON_LARGE_NUMBER_SPACE[]= 				{41U,		440,		485,		520,	585};
+N
+N
+N//中号数字
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_0[]= 					{ICON_CUT_PIC_NUM_41,		622,	370,		652,	415};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_0[]= 					{41U,		622,	370,		652,	415};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_1[]= 					{ICON_CUT_PIC_NUM_41,		664,	370,		694,	415};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_1[]= 					{41U,		664,	370,		694,	415};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_2[]= 					{ICON_CUT_PIC_NUM_41,		570,	65,			600,	110};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_2[]= 					{41U,		570,	65,			600,	110};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_3[]= 					{ICON_CUT_PIC_NUM_41,		610,	65,			640,	110};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_3[]= 					{41U,		610,	65,			640,	110};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_4[]= 					{ICON_CUT_PIC_NUM_41,		652,	65,			682,	110};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_4[]= 					{41U,		652,	65,			682,	110};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_5[]= 					{ICON_CUT_PIC_NUM_41,		705,	370,		735,	415};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_5[]= 					{41U,		705,	370,		735,	415};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_6[]= 					{ICON_CUT_PIC_NUM_41,		746,	370,		776,	415};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_6[]= 					{41U,		746,	370,		776,	415};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_7[]= 					{ICON_CUT_PIC_NUM_41,		570,	116,		600,	161};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_7[]= 					{41U,		570,	116,		600,	161};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_8[]= 					{ICON_CUT_PIC_NUM_41,		610,	116,		640,	161};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_8[]= 					{41U,		610,	116,		640,	161};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_9[]= 					{ICON_CUT_PIC_NUM_41,		652,	116,		682,	161};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_9[]= 					{41U,		652,	116,		682,	161};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_A[]=					{ICON_CUT_PIC_NUM_41,		702,	116,		747,	161};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_A[]=					{41U,		702,	116,		747,	161};
+N
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_POINT[]= 				{ICON_CUT_PIC_NUM_41,		30,		100,		60,		145};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_POINT[]= 				{41U,		30,		100,		60,		145};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_NM[]= 					{ICON_CUT_PIC_NUM_41,		165,	65,			165+60,	65+45};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_NM[]= 					{41U,		165,	65,			165+60,	65+45};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_SPACE[]= 				{ICON_CUT_PIC_NUM_41,		60,		100,		90,		145};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_SPACE[]= 				{41U,		60,		100,		90,		145};
+N
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_PERCANTAGE[]=			{ICON_CUT_PIC_NUM_41,		112,	65,			112+45,	65+45};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_PERCANTAGE[]=			{41U,		112,	65,			112+45,	65+45};
+Nconst SIMPLE_ICON ICON_MIDDLE_NUMBER_MINUS[]= 				{ICON_CUT_PIC_NUM_41,		58,		65,			58+30,	65+45};
+Xconst SIMPLE_ICON ICON_MIDDLE_NUMBER_MINUS[]= 				{41U,		58,		65,			58+30,	65+45};
+N
+N
+N//小号数字
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_0[]= 					{ICON_CUT_PIC_NUM_41,		55,	396,		75,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_0[]= 					{41U,		55,	396,		75,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_1[]= 					{ICON_CUT_PIC_NUM_41,		80,	396,		100,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_1[]= 					{41U,		80,	396,		100,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_2[]= 					{ICON_CUT_PIC_NUM_41,		105,	396,		125,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_2[]= 					{41U,		105,	396,		125,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_3[]= 					{ICON_CUT_PIC_NUM_41,		130,	396,		150,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_3[]= 					{41U,		130,	396,		150,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_4[]= 					{ICON_CUT_PIC_NUM_41,		158,	396,		178,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_4[]= 					{41U,		158,	396,		178,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_5[]= 					{ICON_CUT_PIC_NUM_41,		185,	396,		205,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_5[]= 					{41U,		185,	396,		205,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_6[]= 					{ICON_CUT_PIC_NUM_41,		210,	396,		230,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_6[]= 					{41U,		210,	396,		230,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_7[]= 					{ICON_CUT_PIC_NUM_41,		235,	396,		255,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_7[]= 					{41U,		235,	396,		255,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_8[]= 					{ICON_CUT_PIC_NUM_41,		260,	396,		280,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_8[]= 					{41U,		260,	396,		280,	419};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_9[]= 					{ICON_CUT_PIC_NUM_41,		286,	396,		306,	419};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_9[]= 					{41U,		286,	396,		306,	419};
+N
+N
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_POINT[]= 			{ICON_CUT_PIC_NUM_41,		210,		440,		230,		463};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_POINT[]= 			{41U,		210,		440,		230,		463};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_NM[]= 				{ICON_CUT_PIC_NUM_41,		170,		440,		210,	463};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_NM[]= 				{41U,		170,		440,		210,	463};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_SPACE[]= 			{ICON_CUT_PIC_NUM_41,		235,		440,		255,		463};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_SPACE[]= 			{41U,		235,		440,		255,		463};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_PERCANTAGE[]=		{ICON_CUT_PIC_NUM_41,		135,		440,		165,	463};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_PERCANTAGE[]=		{41U,		135,		440,		165,	463};
+Nconst SIMPLE_ICON ICON_SMALL_NUMBER_MINUS[]= 			{ICON_CUT_PIC_NUM_41,		115,		440,		135,	463};
+Xconst SIMPLE_ICON ICON_SMALL_NUMBER_MINUS[]= 			{41U,		115,		440,		135,	463};
+N
+N
+N//键盘数字
+N
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_1[]= 					{ICON_CUT_PIC_NUM_18,		113,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_1[]= 					{18U,		113,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_2[]= 					{ICON_CUT_PIC_NUM_18,		140,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_2[]= 					{18U,		140,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_3[]= 					{ICON_CUT_PIC_NUM_18,		168,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_3[]= 					{18U,		168,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_4[]= 					{ICON_CUT_PIC_NUM_18,		195,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_4[]= 					{18U,		195,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_5[]= 					{ICON_CUT_PIC_NUM_18,		223,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_5[]= 					{18U,		223,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_6[]= 					{ICON_CUT_PIC_NUM_18,		250,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_6[]= 					{18U,		250,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_7[]= 					{ICON_CUT_PIC_NUM_18,		278,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_7[]= 					{18U,		278,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_8[]= 					{ICON_CUT_PIC_NUM_18,		305,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_8[]= 					{18U,		305,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_9[]= 					{ICON_CUT_PIC_NUM_18,		333,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_9[]= 					{18U,		333,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_0[]= 					{ICON_CUT_PIC_NUM_18,		361,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_0[]= 					{18U,		361,	379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_POINT[]= 				{ICON_CUT_PIC_NUM_18,		90,		379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_POINT[]= 				{18U,		90,		379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_SIGN[]= 				{ICON_CUT_PIC_NUM_18,		71,		379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_SIGN[]= 				{18U,		71,		379,	24,	30};
+Nconst SIMPLE_ICON ICON_DIGITAL_NUMBER_SPACE[]= 				{ICON_CUT_PIC_NUM_18,		395,	379,	24,	30};
+Xconst SIMPLE_ICON ICON_DIGITAL_NUMBER_SPACE[]= 				{18U,		395,	379,	24,	30};
+N
+N
+N
+N
+N
+Nconst COLOR_NUMBER_TABLE  ColorLargeNumberTable[] = 
+N{
+N	{'0',(SIMPLE_ICON*)ICON_LARGE_NUMBER_0},
+N	{'1',(SIMPLE_ICON*)ICON_LARGE_NUMBER_1},
+N	{'2',(SIMPLE_ICON*)ICON_LARGE_NUMBER_2},
+N	{'3',(SIMPLE_ICON*)ICON_LARGE_NUMBER_3},
+N	{'4',(SIMPLE_ICON*)ICON_LARGE_NUMBER_4},
+N	{'5',(SIMPLE_ICON*)ICON_LARGE_NUMBER_5},
+N	{'6',(SIMPLE_ICON*)ICON_LARGE_NUMBER_6},
+N	{'7',(SIMPLE_ICON*)ICON_LARGE_NUMBER_7},
+N	{'8',(SIMPLE_ICON*)ICON_LARGE_NUMBER_8},
+N	{'9',(SIMPLE_ICON*)ICON_LARGE_NUMBER_9},
+N	{'A',(SIMPLE_ICON*)ICON_LARGE_NUMBER_A},
+N	{'%',(SIMPLE_ICON*)ICON_LARGE_NUMBER_PERCANTAGE},
+N	{'.',(SIMPLE_ICON*)ICON_LARGE_NUMBER_POINT},
+N	{'-',(SIMPLE_ICON*)ICON_LARGE_NUMBER_MINUS},
+N	{' ',(SIMPLE_ICON*)ICON_LARGE_NUMBER_SPACE}
+N} ;
+N
+N
+Nconst COLOR_NUMBER_TABLE  ColorMiddleNumberTable[] = 
+N{
+N	{'0',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_0},
+N	{'1',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_1},
+N	{'2',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_2},
+N	{'3',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_3},
+N	{'4',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_4},
+N	{'5',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_5},
+N	{'6',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_6},
+N	{'7',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_7},
+N	{'8',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_8},
+N	{'9',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_9},
+N	{'A',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_A},
+N	{'%',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_PERCANTAGE},
+N	{'.',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_POINT},
+N	{'-',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_MINUS},
+N	{' ',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_SPACE},
+N	{'n',(SIMPLE_ICON*)ICON_MIDDLE_NUMBER_NM}
+N} ;
+N
+N
+Nconst COLOR_NUMBER_TABLE  ColorSmallNumberTable[] = 
+N{
+N	{'0',(SIMPLE_ICON*)ICON_SMALL_NUMBER_0},
+N	{'1',(SIMPLE_ICON*)ICON_SMALL_NUMBER_1},
+N	{'2',(SIMPLE_ICON*)ICON_SMALL_NUMBER_2},
+N	{'3',(SIMPLE_ICON*)ICON_SMALL_NUMBER_3},
+N	{'4',(SIMPLE_ICON*)ICON_SMALL_NUMBER_4},
+N	{'5',(SIMPLE_ICON*)ICON_SMALL_NUMBER_5},
+N	{'6',(SIMPLE_ICON*)ICON_SMALL_NUMBER_6},
+N	{'7',(SIMPLE_ICON*)ICON_SMALL_NUMBER_7},
+N	{'8',(SIMPLE_ICON*)ICON_SMALL_NUMBER_8},
+N	{'9',(SIMPLE_ICON*)ICON_SMALL_NUMBER_9},
+N	{'9',(SIMPLE_ICON*)ICON_SMALL_NUMBER_9},
+N	{'%',(SIMPLE_ICON*)ICON_SMALL_NUMBER_PERCANTAGE},
+N	{'.',(SIMPLE_ICON*)ICON_SMALL_NUMBER_POINT},
+N	{'-',(SIMPLE_ICON*)ICON_SMALL_NUMBER_MINUS},
+N	{' ',(SIMPLE_ICON*)ICON_SMALL_NUMBER_SPACE},
+N	{'n',(SIMPLE_ICON*)ICON_SMALL_NUMBER_NM}
+N
+N} ;
+N
+N
+N
+Nconst COLOR_NUMBER_TABLE  ColorDigitalNumberTable[] = 
+N{
+N	{'0',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_0},
+N	{'1',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_1},
+N	{'2',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_2},
+N	{'3',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_3},
+N	{'4',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_4},
+N	{'5',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_5},
+N	{'6',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_6},
+N	{'7',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_7},
+N	{'8',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_8},
+N	{'9',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_9},
+N	{'.',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_POINT},
+N	{'-',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_SIGN},
+N	{' ',(SIMPLE_ICON*)ICON_DIGITAL_NUMBER_SPACE},
+N} ;
+N
+N
+N
+N
+N
+Nconst SIMPLE_ICON ICON_SELECT_OK[]= 								{ICON_CUT_PIC_NUM_26,		501,		245,		534,	277};//打钩
+Xconst SIMPLE_ICON ICON_SELECT_OK[]= 								{26U,		501,		245,		534,	277};
+Nconst SIMPLE_ICON ICON_SELECT_NOT_OK[]= 						{ICON_CUT_PIC_NUM_26,		501,		202,		534,	234};//不打勾
+Xconst SIMPLE_ICON ICON_SELECT_NOT_OK[]= 						{26U,		501,		202,		534,	234};
+N
+N
+Nconst SIMPLE_ICON ICON_SLIT_OK[]= 										{ICON_CUT_PIC_NUM_8,		737,		112,		777,	152};//打钩
+Xconst SIMPLE_ICON ICON_SLIT_OK[]= 										{8U,		737,		112,		777,	152};
+Nconst SIMPLE_ICON ICON_SLIT_ALL_NOT_SELECT[]= 				{ICON_CUT_PIC_NUM_8,		45,		350,			605,	470};
+Xconst SIMPLE_ICON ICON_SLIT_ALL_NOT_SELECT[]= 				{8U,		45,		350,			605,	470};
+N
+N
+N
+N
+N//光谱测试参数设置
+N//扫描速度选择
+Nconst SIMPLE_ICON ICON_SPEED_SLOW_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		202,	77,				100,	35};
+Xconst SIMPLE_ICON ICON_SPEED_SLOW_SELECT[]= 				{11U,		202,	77,				100,	35};
+Nconst SIMPLE_ICON ICON_SPEED_MIDDLE_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		378,	77,				100,	35};
+Xconst SIMPLE_ICON ICON_SPEED_MIDDLE_SELECT[]= 				{11U,		378,	77,				100,	35};
+Nconst SIMPLE_ICON ICON_SPEED_FAST_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		552,	77,				100,	35};
+Xconst SIMPLE_ICON ICON_SPEED_FAST_SELECT[]= 				{11U,		552,	77,				100,	35};
+Nconst SIMPLE_ICON ICON_SPEED_ALL_NOT_SELECT[]= 				{ICON_CUT_PIC_NUM_10,		202,	77,				450,	35};
+Xconst SIMPLE_ICON ICON_SPEED_ALL_NOT_SELECT[]= 				{10U,		202,	77,				450,	35};
+N//扫描间隔选择
+Nconst SIMPLE_ICON ICON_INTERVAL_01_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		202,	119,			100,	35};
+Xconst SIMPLE_ICON ICON_INTERVAL_01_SELECT[]= 				{11U,		202,	119,			100,	35};
+Nconst SIMPLE_ICON ICON_INTERVAL_10_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		378,	119,			100,	35};
+Xconst SIMPLE_ICON ICON_INTERVAL_10_SELECT[]= 				{11U,		378,	119,			100,	35};
+Nconst SIMPLE_ICON ICON_INTERVAL_ALL_NOT_SELECT[]= 			{ICON_CUT_PIC_NUM_10,		202,	119,			280,	35};
+Xconst SIMPLE_ICON ICON_INTERVAL_ALL_NOT_SELECT[]= 			{10U,		202,	119,			280,	35};
+N
+N//激发光源
+Nconst SIMPLE_ICON ICON_EMIT_LIGHT1_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		202,	285,			100,	35};
+Xconst SIMPLE_ICON ICON_EMIT_LIGHT1_SELECT[]= 				{11U,		202,	285,			100,	35};
+Nconst SIMPLE_ICON ICON_EMIT_LIGHT2_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		317,	285,			100,	35};
+Xconst SIMPLE_ICON ICON_EMIT_LIGHT2_SELECT[]= 				{11U,		317,	285,			100,	35};
+Nconst SIMPLE_ICON ICON_EMIT_LIGHT3_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		431,	285,			100,	35};
+Xconst SIMPLE_ICON ICON_EMIT_LIGHT3_SELECT[]= 				{11U,		431,	285,			100,	35};
+Nconst SIMPLE_ICON ICON_EMIT_LIGHT4_SELECT[]= 				{ICON_CUT_PIC_NUM_11,		546,	285,			100,	35};
+Xconst SIMPLE_ICON ICON_EMIT_LIGHT4_SELECT[]= 				{11U,		546,	285,			100,	35};
+Nconst SIMPLE_ICON ICON_EMIT_LIGHT_ALL_NOT_SELECT[]= 		{ICON_CUT_PIC_NUM_10,		202,	285,			450,	35};
+Xconst SIMPLE_ICON ICON_EMIT_LIGHT_ALL_NOT_SELECT[]= 		{10U,		202,	285,			450,	35};
+N
+N//倍增管状态
+Nconst SIMPLE_ICON ICON_PMT_ON_SELECT[]= 					{ICON_CUT_PIC_NUM_11,		200,	375,			140,	37};
+Xconst SIMPLE_ICON ICON_PMT_ON_SELECT[]= 					{11U,		200,	375,			140,	37};
+Nconst SIMPLE_ICON ICON_PMT_OFF_SELECT[]= 					{ICON_CUT_PIC_NUM_11,		384,	375,			140,	37};
+Xconst SIMPLE_ICON ICON_PMT_OFF_SELECT[]= 					{11U,		384,	375,			140,	37};
+Nconst SIMPLE_ICON ICON_PMT_NONE_SELECT[]= 					{ICON_CUT_PIC_NUM_10,		200,	375,			325,	37};
+Xconst SIMPLE_ICON ICON_PMT_NONE_SELECT[]= 					{10U,		200,	375,			325,	37};
+N
+N//增益
+Nconst SIMPLE_ICON ICON_GAIN1_SELECT[]= 						{ICON_CUT_PIC_NUM_11,		202,	478,			80,	35};
+Xconst SIMPLE_ICON ICON_GAIN1_SELECT[]= 						{11U,		202,	478,			80,	35};
+Nconst SIMPLE_ICON ICON_GAIN2_SELECT[]= 						{ICON_CUT_PIC_NUM_11,		297,	478,			80,	35};
+Xconst SIMPLE_ICON ICON_GAIN2_SELECT[]= 						{11U,		297,	478,			80,	35};
+Nconst SIMPLE_ICON ICON_GAIN4_SELECT[]= 						{ICON_CUT_PIC_NUM_11,		390,	478,			80,	35};
+Xconst SIMPLE_ICON ICON_GAIN4_SELECT[]= 						{11U,		390,	478,			80,	35};
+Nconst SIMPLE_ICON ICON_GAIN8_SELECT[]= 						{ICON_CUT_PIC_NUM_11,		485,	478,			80,	35};
+Xconst SIMPLE_ICON ICON_GAIN8_SELECT[]= 						{11U,		485,	478,			80,	35};
+Nconst SIMPLE_ICON ICON_GAIN_ALL_NOT_SELECT[]= 				{ICON_CUT_PIC_NUM_10,		202,	478,			365,	35};
+Xconst SIMPLE_ICON ICON_GAIN_ALL_NOT_SELECT[]= 				{10U,		202,	478,			365,	35};
+N
+N
+N
+N
+N
+N
+N//动力学测试参数设置
+N//扫描时间单位选择
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_MINUTE[]= 			{ICON_CUT_PIC_NUM_25,		292,	155,		130,	32};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_MINUTE[]= 			{25U,		292,	155,		130,	32};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_SECOND[]= 			{ICON_CUT_PIC_NUM_25,		457,	155,		130,	32};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_SECOND[]= 			{25U,		457,	155,		130,	32};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_NONE[]= 			{ICON_CUT_PIC_NUM_24,		292,	155,		457-292+130,	32};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_UNIT_NONE[]= 			{24U,		292,	155,		457-292+130,	32};
+N
+N//激发光源
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT1_SELECT[]= 				{ICON_CUT_PIC_NUM_25,		224,	309,		100,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT1_SELECT[]= 				{25U,		224,	309,		100,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT2_SELECT[]= 				{ICON_CUT_PIC_NUM_25,		337,	309,		100,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT2_SELECT[]= 				{25U,		337,	309,		100,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT3_SELECT[]= 				{ICON_CUT_PIC_NUM_25,		452,	309,		100,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT3_SELECT[]= 				{25U,		452,	309,		100,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT4_SELECT[]= 				{ICON_CUT_PIC_NUM_25,		566,	309,		100,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT4_SELECT[]= 				{25U,		566,	309,		100,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT_ALL_NOT_SELECT[]= 		{ICON_CUT_PIC_NUM_24,		224,	309,		566-224+100,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_EMIT_LIGHT_ALL_NOT_SELECT[]= 		{24U,		224,	309,		566-224+100,	40};
+N
+N//增益
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN1_SELECT[]= 						{ICON_CUT_PIC_NUM_25,		221,	475,		80,		40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN1_SELECT[]= 						{25U,		221,	475,		80,		40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN2_SELECT[]= 						{ICON_CUT_PIC_NUM_25,		316,	475,		80,		40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN2_SELECT[]= 						{25U,		316,	475,		80,		40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN4_SELECT[]= 						{ICON_CUT_PIC_NUM_25,		411,	475,		80,		40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN4_SELECT[]= 						{25U,		411,	475,		80,		40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN8_SELECT[]= 						{ICON_CUT_PIC_NUM_25,		506,	475,		80,		40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN8_SELECT[]= 						{25U,		506,	475,		80,		40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN_ALL_NOT_SELECT[]= 				{ICON_CUT_PIC_NUM_24,		221,	475,		506-221+80,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_GAIN_ALL_NOT_SELECT[]= 				{24U,		221,	475,		506-221+80,	40};
+N
+N//倍增管状态
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_ON_SELECT[]= 					{ICON_CUT_PIC_NUM_25,		223,	374,		140,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_ON_SELECT[]= 					{25U,		223,	374,		140,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_OFF_SELECT[]= 					{ICON_CUT_PIC_NUM_25,		405,	374,		140,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_OFF_SELECT[]= 					{25U,		405,	374,		140,	40};
+Nconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_NONE_SELECT[]= 					{ICON_CUT_PIC_NUM_24,		223,	374,		405-223+140,	40};
+Xconst SIMPLE_ICON ICON_DONG_LI_XUE_PMT_NONE_SELECT[]= 					{24U,		223,	374,		405-223+140,	40};
+N
+N
+N
+N//定量测试标定
+Nconst SIMPLE_ICON ICON_BIAO_DING_EN_BASE[]= 				            {ICON_CUT_PIC_NUM_16,		746,	228,		40,	40};
+Xconst SIMPLE_ICON ICON_BIAO_DING_EN_BASE[]= 				            {16U,		746,	228,		40,	40};
+Nconst SIMPLE_ICON ICON_BIAO_DING_DIS_BASE[]= 				            {ICON_CUT_PIC_NUM_17,		746,	228,		40,	40};
+Xconst SIMPLE_ICON ICON_BIAO_DING_DIS_BASE[]= 				            {17U,		746,	228,		40,	40};
+N
+N// //定量测试标定
+N// const SIMPLE_ICON ICON_DL_EN_BASE[]= 				            {ICON_CUT_PIC_NUM_14,		746,	228,		40,	40};
+N// const SIMPLE_ICON ICON_DL_DIS_BASE[]= 				            {ICON_CUT_PIC_NUM_15,		746,	228,		40,	40};
+N
+N
+N//child 窗口界面ICON
+Nconst SIMPLE_ICON CWindow_Language[]= 						{ICON_CUT_PIC_NUM_29,		14,		117,	14+372,	117+175};//语言选择
+Xconst SIMPLE_ICON CWindow_Language[]= 						{29U,		14,		117,	14+372,	117+175};
+Nconst SIMPLE_ICON CWindow_SET_SLIT[]= 						{ICON_CUT_PIC_NUM_8,		23,		294,		628,	504};//狭缝设置
+Xconst SIMPLE_ICON CWindow_SET_SLIT[]= 						{8U,		23,		294,		628,	504};
+Nconst SIMPLE_ICON CWindow_DIGITAL_KEYBOARD[]= 				{ICON_CUT_PIC_NUM_18,		549,	31,	230,	270};//数字键盘
+Xconst SIMPLE_ICON CWindow_DIGITAL_KEYBOARD[]= 				{18U,		549,	31,	230,	270};
+Nconst SIMPLE_ICON CWindow_ALPHABET_KEYBOARD[]= 				{ICON_CUT_PIC_NUM_18,		30,		28,	431,	278};//字母键盘
+Xconst SIMPLE_ICON CWindow_ALPHABET_KEYBOARD[]= 				{18U,		30,		28,	431,	278};
+N
+N
+N
+Nconst SIMPLE_ICON CWindow_SET_SCALE[]= 					{ICON_CUT_PIC_NUM_8,		23,		63,	628,	273};//标尺设定
+Xconst SIMPLE_ICON CWindow_SET_SCALE[]= 					{8U,		23,		63,	628,	273};
+Nconst SIMPLE_ICON CWindow_SET_GUPU_PAR[]= 				{ICON_CUT_PIC_NUM_9,		5,		62,	715,	540};//光谱参数设置
+Xconst SIMPLE_ICON CWindow_SET_GUPU_PAR[]= 				{9U,		5,		62,	715,	540};
+Nconst SIMPLE_ICON CWindow_MsgBox[]= 					{ICON_CUT_PIC_NUM_19,		42,		56,		402,		168};;//消息框
+Xconst SIMPLE_ICON CWindow_MsgBox[]= 					{19U,		42,		56,		402,		168};;
+N
+N
+N//语言选择
+N// const SIMPLE_ICON ICON_CHINESE_SELECT[]= 				{ICON_CUT_PIC_NUM_29,																30,			165,		30+325,	165+110};
+N// const SIMPLE_ICON ICON_ENGLISH_SELECT[]= 				{ICON_CUT_PIC_NUM_29+LANGUAGE_PIC_INTERVAL_NUM,			30,			165,		30+325,	165+110};
+N// const SIMPLE_ICON ICON_SPAIN_SELECT[]= 					{ICON_CUT_PIC_NUM_29+LANGUAGE_PIC_INTERVAL_NUM*2,		30,			165,		30+325,	165+110};
+N// const SIMPLE_ICON ICON_PORTUGAL_SELECT[]= 			{ICON_CUT_PIC_NUM_29+LANGUAGE_PIC_INTERVAL_NUM*3,		30,			165,		30+325,	165+110};
+N
+N
+N
+N//数字键盘按键效果
+Nconst SIMPLE_ICON KEY_DIGITAL_0_BLACK[]	= 					{ICON_CUT_PIC_NUM_30,		513-504,	527-305,			610-504,	572-305,};
+Xconst SIMPLE_ICON KEY_DIGITAL_0_BLACK[]	= 					{30U,		513-504,	527-305,			610-504,	572-305,};
+Nconst SIMPLE_ICON KEY_DIGITAL_POINT_BLACK[]	= 				{ICON_CUT_PIC_NUM_30,		618-504,	527-305,			663-504,	572-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_POINT_BLACK[]	= 				{30U,		618-504,	527-305,			663-504,	572-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_1_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		513-504,	474-305,			558-504,	519-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_1_BLACK[]= 					{30U,		513-504,	474-305,			558-504,	519-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_2_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		565-504,	474-305,			610-504,	519-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_2_BLACK[]= 					{30U,		565-504,	474-305,			610-504,	519-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_3_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		618-504,	474-305,			663-504,	519-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_3_BLACK[]= 					{30U,		618-504,	474-305,			663-504,	519-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_4_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		513-504,	420-305,			558-504,	465-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_4_BLACK[]= 					{30U,		513-504,	420-305,			558-504,	465-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_5_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		565-504,	420-305,			610-504,	465-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_5_BLACK[]= 					{30U,		565-504,	420-305,			610-504,	465-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_6_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		618-504,	420-305,			663-504,	465-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_6_BLACK[]= 					{30U,		618-504,	420-305,			663-504,	465-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_7_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		513-504,	367-305,			558-504,	412-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_7_BLACK[]= 					{30U,		513-504,	367-305,			558-504,	412-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_8_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		565-504,	367-305,			610-504,	412-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_8_BLACK[]= 					{30U,		565-504,	367-305,			610-504,	412-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_9_BLACK[]= 					{ICON_CUT_PIC_NUM_30,		618-504,	367-305,			663-504,	412-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_9_BLACK[]= 					{30U,		618-504,	367-305,			663-504,	412-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_CE_BLACK[]= 				{ICON_CUT_PIC_NUM_30,		675-504,	367-305,			773-504,	412-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_CE_BLACK[]= 				{30U,		675-504,	367-305,			773-504,	412-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_SIGN_BLACK[]= 			{ICON_CUT_PIC_NUM_30,		675-504,	420-305,			773-504,	465-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_SIGN_BLACK[]= 			{30U,		675-504,	420-305,			773-504,	465-305};
+Nconst SIMPLE_ICON KEY_DIGITAL_ENTER_BLACK[]= 			{ICON_CUT_PIC_NUM_30,		675-504,	474-305,			773-504,	572-305};
+Xconst SIMPLE_ICON KEY_DIGITAL_ENTER_BLACK[]= 			{30U,		675-504,	474-305,			773-504,	572-305};
+N
+N
+N
+N
+N
+N
+N//字母键盘按键效果
+Nconst SIMPLE_ICON KEY_ALPH_1_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		26-17,		372-306,			72-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_1_BLACK[]= 					{33U,		26-17,		372-306,			72-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_2_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		78-17,		372-306,			122-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_2_BLACK[]= 					{33U,		78-17,		372-306,			122-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_3_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		131-17,		372-306,			175-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_3_BLACK[]= 					{33U,		131-17,		372-306,			175-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_4_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		183-17,		372-306,			227-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_4_BLACK[]= 					{33U,		183-17,		372-306,			227-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_5_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		234-17,		372-306,			279-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_5_BLACK[]= 					{33U,		234-17,		372-306,			279-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_6_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		287-17,		372-306,			332-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_6_BLACK[]= 					{33U,		287-17,		372-306,			332-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_7_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		338-17,		372-306,			383-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_7_BLACK[]= 					{33U,		338-17,		372-306,			383-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_8_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		391-17,		372-306,			436-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_8_BLACK[]= 					{33U,		391-17,		372-306,			436-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_9_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		442-17,		372-306,			488-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_9_BLACK[]= 					{33U,		442-17,		372-306,			488-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_0_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		495-17,		372-306,			540-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_0_BLACK[]= 					{33U,		495-17,		372-306,			540-17,	416-306};
+Nconst SIMPLE_ICON KEY_ALPH_CE_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		547-17,		372-306,			644-17,	416-306};
+Xconst SIMPLE_ICON KEY_ALPH_CE_BLACK[]= 					{33U,		547-17,		372-306,			644-17,	416-306};
+N
+Nconst SIMPLE_ICON KEY_ALPH_Q_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		26-17,		425-306,			72-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_Q_BLACK[]= 					{33U,		26-17,		425-306,			72-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_W_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		78-17,		425-306,			122-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_W_BLACK[]= 					{33U,		78-17,		425-306,			122-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_E_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		131-17,		425-306,			175-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_E_BLACK[]= 					{33U,		131-17,		425-306,			175-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_R_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		183-17,		425-306,			227-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_R_BLACK[]= 					{33U,		183-17,		425-306,			227-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_T_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		234-17,		425-306,			279-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_T_BLACK[]= 					{33U,		234-17,		425-306,			279-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_Y_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		287-17,		425-306,			332-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_Y_BLACK[]= 					{33U,		287-17,		425-306,			332-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_U_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		338-17,		425-306,			383-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_U_BLACK[]= 					{33U,		338-17,		425-306,			383-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_I_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		391-17,		425-306,			436-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_I_BLACK[]= 					{33U,		391-17,		425-306,			436-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_O_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		442-17,		425-306,			488-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_O_BLACK[]= 					{33U,		442-17,		425-306,			488-17,	469-306};
+Nconst SIMPLE_ICON KEY_ALPH_P_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		495-17,		425-306,			540-17,	469-306};
+Xconst SIMPLE_ICON KEY_ALPH_P_BLACK[]= 					{33U,		495-17,		425-306,			540-17,	469-306};
+N
+N
+Nconst SIMPLE_ICON KEY_ALPH_A_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		26-17,		478-306,			72-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_A_BLACK[]= 					{33U,		26-17,		478-306,			72-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_S_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		78-17,		478-306,			122-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_S_BLACK[]= 					{33U,		78-17,		478-306,			122-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_D_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		131-17,		478-306,			175-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_D_BLACK[]= 					{33U,		131-17,		478-306,			175-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_F_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		183-17,		478-306,			227-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_F_BLACK[]= 					{33U,		183-17,		478-306,			227-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_G_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		234-17,		478-306,			279-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_G_BLACK[]= 					{33U,		234-17,		478-306,			279-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_H_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		287-17,		478-306,			332-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_H_BLACK[]= 					{33U,		287-17,		478-306,			332-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_J_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		338-17,		478-306,			383-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_J_BLACK[]= 					{33U,		338-17,		478-306,			383-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_K_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		391-17,		478-306,			436-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_K_BLACK[]= 					{33U,		391-17,		478-306,			436-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_L_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		442-17,		478-306,			488-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_L_BLACK[]= 					{33U,		442-17,		478-306,			488-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_POINT_BLACK[]= 				{ICON_CUT_PIC_NUM_33,		495-17,		478-306,			540-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_POINT_BLACK[]= 				{33U,		495-17,		478-306,			540-17,	522-306};
+N
+N
+Nconst SIMPLE_ICON KEY_ALPH_Z_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		26-17,		531-306,			72-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_Z_BLACK[]= 					{33U,		26-17,		531-306,			72-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_X_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		78-17,		531-306,			122-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_X_BLACK[]= 					{33U,		78-17,		531-306,			122-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_C_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		131-17,		531-306,			175-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_C_BLACK[]= 					{33U,		131-17,		531-306,			175-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_V_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		183-17,		531-306,			227-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_V_BLACK[]= 					{33U,		183-17,		531-306,			227-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_B_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		234-17,		531-306,			279-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_B_BLACK[]= 					{33U,		234-17,		531-306,			279-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_N_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		287-17,		531-306,			332-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_N_BLACK[]= 					{33U,		287-17,		531-306,			332-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_M_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		338-17,		531-306,			383-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_M_BLACK[]= 					{33U,		338-17,		531-306,			383-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_DOWN_LINE_BLACK[]= 			{ICON_CUT_PIC_NUM_33,		391-17,		531-306,			436-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_DOWN_LINE_BLACK[]= 			{33U,		391-17,		531-306,			436-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_SPACE_BLACK[]= 				{ICON_CUT_PIC_NUM_33,		442-17,		531-306,			592-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_SPACE_BLACK[]= 				{33U,		442-17,		531-306,			592-17,	575-306};
+Nconst SIMPLE_ICON KEY_ALPH_EN_CN_BLACK[]= 				{ICON_CUT_PIC_NUM_33,		599-17,		531-306,			644-17,	575-306};
+Xconst SIMPLE_ICON KEY_ALPH_EN_CN_BLACK[]= 				{33U,		599-17,		531-306,			644-17,	575-306};
+N
+N
+Nconst SIMPLE_ICON KEY_ALPH_ENTER_BLACK[]= 				{ICON_CUT_PIC_NUM_33,		547-17,		425-306,			644-17,	522-306};
+Xconst SIMPLE_ICON KEY_ALPH_ENTER_BLACK[]= 				{33U,		547-17,		425-306,			644-17,	522-306};
+Nconst SIMPLE_ICON KEY_ALPH_UP_BLACK[]= 					{ICON_CUT_PIC_NUM_33,		495-17,		317-306,			540-17,	361-306};
+Xconst SIMPLE_ICON KEY_ALPH_UP_BLACK[]= 					{33U,		495-17,		317-306,			540-17,	361-306};
+Nconst SIMPLE_ICON KEY_ALPH_DOWN_BLACK[]= 				{ICON_CUT_PIC_NUM_33,		547-17,		317-306,			592-17,	361-306};
+Xconst SIMPLE_ICON KEY_ALPH_DOWN_BLACK[]= 				{33U,		547-17,		317-306,			592-17,	361-306};
+N
+Nconst SIMPLE_ICON ICON_ALPH_CN[]= 						{ICON_CUT_PIC_NUM_32,		599,		531,			644,	575};
+Xconst SIMPLE_ICON ICON_ALPH_CN[]= 						{32U,		599,		531,			644,	575};
+Nconst SIMPLE_ICON ICON_ALPH_EN[]= 						{ICON_CUT_PIC_NUM_32,		714,		531,			759,	575};
+Xconst SIMPLE_ICON ICON_ALPH_EN[]= 						{32U,		714,		531,			759,	575};
+N
+N
+N
+N
+N
+N//消息框的消息
+Nconst SIMPLE_ICON DISP_MSG1[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10,				320,	40};
+Xconst SIMPLE_ICON DISP_MSG1[]	= 				{31U,		20,	10,				320,	40};
+Nconst SIMPLE_ICON DISP_MSG2[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42,			320,	40+42};
+Xconst SIMPLE_ICON DISP_MSG2[]	= 				{31U,		20,	10+42,			320,	40+42};
+Nconst SIMPLE_ICON DISP_MSG3[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*2,		320,	40+42*2};
+Xconst SIMPLE_ICON DISP_MSG3[]	= 				{31U,		20,	10+42*2,		320,	40+42*2};
+Nconst SIMPLE_ICON DISP_MSG4[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*3,		320,	40+42*3};
+Xconst SIMPLE_ICON DISP_MSG4[]	= 				{31U,		20,	10+42*3,		320,	40+42*3};
+Nconst SIMPLE_ICON DISP_MSG5[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*4,		320,	40+42*4};
+Xconst SIMPLE_ICON DISP_MSG5[]	= 				{31U,		20,	10+42*4,		320,	40+42*4};
+Nconst SIMPLE_ICON DISP_MSG6[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*5,		320,	40+42*5};
+Xconst SIMPLE_ICON DISP_MSG6[]	= 				{31U,		20,	10+42*5,		320,	40+42*5};
+Nconst SIMPLE_ICON DISP_MSG7[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*6,		320,	40+42*6};
+Xconst SIMPLE_ICON DISP_MSG7[]	= 				{31U,		20,	10+42*6,		320,	40+42*6};
+Nconst SIMPLE_ICON DISP_MSG8[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*7,		320,	40+42*7};
+Xconst SIMPLE_ICON DISP_MSG8[]	= 				{31U,		20,	10+42*7,		320,	40+42*7};
+Nconst SIMPLE_ICON DISP_MSG9[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*8,		320,	40+42*8};
+Xconst SIMPLE_ICON DISP_MSG9[]	= 				{31U,		20,	10+42*8,		320,	40+42*8};
+Nconst SIMPLE_ICON DISP_MSG10[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*9,		320,	40+42*9};
+Xconst SIMPLE_ICON DISP_MSG10[]	= 				{31U,		20,	10+42*9,		320,	40+42*9};
+Nconst SIMPLE_ICON DISP_MSG11[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*10,		320,	40+42*10};
+Xconst SIMPLE_ICON DISP_MSG11[]	= 				{31U,		20,	10+42*10,		320,	40+42*10};
+Nconst SIMPLE_ICON DISP_MSG12[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*11,		320,	40+42*11};
+Xconst SIMPLE_ICON DISP_MSG12[]	= 				{31U,		20,	10+42*11,		320,	40+42*11};
+Nconst SIMPLE_ICON DISP_MSG13[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*12,		320,	40+42*12};
+Xconst SIMPLE_ICON DISP_MSG13[]	= 				{31U,		20,	10+42*12,		320,	40+42*12};
+Nconst SIMPLE_ICON DISP_MSG14[]	= 				{ICON_CUT_PIC_NUM_31,		20,	10+42*13,		320,	40+42*13};
+Xconst SIMPLE_ICON DISP_MSG14[]	= 				{31U,		20,	10+42*13,		320,	40+42*13};
+N
+Nconst SIMPLE_ICON DISP_MSG15[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10,				680,	40};
+Xconst SIMPLE_ICON DISP_MSG15[]	= 				{31U,		380,	10,				680,	40};
+Nconst SIMPLE_ICON DISP_MSG16[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42,			680,	40+42};
+Xconst SIMPLE_ICON DISP_MSG16[]	= 				{31U,		380,	10+42,			680,	40+42};
+Nconst SIMPLE_ICON DISP_MSG17[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*2,		680,	40+42*2};
+Xconst SIMPLE_ICON DISP_MSG17[]	= 				{31U,		380,	10+42*2,		680,	40+42*2};
+Nconst SIMPLE_ICON DISP_MSG18[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*3,		680,	40+42*3};
+Xconst SIMPLE_ICON DISP_MSG18[]	= 				{31U,		380,	10+42*3,		680,	40+42*3};
+Nconst SIMPLE_ICON DISP_MSG19[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*4,		680,	40+42*4};
+Xconst SIMPLE_ICON DISP_MSG19[]	= 				{31U,		380,	10+42*4,		680,	40+42*4};
+Nconst SIMPLE_ICON DISP_MSG20[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*5,		680,	40+42*5};
+Xconst SIMPLE_ICON DISP_MSG20[]	= 				{31U,		380,	10+42*5,		680,	40+42*5};
+Nconst SIMPLE_ICON DISP_MSG21[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*6,		680,	40+42*6};
+Xconst SIMPLE_ICON DISP_MSG21[]	= 				{31U,		380,	10+42*6,		680,	40+42*6};
+Nconst SIMPLE_ICON DISP_MSG22[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*7,		680,	40+42*7};
+Xconst SIMPLE_ICON DISP_MSG22[]	= 				{31U,		380,	10+42*7,		680,	40+42*7};
+Nconst SIMPLE_ICON DISP_MSG23[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*8,		680,	40+42*8};
+Xconst SIMPLE_ICON DISP_MSG23[]	= 				{31U,		380,	10+42*8,		680,	40+42*8};
+Nconst SIMPLE_ICON DISP_MSG24[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*9,		680,	40+42*9};
+Xconst SIMPLE_ICON DISP_MSG24[]	= 				{31U,		380,	10+42*9,		680,	40+42*9};
+Nconst SIMPLE_ICON DISP_MSG25[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*10,		680,	40+42*10};
+Xconst SIMPLE_ICON DISP_MSG25[]	= 				{31U,		380,	10+42*10,		680,	40+42*10};
+Nconst SIMPLE_ICON DISP_MSG26[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*11,		680,	40+42*11};
+Xconst SIMPLE_ICON DISP_MSG26[]	= 				{31U,		380,	10+42*11,		680,	40+42*11};
+Nconst SIMPLE_ICON DISP_MSG27[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*12,		680,	40+42*12};
+Xconst SIMPLE_ICON DISP_MSG27[]	= 				{31U,		380,	10+42*12,		680,	40+42*12};
+Nconst SIMPLE_ICON DISP_MSG28[]	= 				{ICON_CUT_PIC_NUM_31,		380,	10+42*13,		680,	40+42*13};
+Xconst SIMPLE_ICON DISP_MSG28[]	= 				{31U,		380,	10+42*13,		680,	40+42*13};
+N
+N
+N

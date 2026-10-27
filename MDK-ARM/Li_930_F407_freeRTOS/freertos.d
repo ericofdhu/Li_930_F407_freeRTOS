@@ -80,3 +80,6 @@ li_930_f407_freertos\freertos.o: ..\WindowsManage\ColorLcd.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/MySaveLoadFile.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/StepControl.h
 li_930_f407_freertos\freertos.o: ../Core/Inc/wavelength_transfor.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/CircularBuffer.h
+li_930_f407_freertos\freertos.o: ../Core/Inc/rc_filter.h
+li_930_f407_freertos\freertos.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

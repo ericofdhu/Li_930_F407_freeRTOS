@@ -57,3 +57,6 @@ li_930_f407_freertos\ads1256.o: ../Middlewares/Third_Party/FreeRTOS/Source/inclu
 li_930_f407_freertos\ads1256.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
 li_930_f407_freertos\ads1256.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 li_930_f407_freertos\ads1256.o: ../Core/Inc/spi.h
+li_930_f407_freertos\ads1256.o: ../Core/Inc/MyLib.h
+li_930_f407_freertos\ads1256.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+li_930_f407_freertos\ads1256.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h

@@ -43,6 +43,8 @@
 #include "ads1256.h"
 #include "StepControl.h"
 #include "wavelength_transfor.h"
+#include "CircularBuffer.h"
+#include "rc_filter.h"
 
 /* USER CODE END Includes */
 
@@ -444,17 +446,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of Task_Start */
   Task_Start_Handle = osThreadNew(Task_StartFunc, NULL, &Task_Start_attributes);
   Task_SysRun_Handle = osThreadNew(Task_SysRun, NULL, &Task_SysRun_attributes);
-  Task_Action_Handle = osThreadNew(Task_Action, NULL, &Task_Action_attributes);
-  if (Task_Action_Handle == NULL)
-  {
-    Error_Handler();
-  }
-  Task_WaveLengthStepper_Handle = osThreadNew(
-      Task_WaveLengthStepper, NULL, &Task_WaveLengthStepper_attributes);
-  if (Task_WaveLengthStepper_Handle == NULL)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -469,10 +460,9 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_Task_StartFunc */
 /**
- * @brief 执行系统启动初始化并启动应用运行任务。
- * @param argument 任务参数，本任务不使用。
- * @retval 无；初始化后任务持续运行。
- * @note 初始化文件系统、传感器、串口接收和显示相关组件。
+ * @brief 完成应用启动阶段的外设和任务初始化。
+ * @param argument 任务入口参数，本函数当前不使用。
+ * @return 无。
  */
 /* USER CODE END Header_Task_StartFunc */
 void Task_StartFunc(void *argument)
@@ -495,15 +485,20 @@ void Task_StartFunc(void *argument)
 
 
   ads1256InitResult = ADS1256_Init();
-  if (ads1256InitResult == ADS1256_OK)
+  Task_Action_Handle = osThreadNew(Task_Action, NULL, &Task_Action_attributes);
+  if (Task_Action_Handle == NULL)
   {
-    Task_ADS1256_Handle = osThreadNew(Task_ADS1256_Sampling, NULL,
-                                    &Task_ADS1256_attributes);
-    if (Task_ADS1256_Handle == NULL)
-    {
-      ADS1256_LastStatus = ADS1256_ERROR_RTOS;
-    }
+    Error_Handler();
   }
+  // if (ads1256InitResult == ADS1256_OK)
+  // {
+  //   Task_ADS1256_Handle = osThreadNew(Task_ADS1256_Sampling, NULL,
+  //                                   &Task_ADS1256_attributes);
+  //   if (Task_ADS1256_Handle == NULL)
+  //   {
+  //     ADS1256_LastStatus = ADS1256_ERROR_RTOS;
+  //   }
+  // }
 
 
   if(TMC_5130_Init())
@@ -514,6 +509,18 @@ void Task_StartFunc(void *argument)
   {
     printf("TMC5130初始化失败\r\n");
   }
+
+
+  Task_WaveLengthStepper_Handle = osThreadNew(
+      Task_WaveLengthStepper, NULL, &Task_WaveLengthStepper_attributes);
+  if (Task_WaveLengthStepper_Handle == NULL)
+  {
+    Error_Handler();
+  }
+
+
+
+
 
   USART3_ProcessStartResult = USART3_Process_Init();
   if (USART3_ProcessStartResult == HAL_OK)
@@ -622,6 +629,61 @@ void Task_SysRun(void *argument)
   }
 }
 
+
+int16_t get_normal_time_value(void)
+{
+//  int32_t sample = 0;
+//  ADS1256_Status readStatus = ADS1256_ERROR_RTOS;
+
+//  if (ADS1256_WaitDataReady(osWaitForever) == osOK)
+//  {
+//    readStatus = ADS1256_ReadData(&sample);
+//  }
+
+//  if (readStatus == ADS1256_OK)
+//  {
+//    CircularBuffer_Push(&cb_normal,
+//                        ADS1256_ConvertToVoltage((uint16_t)((uint32_t)sample >> 8)));
+//  }
+//  else
+//  {
+//    printf("Failed to read ADS1256 sample\r\n");
+//  }
+
+//  int16_t tmp_in = CircularBuffer_GetAverage(&cb_normal);
+//  int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+//  return tmp_voltage;
+
+
+	uint32_t   tmp_ad=0;
+	
+//	while(ADS1256_FLAG == 0);
+	tmp_ad = AD_read_data();
+//	ADS1256_FLAG = 0;
+	CircularBuffer_Push(&cb_normal, ADS1256_ConvertToVoltage(tmp_ad));
+	int16_t tmp_in  = CircularBuffer_GetAverage(&cb_normal);
+	int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+
+	return (int16_t)tmp_voltage;
+
+}
+int16_t get_normal_time_value_with_data(int16_t tmp_ad)
+{
+
+	CircularBuffer_Push(&cb_normal, ADS1256_ConvertToVoltage(tmp_ad));
+	int16_t tmp_in  = CircularBuffer_GetAverage(&cb_normal);
+	int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+
+	return (int16_t)tmp_voltage;
+
+}
+
+
+
+
+
+
+
 /**
  * @brief 接收动作队列消息并执行对应的系统动作。
  * @param argument 任务参数，本任务不使用。
@@ -635,30 +697,50 @@ static void Task_Action(void *argument)
 
   (void)argument;
 
+
+
+	CircularBuffer_Init(&cb_normal,normal_Buffer,NORMAL_BUFF_LEN);
+	rc_filter_init(&normal_filter, TIME_SCAN_CUTO_FREQ, TIME_SCAN_SAMPLE_FREQ);
+
+
+
+
+
   for (;;)
   {
-    queueStatus = xQueueReceive(g_ActionQueue, actionMessage, portMAX_DELAY);
+    queueStatus = xQueueReceive(g_ActionQueue, actionMessage, pdMS_TO_TICKS(20U));
     if (queueStatus != pdPASS)
     {
-      printf("Failed to receive action queue message\r\n");
-      continue;
-    }
+      // printf("Failed to receive action queue message\r\n");
+			MySysAbs.data_E = get_normal_time_value();
+      printf("Normal time value: %d\r\n", MySysAbs.data_E);
 
-    switch (actionMessage[0])
+
+    }
+    else
     {
-      case MSG_SCAN:
-        taskENTER_CRITICAL();
-        SysFlag.RunWaveScanFlag = 1U;
-        taskEXIT_CRITICAL();
-        printf("Scan action triggered\r\n");
 
-        break;
+      switch (actionMessage[0])
+      {
+        case MSG_SCAN:
+          taskENTER_CRITICAL();
+          SysFlag.RunWaveScanFlag = 1U;
+          taskEXIT_CRITICAL();
+          printf("Scan action triggered\r\n");
 
-      default:
-        printf("Unsupported action message type: %u\r\n",
-               (unsigned int)actionMessage[0]);
-        break;
+          break;
+
+        default:
+          printf("Unsupported action message type: %u\r\n",
+                (unsigned int)actionMessage[0]);
+          break;
+      }
+
     }
+
+
+
+
   }
 }
 /**

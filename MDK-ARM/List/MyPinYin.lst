@@ -1,0 +1,2229 @@
+L 1 "..\Core\Src\MyPinYin.c"
+N//"********************Æ´ÒôÊäÈë·¨Ä£¿é********************"
+N
+N//"******************************************************************************"
+N#include "MyPinYin.h"
+L 1 "../Core/Inc/MyPinYin.h" 1
+N#ifndef __MY_PIN_YIN_H__
+N#define __MY_PIN_YIN_H__
+N
+N//"========================================º¯ÊýÉùÃ÷========================================"
+N//"Æ´ÒôÊäÈë·¨èÃÑ¯º¯Êý£¬input_pyÎªÒÑÊäÈëµÄÆ´ÒôÂë£¬·´»ØÖµÎªÖÐÎÄµÄÆðÊ¼µØÖ·£¬µ±Îª0Ê±£¬èÃÑ¯Ê§°Ü"
+Nconst char * py_ime(unsigned char input_py_val[]);
+N
+N#endif
+N
+N
+L 5 "..\Core\Src\MyPinYin.c" 2
+N#include <stdint.h>
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+N/* Copyright (C) ARM Ltd., 1999,2014 */
+N/* All rights reserved */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N
+N#ifndef __stdint_h
+N#define __stdint_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N  #ifdef __INT64_TYPE__
+S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
+S    #define __INT64 __INT64_TYPE__
+N  #else
+N    /* armcc has builtin '__int64' which can be used in --strict mode */
+N    #define __INT64 __int64
+N    #define __INT64_C_SUFFIX__ ll
+N  #endif
+N  #define __PASTE2(x, y) x ## y
+N  #define __PASTE(x, y) __PASTE2(x, y)
+N  #define __INT64_C(x)  __ESCAPE__(__PASTE(x, __INT64_C_SUFFIX__))
+N  #define __UINT64_C(x)  __ESCAPE__(__PASTE(x ## u, __INT64_C_SUFFIX__))
+N  #if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
+X  #if 0L || (1L && !0L)
+N    /* armclang and non-strict armcc allow 'long long' in system headers */
+N    #define __LONGLONG long long
+N  #else
+S    /* strict armcc has '__int64' */
+S    #define __LONGLONG __int64
+N  #endif
+N
+N  #ifndef __STDINT_DECLS
+N  #define __STDINT_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S      namespace std {
+S          #define __CLIBNS std::
+S          extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N
+N/*
+N * 'signed' is redundant below, except for 'signed char' and if
+N * the typedef is used to declare a bitfield.
+N */
+N
+N    /* 7.18.1.1 */
+N
+N    /* exact-width signed integer types */
+Ntypedef   signed          char int8_t;
+Ntypedef   signed short     int int16_t;
+Ntypedef   signed           int int32_t;
+Ntypedef   signed       __INT64 int64_t;
+Xtypedef   signed       __int64 int64_t;
+N
+N    /* exact-width unsigned integer types */
+Ntypedef unsigned          char uint8_t;
+Ntypedef unsigned short     int uint16_t;
+Ntypedef unsigned           int uint32_t;
+Ntypedef unsigned       __INT64 uint64_t;
+Xtypedef unsigned       __int64 uint64_t;
+N
+N    /* 7.18.1.2 */
+N
+N    /* smallest type of at least n bits */
+N    /* minimum-width signed integer types */
+Ntypedef   signed          char int_least8_t;
+Ntypedef   signed short     int int_least16_t;
+Ntypedef   signed           int int_least32_t;
+Ntypedef   signed       __INT64 int_least64_t;
+Xtypedef   signed       __int64 int_least64_t;
+N
+N    /* minimum-width unsigned integer types */
+Ntypedef unsigned          char uint_least8_t;
+Ntypedef unsigned short     int uint_least16_t;
+Ntypedef unsigned           int uint_least32_t;
+Ntypedef unsigned       __INT64 uint_least64_t;
+Xtypedef unsigned       __int64 uint_least64_t;
+N
+N    /* 7.18.1.3 */
+N
+N    /* fastest minimum-width signed integer types */
+Ntypedef   signed           int int_fast8_t;
+Ntypedef   signed           int int_fast16_t;
+Ntypedef   signed           int int_fast32_t;
+Ntypedef   signed       __INT64 int_fast64_t;
+Xtypedef   signed       __int64 int_fast64_t;
+N
+N    /* fastest minimum-width unsigned integer types */
+Ntypedef unsigned           int uint_fast8_t;
+Ntypedef unsigned           int uint_fast16_t;
+Ntypedef unsigned           int uint_fast32_t;
+Ntypedef unsigned       __INT64 uint_fast64_t;
+Xtypedef unsigned       __int64 uint_fast64_t;
+N
+N    /* 7.18.1.4 integer types capable of holding object pointers */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+Stypedef   signed       __INT64 intptr_t;
+Stypedef unsigned       __INT64 uintptr_t;
+N#else
+Ntypedef   signed           int intptr_t;
+Ntypedef unsigned           int uintptr_t;
+N#endif
+N
+N    /* 7.18.1.5 greatest-width integer types */
+Ntypedef   signed     __LONGLONG intmax_t;
+Xtypedef   signed     long long intmax_t;
+Ntypedef unsigned     __LONGLONG uintmax_t;
+Xtypedef unsigned     long long uintmax_t;
+N
+N
+N#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.2.1 */
+N
+N    /* minimum values of exact-width signed integer types */
+N#define INT8_MIN                   -128
+N#define INT16_MIN                -32768
+N#define INT32_MIN          (~0x7fffffff)   /* -2147483648 is unsigned */
+N#define INT64_MIN  __INT64_C(~0x7fffffffffffffff) /* -9223372036854775808 is unsigned */
+N
+N    /* maximum values of exact-width signed integer types */
+N#define INT8_MAX                    127
+N#define INT16_MAX                 32767
+N#define INT32_MAX            2147483647
+N#define INT64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of exact-width unsigned integer types */
+N#define UINT8_MAX                   255
+N#define UINT16_MAX                65535
+N#define UINT32_MAX           4294967295u
+N#define UINT64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.2 */
+N
+N    /* minimum values of minimum-width signed integer types */
+N#define INT_LEAST8_MIN                   -128
+N#define INT_LEAST16_MIN                -32768
+N#define INT_LEAST32_MIN          (~0x7fffffff)
+N#define INT_LEAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of minimum-width signed integer types */
+N#define INT_LEAST8_MAX                    127
+N#define INT_LEAST16_MAX                 32767
+N#define INT_LEAST32_MAX            2147483647
+N#define INT_LEAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of minimum-width unsigned integer types */
+N#define UINT_LEAST8_MAX                   255
+N#define UINT_LEAST16_MAX                65535
+N#define UINT_LEAST32_MAX           4294967295u
+N#define UINT_LEAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.3 */
+N
+N    /* minimum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MIN           (~0x7fffffff)
+N#define INT_FAST16_MIN          (~0x7fffffff)
+N#define INT_FAST32_MIN          (~0x7fffffff)
+N#define INT_FAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MAX             2147483647
+N#define INT_FAST16_MAX            2147483647
+N#define INT_FAST32_MAX            2147483647
+N#define INT_FAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of fastest minimum-width unsigned integer types */
+N#define UINT_FAST8_MAX            4294967295u
+N#define UINT_FAST16_MAX           4294967295u
+N#define UINT_FAST32_MAX           4294967295u
+N#define UINT_FAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.4 */
+N
+N    /* minimum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MIN INT64_MIN
+N#else
+N#define INTPTR_MIN INT32_MIN
+N#endif
+N
+N    /* maximum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MAX INT64_MAX
+N#else
+N#define INTPTR_MAX INT32_MAX
+N#endif
+N
+N    /* maximum value of pointer-holding unsigned integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define UINTPTR_MAX UINT64_MAX
+N#else
+N#define UINTPTR_MAX UINT32_MAX
+N#endif
+N
+N    /* 7.18.2.5 */
+N
+N    /* minimum value of greatest-width signed integer type */
+N#define INTMAX_MIN  __ESCAPE__(~0x7fffffffffffffffll)
+N
+N    /* maximum value of greatest-width signed integer type */
+N#define INTMAX_MAX  __ESCAPE__(9223372036854775807ll)
+N
+N    /* maximum value of greatest-width unsigned integer type */
+N#define UINTMAX_MAX __ESCAPE__(18446744073709551615ull)
+N
+N    /* 7.18.3 */
+N
+N    /* limits of ptrdiff_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define PTRDIFF_MIN INT64_MIN
+S#define PTRDIFF_MAX INT64_MAX
+N#else
+N#define PTRDIFF_MIN INT32_MIN
+N#define PTRDIFF_MAX INT32_MAX
+N#endif
+N
+N    /* limits of sig_atomic_t */
+N#define SIG_ATOMIC_MIN (~0x7fffffff)
+N#define SIG_ATOMIC_MAX   2147483647
+N
+N    /* limit of size_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define SIZE_MAX UINT64_MAX
+N#else
+N#define SIZE_MAX UINT32_MAX
+N#endif
+N
+N    /* limits of wchar_t */
+N    /* NB we have to undef and redef because they're defined in both
+N     * stdint.h and wchar.h */
+N#undef WCHAR_MIN
+N#undef WCHAR_MAX
+N
+N#if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X#if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S  #define WCHAR_MIN   0
+S  #define WCHAR_MAX   0xffffffffU
+N#else
+N  #define WCHAR_MIN   0
+N  #define WCHAR_MAX   65535
+N#endif
+N
+N    /* limits of wint_t */
+N#define WINT_MIN (~0x7fffffff)
+N#define WINT_MAX 2147483647
+N
+N#endif /* __STDC_LIMIT_MACROS */
+N
+N#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.4.1 macros for minimum-width integer constants */
+N#define INT8_C(x)   (x)
+N#define INT16_C(x)  (x)
+N#define INT32_C(x)  (x)
+N#define INT64_C(x)  __INT64_C(x)
+N
+N#define UINT8_C(x)  (x ## u)
+N#define UINT16_C(x) (x ## u)
+N#define UINT32_C(x) (x ## u)
+N#define UINT64_C(x) __UINT64_C(x)
+N
+N    /* 7.18.4.2 macros for greatest-width integer constants */
+N#define INTMAX_C(x)  __ESCAPE__(x ## ll)
+N#define UINTMAX_C(x) __ESCAPE__(x ## ull)
+N
+N#endif /* __STDC_CONSTANT_MACROS */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDINT_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDINT_NO_EXPORTS
+S      using ::std::int8_t;
+S      using ::std::int16_t;
+S      using ::std::int32_t;
+S      using ::std::int64_t;
+S      using ::std::uint8_t;
+S      using ::std::uint16_t;
+S      using ::std::uint32_t;
+S      using ::std::uint64_t;
+S      using ::std::int_least8_t;
+S      using ::std::int_least16_t;
+S      using ::std::int_least32_t;
+S      using ::std::int_least64_t;
+S      using ::std::uint_least8_t;
+S      using ::std::uint_least16_t;
+S      using ::std::uint_least32_t;
+S      using ::std::uint_least64_t;
+S      using ::std::int_fast8_t;
+S      using ::std::int_fast16_t;
+S      using ::std::int_fast32_t;
+S      using ::std::int_fast64_t;
+S      using ::std::uint_fast8_t;
+S      using ::std::uint_fast16_t;
+S      using ::std::uint_fast32_t;
+S      using ::std::uint_fast64_t;
+S      using ::std::intptr_t;
+S      using ::std::uintptr_t;
+S      using ::std::intmax_t;
+S      using ::std::uintmax_t;
+S    #endif
+N  #endif /* __cplusplus */
+N
+N#undef __INT64
+N#undef __LONGLONG
+N
+N#endif /* __stdint_h */
+N
+N/* end of stdint.h */
+L 6 "..\Core\Src\MyPinYin.c" 2
+N#include <string.h>
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h" 1
+N/* string.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.11 */
+N/* Copyright (C) Codemist Ltd., 1988-1993.                        */
+N/* Copyright 1991-1993 ARM Limited. All rights reserved.          */
+N/* version 0.04 */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N */
+N
+N/*
+N * string.h declares one type and several functions, and defines one macro
+N * useful for manipulating character arrays and other objects treated as
+N * character arrays. Various methods are used for determining the lengths of
+N * the arrays, but in all cases a char * or void * argument points to the
+N * initial (lowest addresses) character of the array. If an array is written
+N * beyond the end of an object, the behaviour is undefined.
+N */
+N
+N#ifndef __string_h
+N#define __string_h
+N#define __ARMCLIB_VERSION 5060044
+N
+N#define _ARMABI __declspec(__nothrow)
+N
+N  #ifndef __STRING_DECLS
+N  #define __STRING_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S        namespace std {
+S        #define __CLIBNS std::
+S        extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N#if defined(__cplusplus) || !defined(__STRICT_ANSI__)
+X#if 0L || !0L
+N /* unconditional in C++ and non-strict C for consistency of debug info */
+N  #if __sizeof_ptr == 8
+X  #if 4 == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+N  #else
+N    typedef unsigned int size_t;   /* see <stddef.h> */
+N  #endif
+N#elif !defined(__size_t)
+S  #define __size_t 1
+S  #if __sizeof_ptr == 8
+S    typedef unsigned long size_t;   /* see <stddef.h> */
+S  #else
+S    typedef unsigned int size_t;   /* see <stddef.h> */
+S  #endif
+N#endif
+N
+N#undef NULL
+N#define NULL 0                   /* see <stddef.h> */
+N
+Nextern _ARMABI void *memcpy(void * __restrict /*s1*/,
+Xextern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+N                    const void * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies n characters from the object pointed to by s2 into the object
+N    * pointed to by s1. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI void *memmove(void * /*s1*/,
+Xextern __declspec(__nothrow) void *memmove(void *  ,
+N                    const void * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies n characters from the object pointed to by s2 into the object
+N    * pointed to by s1. Copying takes place as if the n characters from the
+N    * object pointed to by s2 are first copied into a temporary array of n
+N    * characters that does not overlap the objects pointed to by s1 and s2,
+N    * and then the n characters from the temporary array are copied into the
+N    * object pointed to by s1.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strcpy(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies the string pointed to by s2 (including the terminating nul
+N    * character) into the array pointed to by s1. If copying takes place
+N    * between objects that overlap, the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strncpy(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies not more than n characters (characters that follow a null
+N    * character are not copied) from the array pointed to by s2 into the array
+N    * pointed to by s1. If copying takes place between objects that overlap,
+N    * the behaviour is undefined.
+N    * Returns: the value of s1.
+N    */
+N
+Nextern _ARMABI char *strcat(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * appends a copy of the string pointed to by s2 (including the terminating
+N    * null character) to the end of the string pointed to by s1. The initial
+N    * character of s2 overwrites the null character at the end of s1.
+N    * Returns: the value of s1.
+N    */
+Nextern _ARMABI char *strncat(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * appends not more than n characters (a null character and characters that
+N    * follow it are not appended) from the array pointed to by s2 to the end of
+N    * the string pointed to by s1. The initial character of s2 overwrites the
+N    * null character at the end of s1. A terminating null character is always
+N    * appended to the result.
+N    * Returns: the value of s1.
+N    */
+N
+N/*
+N * The sign of a nonzero value returned by the comparison functions is
+N * determined by the sign of the difference between the values of the first
+N * pair of characters (both interpreted as unsigned char) that differ in the
+N * objects being compared.
+N */
+N
+Nextern _ARMABI int memcmp(const void * /*s1*/, const void * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the first n characters of the object pointed to by s1 to the
+N    * first n characters of the object pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the object pointed to by s1 is greater than, equal to, or
+N    *          less than the object pointed to by s2.
+N    */
+Nextern _ARMABI int strcmp(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strncmp(const char * /*s1*/, const char * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares not more than n characters (characters that follow a null
+N    * character are not compared) from the array pointed to by s1 to the array
+N    * pointed to by s2.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strcasecmp(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2,
+N    * case-insensitively as defined by the current locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strncasecmp(const char * /*s1*/, const char * /*s2*/, size_t /*n*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares not more than n characters (characters that follow a null
+N    * character are not compared) from the array pointed to by s1 to the array
+N    * pointed to by s2, case-insensitively as defined by the current locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2.
+N    */
+Nextern _ARMABI int strcoll(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * compares the string pointed to by s1 to the string pointed to by s2, both
+N    * interpreted as appropriate to the LC_COLLATE category of the current
+N    * locale.
+N    * Returns: an integer greater than, equal to, or less than zero, according
+N    *          as the string pointed to by s1 is greater than, equal to, or
+N    *          less than the string pointed to by s2 when both are interpreted
+N    *          as appropriate to the current locale.
+N    */
+N
+Nextern _ARMABI size_t strxfrm(char * __restrict /*s1*/, const char * __restrict /*s2*/, size_t /*n*/) __attribute__((__nonnull__(2)));
+Xextern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+N   /*
+N    * transforms the string pointed to by s2 and places the resulting string
+N    * into the array pointed to by s1. The transformation function is such that
+N    * if the strcmp function is applied to two transformed strings, it returns
+N    * a value greater than, equal to or less than zero, corresponding to the
+N    * result of the strcoll function applied to the same two original strings.
+N    * No more than n characters are placed into the resulting array pointed to
+N    * by s1, including the terminating null character. If n is zero, s1 is
+N    * permitted to be a null pointer. If copying takes place between objects
+N    * that overlap, the behaviour is undefined.
+N    * Returns: The length of the transformed string is returned (not including
+N    *          the terminating null character). If the value returned is n or
+N    *          more, the contents of the array pointed to by s1 are
+N    *          indeterminate.
+N    */
+N
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const void *memchr(const void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Sextern "C++" void *memchr(void * __s, int __c, size_t __n) __attribute__((__nonnull__(1)));
+Sextern "C++" inline void *memchr(void * __s, int __c, size_t __n)
+S    { return const_cast<void *>(memchr(const_cast<const void *>(__s), __c, __n)); }
+N#else
+Nextern _ARMABI void *memchr(const void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the first occurence of c (converted to an unsigned char) in the
+N    * initial n characters (each interpreted as unsigned char) of the object
+N    * pointed to by s.
+N    * Returns: a pointer to the located character, or a null pointer if the
+N    *          character does not occur in the object.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Sextern "C++" char *strchr(char * __s, int __c) __attribute__((__nonnull__(1)));
+Sextern "C++" inline char *strchr(char * __s, int __c)
+S    { return const_cast<char *>(strchr(const_cast<const char *>(__s), __c)); }
+N#else
+Nextern _ARMABI char *strchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the first occurence of c (converted to an char) in the string
+N    * pointed to by s (including the terminating null character).
+N    * Returns: a pointer to the located character, or a null pointer if the
+N    *          character does not occur in the string.
+N    */
+N
+Nextern _ARMABI size_t strcspn(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * computes the length of the initial segment of the string pointed to by s1
+N    * which consists entirely of characters not from the string pointed to by
+N    * s2. The terminating null character is not considered part of s2.
+N    * Returns: the length of the segment.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strpbrk(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Sextern "C++" char *strpbrk(char * __s1, const char * __s2) __attribute__((__nonnull__(1,2)));
+Sextern "C++" inline char *strpbrk(char * __s1, const char * __s2)
+S    { return const_cast<char *>(strpbrk(const_cast<const char *>(__s1), __s2)); }
+N#else
+Nextern _ARMABI char *strpbrk(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N#endif
+N   /*
+N    * locates the first occurence in the string pointed to by s1 of any
+N    * character from the string pointed to by s2.
+N    * Returns: returns a pointer to the character, or a null pointer if no
+N    *          character form s2 occurs in s1.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strrchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Sextern "C++" char *strrchr(char * __s, int __c) __attribute__((__nonnull__(1)));
+Sextern "C++" inline char *strrchr(char * __s, int __c)
+S    { return const_cast<char *>(strrchr(const_cast<const char *>(__s), __c)); }
+N#else
+Nextern _ARMABI char *strrchr(const char * /*s*/, int /*c*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+N#endif
+N   /*
+N    * locates the last occurence of c (converted to a char) in the string
+N    * pointed to by s. The terminating null character is considered part of
+N    * the string.
+N    * Returns: returns a pointer to the character, or a null pointer if c does
+N    *          not occur in the string.
+N    */
+N
+Nextern _ARMABI size_t strspn(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * computes the length of the initial segment of the string pointed to by s1
+N    * which consists entirely of characters from the string pointed to by S2
+N    * Returns: the length of the segment.
+N    */
+N
+N#ifdef __cplusplus
+Sextern _ARMABI const char *strstr(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Sextern "C++" char *strstr(char * __s1, const char * __s2) __attribute__((__nonnull__(1,2)));
+Sextern "C++" inline char *strstr(char * __s1, const char * __s2)
+S    { return const_cast<char *>(strstr(const_cast<const char *>(__s1), __s2)); }
+N#else
+Nextern _ARMABI char *strstr(const char * /*s1*/, const char * /*s2*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+N#endif
+N   /*
+N    * locates the first occurence in the string pointed to by s1 of the
+N    * sequence of characters (excluding the terminating null character) in the
+N    * string pointed to by s2.
+N    * Returns: a pointer to the located string, or a null pointer if the string
+N    *          is not found.
+N    */
+N
+Nextern _ARMABI char *strtok(char * __restrict /*s1*/, const char * __restrict /*s2*/) __attribute__((__nonnull__(2)));
+Xextern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+Nextern _ARMABI char *_strtok_r(char * /*s1*/, const char * /*s2*/, char ** /*ptr*/) __attribute__((__nonnull__(2,3)));
+Xextern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+N#ifndef __STRICT_ANSI__
+Nextern _ARMABI char *strtok_r(char * /*s1*/, const char * /*s2*/, char ** /*ptr*/) __attribute__((__nonnull__(2,3)));
+Xextern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+N#endif
+N   /*
+N    * A sequence of calls to the strtok function breaks the string pointed to
+N    * by s1 into a sequence of tokens, each of which is delimited by a
+N    * character from the string pointed to by s2. The first call in the
+N    * sequence has s1 as its first argument, and is followed by calls with a
+N    * null pointer as their first argument. The separator string pointed to by
+N    * s2 may be different from call to call.
+N    * The first call in the sequence searches for the first character that is
+N    * not contained in the current separator string s2. If no such character
+N    * is found, then there are no tokens in s1 and the strtok function returns
+N    * a null pointer. If such a character is found, it is the start of the
+N    * first token.
+N    * The strtok function then searches from there for a character that is
+N    * contained in the current separator string. If no such character is found,
+N    * the current token extends to the end of the string pointed to by s1, and
+N    * subsequent searches for a token will fail. If such a character is found,
+N    * it is overwritten by a null character, which terminates the current
+N    * token. The strtok function saves a pointer to the following character,
+N    * from which the next search for a token will start.
+N    * Each subsequent call, with a null pointer as the value for the first
+N    * argument, starts searching from the saved pointer and behaves as
+N    * described above.
+N    * Returns: pointer to the first character of a token, or a null pointer if
+N    *          there is no token.
+N    *
+N    * strtok_r() is a common extension which works exactly like
+N    * strtok(), but instead of storing its state in a hidden
+N    * library variable, requires the user to pass in a pointer to a
+N    * char * variable which will be used instead. Any sequence of
+N    * calls to strtok_r() passing the same char ** pointer should
+N    * behave exactly like the corresponding sequence of calls to
+N    * strtok(). This means that strtok_r() can safely be used in
+N    * multi-threaded programs, and also that you can tokenise two
+N    * strings in parallel.
+N    */
+N
+Nextern _ARMABI void *memset(void * /*s*/, int /*c*/, size_t /*n*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * copies the value of c (converted to an unsigned char) into each of the
+N    * first n charactes of the object pointed to by s.
+N    * Returns: the value of s.
+N    */
+Nextern _ARMABI char *strerror(int /*errnum*/);
+Xextern __declspec(__nothrow) char *strerror(int  );
+N   /*
+N    * maps the error number in errnum to an error message string.
+N    * Returns: a pointer to the string, the contents of which are
+N    *          implementation-defined. The array pointed to shall not be
+N    *          modified by the program, but may be overwritten by a
+N    *          subsequent call to the strerror function.
+N    */
+Nextern _ARMABI size_t strlen(const char * /*s*/) __attribute__((__nonnull__(1)));
+Xextern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+N   /*
+N    * computes the length of the string pointed to by s.
+N    * Returns: the number of characters that precede the terminating null
+N    *          character.
+N    */
+N
+Nextern _ARMABI size_t strlcpy(char * /*dst*/, const char * /*src*/, size_t /*len*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * copies the string src into the string dst, using no more than
+N    * len bytes of dst. Always null-terminates dst _within the
+N    * length len (i.e. will copy at most len-1 bytes of string plus
+N    * a NUL), unless len is actually zero.
+N    * 
+N    * Return value is the length of the string that _would_ have
+N    * been written, i.e. the length of src. Thus, the operation
+N    * succeeded without truncation if and only if ret < len;
+N    * otherwise, the value in ret tells you how big to make dst if
+N    * you decide to reallocate it. (That value does _not_ include
+N    * the NUL.)
+N    * 
+N    * This is a BSD-derived library extension, which we are
+N    * permitted to declare in a standard header because ISO defines
+N    * function names beginning with 'str' as reserved for future
+N    * expansion of <string.h>.
+N    */
+N
+Nextern _ARMABI size_t strlcat(char * /*dst*/, const char * /*src*/, size_t /*len*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+N   /*
+N    * concatenates the string src to the string dst, using no more
+N    * than len bytes of dst. Always null-terminates dst _within the
+N    * length len (i.e. will copy at most len-1 bytes of string plus
+N    * a NUL), unless len is actually zero.
+N    * 
+N    * Return value is the length of the string that _would_ have
+N    * been written, i.e. the length of src plus the original length
+N    * of dst. Thus, the operation succeeded without truncation if
+N    * and only if ret < len; otherwise, the value in ret tells you
+N    * how big to make dst if you decide to reallocate it. (That
+N    * value does _not_ include the NUL.)
+N    * 
+N    * If no NUL is encountered within the first len bytes of dst,
+N    * then the length of dst is considered to have been equal to
+N    * len for the purposes of the return value (as if there were a
+N    * NUL at dst[len]). Thus, the return value in this case is len
+N    * + strlen(src).
+N    * 
+N    * This is a BSD-derived library extension, which we are
+N    * permitted to declare in a standard header because ISO defines
+N    * function names beginning with 'str' as reserved for future
+N    * expansion of <string.h>.
+N    */
+N
+Nextern _ARMABI void _membitcpybl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpybb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpyhl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpyhb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpywl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitcpywb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovebl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovebb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovehl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovehb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovewl(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+Nextern _ARMABI void _membitmovewb(void * /*dest*/, const void * /*src*/, int /*destoffset*/, int /*srcoffset*/, size_t /*nbits*/) __attribute__((__nonnull__(1,2)));
+Xextern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+N    /*
+N     * Copies or moves a piece of memory from one place to another,
+N     * with one-bit granularity. So you can start or finish a copy
+N     * part way through a byte, and you can copy between regions
+N     * with different alignment within a byte.
+N     * 
+N     * All these functions have the same prototype: two void *
+N     * pointers for destination and source, then two integers
+N     * giving the bit offset from those pointers, and finally the
+N     * number of bits to copy.
+N     * 
+N     * Just like memcpy and memmove, the "cpy" functions copy as
+N     * fast as they can in the assumption that the memory regions
+N     * do not overlap, while the "move" functions cope correctly
+N     * with overlap.
+N     *
+N     * Treating memory as a stream of individual bits requires
+N     * defining a convention about what order those bits are
+N     * considered to be arranged in. The above functions support
+N     * multiple conventions:
+N     * 
+N     *  - the "bl" functions consider the unit of memory to be the
+N     *    byte, and consider the bits within each byte to be
+N     *    arranged in little-endian fashion, so that the LSB comes
+N     *    first. (For example, membitcpybl(a,b,0,7,1) would copy
+N     *    the MSB of the byte at b to the LSB of the byte at a.)
+N     * 
+N     *  - the "bb" functions consider the unit of memory to be the
+N     *    byte, and consider the bits within each byte to be
+N     *    arranged in big-endian fashion, so that the MSB comes
+N     *    first.
+N     * 
+N     *  - the "hl" functions consider the unit of memory to be the
+N     *    16-bit halfword, and consider the bits within each word
+N     *    to be arranged in little-endian fashion.
+N     * 
+N     *  - the "hb" functions consider the unit of memory to be the
+N     *    16-bit halfword, and consider the bits within each word
+N     *    to be arranged in big-endian fashion.
+N     * 
+N     *  - the "wl" functions consider the unit of memory to be the
+N     *    32-bit word, and consider the bits within each word to be
+N     *    arranged in little-endian fashion.
+N     * 
+N     *  - the "wb" functions consider the unit of memory to be the
+N     *    32-bit word, and consider the bits within each word to be
+N     *    arranged in big-endian fashion.
+N     */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STRING_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STRING_NO_EXPORTS
+S      using ::std::size_t;
+S      using ::std::memcpy;
+S      using ::std::memmove;
+S      using ::std::strcpy;
+S      using ::std::strncpy;
+S      using ::std::strcat;
+S      using ::std::strncat;
+S      using ::std::memcmp;
+S      using ::std::strcmp;
+S      using ::std::strncmp;
+S      using ::std::strcasecmp;
+S      using ::std::strncasecmp;
+S      using ::std::strcoll;
+S      using ::std::strxfrm;
+S      using ::std::memchr;
+S      using ::std::strchr;
+S      using ::std::strcspn;
+S      using ::std::strpbrk;
+S      using ::std::strrchr;
+S      using ::std::strspn;
+S      using ::std::strstr;
+S      using ::std::strtok;
+S#ifndef __STRICT_ANSI__
+S      using ::std::strtok_r;
+S#endif
+S      using ::std::_strtok_r;
+S      using ::std::memset;
+S      using ::std::strerror;
+S      using ::std::strlen;
+S      using ::std::strlcpy;
+S      using ::std::strlcat;
+S      using ::std::_membitcpybl;
+S      using ::std::_membitcpybb;
+S      using ::std::_membitcpyhl;
+S      using ::std::_membitcpyhb;
+S      using ::std::_membitcpywl;
+S      using ::std::_membitcpywb;
+S      using ::std::_membitmovebl;
+S      using ::std::_membitmovebb;
+S      using ::std::_membitmovehl;
+S      using ::std::_membitmovehb;
+S      using ::std::_membitmovewl;
+S      using ::std::_membitmovewb;
+S    #endif /* __STRING_NO_EXPORTS */
+N  #endif /* __cplusplus */
+N
+N#endif
+N
+N/* end of string.h */
+N
+L 7 "..\Core\Src\MyPinYin.c" 2
+N
+N
+N
+N//"Æ´ÒôÊäÈë·¨ºº×ÖÅÅÁÐ±í"
+Nconst char PY_mb_a     []={"°¢°¡"};
+Nconst char PY_mb_ai    []={"°¥°§°¦°£°¤°¨°©°«°ª°¬°®°¯°­"};
+Nconst char PY_mb_an    []={"°²°±°°°³°¶°´°¸°·°µ"};
+Nconst char PY_mb_ang   []={"°¹°º°»"};
+Nconst char PY_mb_ao    []={"°¼°½°¾°¿°À°Á°Â°Ä°Ã"};
+Nconst char PY_mb_ba    []={"°Ë°Í°È°Ç°É°Å°Ì°Æ°Ê°Î°Ï°Ñ°Ð°Ó°Ö°Õ°Ô"};
+Nconst char PY_mb_bai   []={"°×°Ù°Û°Ø°Ú°Ü°Ý°Þ"};
+Nconst char PY_mb_ban   []={"°â°à°ã°ä°ß°á°å°æ°ì°ë°é°ç°è°í°ê"};
+Nconst char PY_mb_bang  []={"°î°ï°ð°ó°ñ°ò°ö°ø°ô°ù°õ°÷"};
+Nconst char PY_mb_bao   []={"°ü°ú°û°ý±¢±¦±¥±£±¤±¨±§±ª±«±©±¬°þ±¡ÆÙ"};
+Nconst char PY_mb_bei   []={"±°±­±¯±®±±±´±·±¸±³±µ±¶±»±¹±º±²"};
+Nconst char PY_mb_ben   []={"±¼±¾±½±¿º»"};
+Nconst char PY_mb_beng  []={"±À±Á±Â±Ã±Å±Ä"};
+Nconst char PY_mb_bi    []={"±Æ±Ç±È±Ë±Ê±É±Ò±Ø±Ï±Õ±Ó±Ñ±Ý±Ð±Ö±Ô±Í±×±Ì±Î±Ú±Ü±Û"};
+Nconst char PY_mb_bian  []={"±ß±à±Þ±á±â±å±ã±ä±é±æ±ç±è"};
+Nconst char PY_mb_biao  []={"±ë±ê±ì±í"};
+Nconst char PY_mb_bie   []={"±ï±î±ð±ñ"};
+Nconst char PY_mb_bin   []={"±ö±ò±ó±õ±ô±÷"};
+Nconst char PY_mb_bing  []={"±ù±ø±û±ü±ú±þ±ý²¢²¡"};
+Nconst char PY_mb_bo    []={"²¦²¨²£²§²±²¤²¥²®²µ²¯²´²ª²¬²°²©²³²«²­²²²·"};
+Nconst char PY_mb_bu    []={"²¹²¸²¶²»²¼²½²À²¿²º²¾"};
+Nconst char PY_mb_ca    []={"²Á"};
+Nconst char PY_mb_cai   []={"²Â²Å²Ä²Æ²Ã²É²Ê²Ç²È²Ë²Ì"};
+Nconst char PY_mb_can   []={"²Î²Í²Ð²Ï²Ñ²Ò²Ó"};
+Nconst char PY_mb_cang  []={"²Ö²×²Ô²Õ²Ø"};
+Nconst char PY_mb_cao   []={"²Ù²Ú²Ü²Û²Ý"};
+Nconst char PY_mb_ce    []={"²á²à²Þ²â²ß"};
+Nconst char PY_mb_ceng  []={"²ã²äÔø"};
+Nconst char PY_mb_cha   []={"²æ²å²é²ç²è²ë²ì²ê²í²ï²îÉ²"};
+Nconst char PY_mb_chai  []={"²ð²ñ²ò"};
+Nconst char PY_mb_chan  []={"²ô²ó²÷²ö²ø²õ²ú²ù²û²ü"};
+Nconst char PY_mb_chang []={"²ý²þ³¦³¢³¥³£³§³¡³¨³©³«³ª"};
+Nconst char PY_mb_chao  []={"³­³®³¬³²³¯³°³±³³³´´Â"};
+Nconst char PY_mb_che   []={"³µ³¶³¹³¸³·³º"};
+Nconst char PY_mb_chen  []={"³»³¾³¼³À³Á³½³Â³¿³Ä³Ã"};
+Nconst char PY_mb_cheng []={"³Æ³Å³É³Ê³Ð³Ï³Ç³Ë³Í³Ì³Î³È³Ñ³Ò³Ó"};
+Nconst char PY_mb_chi   []={"³Ô³Õ³Ú³Ø³Û³Ù³Ö³ß³Þ³Ý³Ü³â³à³ã³á"};
+Nconst char PY_mb_chong []={"³ä³å³æ³ç³è"};
+Nconst char PY_mb_chou  []={"³é³ð³ñ³ë³î³í³ï³ê³ì³ó³ò³ô"};
+Nconst char PY_mb_chu   []={"³ö³õ³ý³ø³ü³ú³û³÷³ù´¡´¢³þ´¦´¤´¥´£Ðó"};
+Nconst char PY_mb_chuai []={"´§"};
+Nconst char PY_mb_chuan []={"´¨´©´«´¬´ª´­´®"};
+Nconst char PY_mb_chuang[]={"´³´¯´°´²´´"};
+Nconst char PY_mb_chui  []={"´µ´¶´¹´·´¸"};
+Nconst char PY_mb_chun  []={"´º´»´¿´½´¾´¼´À"};
+Nconst char PY_mb_chuo  []={"´Á"};
+Nconst char PY_mb_ci    []={"´Ã´Ê´Ä´É´È´Ç´Å´Æ´Ë´Î´Ì´Í"};
+Nconst char PY_mb_cong  []={"´Ñ´Ó´Ò´Ð´Ï´Ô"};
+Nconst char PY_mb_cou   []={"´Õ"};
+Nconst char PY_mb_cu    []={"´Ö´Ù´×´Ø"};
+Nconst char PY_mb_cuan  []={"´Ú´Ü´Û"};
+Nconst char PY_mb_cui   []={"´Þ´ß´Ý´à´ã´á´â´ä"};
+Nconst char PY_mb_cun   []={"´å´æ´ç"};
+Nconst char PY_mb_cuo   []={"´ê´è´é´ì´ë´í"};
+Nconst char PY_mb_da    []={"´î´ï´ð´ñ´ò´ó"};
+Nconst char PY_mb_dai   []={"´ô´õ´ö´ú´ø´ýµ¡´ù´û´ü´þ´÷"};
+Nconst char PY_mb_dan   []={"µ¤µ¥µ£µ¢µ¦µ¨µ§µ©µ«µ®µ¯µ¬µ­µ°µª"};
+Nconst char PY_mb_dang  []={"µ±µ²µ³µ´µµ"};
+Nconst char PY_mb_dao   []={"ë®µ¶µ¼µºµ¹µ·µ»µ¸µ½µ¿µÁµÀµ¾"};
+Nconst char PY_mb_de    []={"µÃµÂµÄ"};
+Nconst char PY_mb_deng  []={"µÆµÇµÅµÈµËµÊµÉ"};
+Nconst char PY_mb_di    []={"µÍµÌµÎµÒµÏµÐµÓµÑµÕµ×µÖµØµÜµÛµÝµÚµÞµÙ"};
+Nconst char PY_mb_dian  []={"µàµáµßµäµãµâµçµèµéµêµæµëµíµìµîµå"};
+Nconst char PY_mb_diao  []={"µóµðµòµïµñµõµöµô"};
+Nconst char PY_mb_die   []={"µùµøµüµýµþµúµû"};
+Nconst char PY_mb_ding  []={"¶¡¶£¶¢¶¤¶¥¶¦¶©¶¨¶§"};
+Nconst char PY_mb_diu   []={"¶ª"};
+Nconst char PY_mb_dong  []={"¶«¶¬¶­¶®¶¯¶³¶±¶²¶°¶´"};
+Nconst char PY_mb_dou   []={"¶¼¶µ¶·¶¶¶¸¶¹¶º¶»"};
+Nconst char PY_mb_du    []={"¶½¶¾¶Á¶¿¶À¶Â¶Ä¶Ã¶Ê¶Å¶Ç¶È¶É¶Æ"};
+Nconst char PY_mb_duan  []={"¶Ë¶Ì¶Î¶Ï¶Ð¶Í"};
+Nconst char PY_mb_dui   []={"¶Ñ¶Ó¶Ô¶Ò"};
+Nconst char PY_mb_dun   []={"¶Ö¶Ø¶Õ¶×¶Ü¶Û¶Ù¶Ý"};
+Nconst char PY_mb_duo   []={"¶à¶ß¶á¶Þ¶ä¶â¶ã¶ç¶é¶æ¶è¶å"};
+Nconst char PY_mb_e     []={"¶ï¶í¶ð¶ë¶ì¶ê¶î¶ò¶ó¶ñ¶ö¶õ¶ô"};
+Nconst char PY_mb_en    []={"¶÷"};
+Nconst char PY_mb_er    []={"¶ù¶ø¶û¶ú¶ý¶ü¶þ·¡"};
+Nconst char PY_mb_fa    []={"·¢·¦·¥·£·§·¤·¨·©"};
+Nconst char PY_mb_fan   []={"·«·¬·­·ª·²·¯·°·³·®·±·´·µ·¸·º·¹·¶··"};
+Nconst char PY_mb_fang  []={"·½·»·¼·À·Á·¿·¾·Â·Ã·Ä·Å"};
+Nconst char PY_mb_fei   []={"·É·Ç·È·Æ·Ê·Ë·Ì·Í·Ï·Ð·Î·Ñ"};
+Nconst char PY_mb_fen   []={"·Ö·Ô·×·Ò·Õ·Ó·Ø·Ú·Ù·Û·Ý·Ü·Þ·ß·à"};
+Nconst char PY_mb_feng  []={"·á·ç·ã·â·è·å·é·æ·ä·ë·ê·ì·í·ï·î"};
+Nconst char PY_mb_fo    []={"·ð"};
+Nconst char PY_mb_fou   []={"ó¾·ñ"};
+Nconst char PY_mb_fu    []={"·ò·ô·õ·ó¸¥·ü·ö·÷·þ·ý·ú¸¡¸¢·û¸¤·ù¸£·ø¸§¸¦¸®¸«¸©¸ª¸¨¸­¸¯¸¸¸¼¸¶¸¾¸º¸½¸À¸·¸´¸°¸±¸µ¸»¸³¸¿¸¹¸²"};
+Nconst char PY_mb_ga    []={"¸Â¸Á"};
+Nconst char PY_mb_gai   []={"¸Ã¸Ä¸Æ¸Ç¸È¸Å"};
+Nconst char PY_mb_gan   []={"¸É¸Ê¸Ë¸Î¸Ì¸Í¸Ñ¸Ï¸Ò¸Ð¸Ó"};
+Nconst char PY_mb_gang  []={"¸Ô¸Õ¸Ú¸Ù¸Ø¸×¸Ö¸Û¸Ü"};
+Nconst char PY_mb_gao   []={"¸Þ¸á¸ß¸à¸Ý¸â¸ã¸å¸ä¸æ"};
+Nconst char PY_mb_ge    []={"¸ê¸í¸ç¸ì¸ë¸î¸é¸è¸ó¸ï¸ñ¸ð¸ô¸ö¸÷¸õ¿©"};
+Nconst char PY_mb_gei   []={"¸ø"};
+Nconst char PY_mb_gen   []={"¸ù¸ú"};
+Nconst char PY_mb_geng  []={"¸ü¸ý¸û¸þ¹¡¹¢¹£"};
+Nconst char PY_mb_gong  []={"¹¤¹­¹«¹¦¹¥¹©¹¬¹§¹ª¹¨¹®¹¯¹°¹²¹±"};
+Nconst char PY_mb_gou   []={"¹´¹µ¹³¹·¹¶¹¹¹º¹¸¹»"};
+Nconst char PY_mb_gu    []={"¹À¹¾¹Ã¹Â¹Á¹½¹¼¹¿¹Å¹È¹É¹Ç¹Æ¹Ä¹Ì¹Ê¹Ë¹Í"};
+Nconst char PY_mb_gua   []={"¹Ï¹Î¹Ð¹Ñ¹Ò¹Ó"};
+Nconst char PY_mb_guai  []={"¹Ô¹Õ¹Ö"};
+Nconst char PY_mb_guan  []={"¹Ø¹Û¹Ù¹Ú¹×¹Ý¹Ü¹á¹ß¹à¹Þ"};
+Nconst char PY_mb_guang []={"¹â¹ã¹ä"};
+Nconst char PY_mb_gui   []={"¹é¹ç¹ê¹æ¹ë¹è¹å¹ì¹î¹ï¹í¹ô¹ñ¹ó¹ð¹ò"};
+Nconst char PY_mb_gun   []={"¹õ¹ö¹÷"};
+Nconst char PY_mb_guo   []={"¹ù¹ø¹ú¹û¹ü¹ý"};
+Nconst char PY_mb_ha    []={"¸ò¹þ"};
+Nconst char PY_mb_hai   []={"º¢º¡º£º¥º§º¦º¤»¹àË"};
+Nconst char PY_mb_han   []={"º¨º©º¬ºªº¯º­º®º«º±º°ººº¹ºµº·º´º¸º¶º³º²"};
+Nconst char PY_mb_hang  []={"º¼º½ÐÐ"};
+Nconst char PY_mb_hao   []={"ºÁºÀº¿º¾ºÃºÂºÅºÆºÄ"};
+Nconst char PY_mb_he    []={"ºÇºÈºÌºÏºÎºÍºÓºÒºËºÉºÔºÐºÊºØºÖºÕº×"};
+Nconst char PY_mb_hei   []={"ºÚºÙ"};
+Nconst char PY_mb_hen   []={"ºÛºÜºÝºÞ"};
+Nconst char PY_mb_heng  []={"ºàºßºãºáºâ"};
+Nconst char PY_mb_hong  []={"ºäºåºæºëºìºêºéºçºè"};
+Nconst char PY_mb_hou   []={"ºîºíºïºðºóºñºò"};
+Nconst char PY_mb_hu    []={"ºõºôºö»¡ºüºúºøºþºùº÷ºýºû»¢»£»¥»§»¤»¦"};
+Nconst char PY_mb_hua   []={"»¨»ª»©»¬»«»¯»®»­»°"};
+Nconst char PY_mb_huai  []={"»³»²»´»±»µ"};
+Nconst char PY_mb_huan  []={"»¶»¹»·»¸»º»Ã»Â»½»»»Á»¼»À»¾»¿"};
+Nconst char PY_mb_huang []={"»Ä»Å»Ê»Ë»Æ»Ì»Í»È»Ç»É»Ð»Î»Ñ»Ï"};
+Nconst char PY_mb_hui   []={"»Ò»Ö»Ó»Ô»Õ»Ø»×»Ú»Ü»ã»á»ä»æ»å»â»ß»Þ»à»Ý»Ù»Û"};
+Nconst char PY_mb_hun   []={"»è»ç»é»ë»ê»ì"};
+Nconst char PY_mb_huo   []={"îØ»í»î»ð»ï»ò»õ»ñ»ö»ó»ô"};
+Nconst char PY_mb_ji    []={"¼¥»÷¼¢»ø»ú¼¡¼¦¼£¼§»ý»ù¼¨¼©»û»þ»ü¼¤¼°¼ª¼³¼¶¼´¼«¼±¼²¼¬¼¯¼µ¼­¼®¼¸¼º¼·¼¹¼Æ¼Ç¼¿¼Í¼Ë¼É¼¼¼Ê¼Á¼¾¼È¼Ã¼Ì¼Å¼Ä¼Â¼À¼»¼½½å"};
+Nconst char PY_mb_jia   []={"¼Ó¼Ð¼Ñ¼Ï¼Ò¼Î¼Ô¼Õ¼×¼Ö¼Ø¼Û¼Ý¼Ü¼Ù¼Þ¼ÚÐ®"};
+Nconst char PY_mb_jian  []={"¼é¼â¼á¼ß¼ä¼ç¼è¼æ¼à¼ã¼ê¼å¼ð¼ó¼í¼ë¼ñ¼õ¼ô¼ì¼ï¼ò¼î¼û¼þ½¨½¤½£¼ö¼ú½¡½§½¢½¥½¦¼ù¼ø¼ü¼ý"};
+Nconst char PY_mb_jiang []={"½­½ª½«½¬½©½®½²½±½°½¯½³½µ½´"};
+Nconst char PY_mb_jiao  []={"½»½¼½¿½½½¾½º½·½¹½¶½¸½Ç½Æ½Ê½È½Ã½Å½Â½Á½Ë½É½Ð½Î½Ï½Ì½Ñ½Í¾õ½À"};
+Nconst char PY_mb_jie   []={"½×½Ô½Ó½Õ½Ò½Ö½Ú½Ù½Ü½à½á½Ý½Þ½Ø½ß½ã½â½é½ä½æ½ì½ç½ê½ë½è"};
+Nconst char PY_mb_jin   []={"½í½ñ½ï½ð½ò½î½ó½ö½ô½÷½õ¾¡¾¢½ü½ø½ú½þ½ý½û½ù"};
+Nconst char PY_mb_jing  []={"¾©¾­¾¥¾£¾ª¾§¾¦¾¬¾¤¾«¾¨¾®¾±¾°¾¯¾»¾¶¾·¾º¾¹¾´¾¸¾³¾²¾µ"};
+Nconst char PY_mb_jiong []={"¾¼¾½"};
+Nconst char PY_mb_jiu   []={"¾À¾¿¾¾¾Å¾Ã¾Ä¾Á¾Â¾Æ¾É¾Ê¾Ì¾Î¾Ç¾È¾Í¾Ë"};
+Nconst char PY_mb_ju    []={"¾Ó¾Ð¾Ñ¾Ô¾Ò¾Ï¾Ö½Û¾Õ¾×¾Ú¾Ù¾Ø¾ä¾Þ¾Ü¾ß¾æ¾ã¾ç¾å¾Ý¾à¾â¾Û¾á"};
+Nconst char PY_mb_juan  []={"¾ê¾è¾é¾í¾ë¾î¾ì"};
+Nconst char PY_mb_jue   []={"¾ï¾ö¾÷¾ñ¾ø¾ó¾ò¾ô¾ð"};
+Nconst char PY_mb_jun   []={"¾ü¾ý¾ù¾û¾ú¿¡¿¤¾þ¿£¿¥¿¢"};
+Nconst char PY_mb_ka    []={"¿§¿¦¿¨"};
+Nconst char PY_mb_kai   []={"¿ª¿«¿­¿®¿¬"};
+Nconst char PY_mb_kan   []={"¼÷¿¯¿±¿°¿²¿³¿´"};
+Nconst char PY_mb_kang  []={"¿µ¿¶¿·¿¸¿º¿¹¿»"};
+Nconst char PY_mb_kao   []={"¿¼¿½¿¾¿¿"};
+Nconst char PY_mb_ke    []={"¿À¿Á¿Â¿Æ¿Ã¿Å¿Ä¿Ç¿È¿É¿Ê¿Ë¿Ì¿Í¿Î"};
+Nconst char PY_mb_ken   []={"¿Ï¿Ñ¿Ò¿Ð"};
+Nconst char PY_mb_keng  []={"¿Ô¿Ó"};
+Nconst char PY_mb_kong  []={"¿Õ¿×¿Ö¿Ø"};
+Nconst char PY_mb_kou   []={"¿Ù¿Ú¿Û¿Ü"};
+Nconst char PY_mb_ku    []={"¿Ý¿Þ¿ß¿à¿â¿ã¿á"};
+Nconst char PY_mb_kua   []={"¿ä¿å¿æ¿è¿ç"};
+Nconst char PY_mb_kuai  []={"¿é¿ì¿ë¿ê"};
+Nconst char PY_mb_kuan  []={"¿í¿î"};
+Nconst char PY_mb_kuang []={"¿ï¿ð¿ñ¿ö¿õ¿ó¿ò¿ô"};
+Nconst char PY_mb_kui   []={"¿÷¿ù¿ø¿ú¿ü¿û¿ý¿þÀ¢À£À¡"};
+Nconst char PY_mb_kun   []={"À¤À¥À¦À§"};
+Nconst char PY_mb_kuo   []={"À©À¨À«Àª"};
+Nconst char PY_mb_la    []={"À¬À­À²À®À°À¯À±"};
+Nconst char PY_mb_lai   []={"À´À³Àµ"};
+Nconst char PY_mb_lan   []={"À¼À¹À¸À·À»À¶À¾À½ÀºÀÀÀ¿ÀÂÀÁÀÃÀÄ"};
+Nconst char PY_mb_lang  []={"ÀÉÀÇÀÈÀÅÀÆÀÊÀË"};
+Nconst char PY_mb_lao   []={"ÀÌÀÍÀÎÀÏÀÐÀÑÀÔÀÓÀÒ"};
+Nconst char PY_mb_le    []={"ÀÖÀÕÁË"};
+Nconst char PY_mb_lei   []={"À×ÀØÀÝÀÚÀÙÀÜÀßÀáÀàÀÛÀÞ"};
+Nconst char PY_mb_leng  []={"ÀâÀãÀä"};
+Nconst char PY_mb_li    []={"ÀåÀæÀêÀëÀòÀçÀìÁ§ÀèÀéÀñÀîÀïÁ¨ÀíÀðÁ¦ÀúÀ÷Á¢ÀôÀöÀûÀøÁ¤ÀýÁ¥ÀþÀóÀõÀùÁ£ÀüÁ¡"};
+Nconst char PY_mb_lian  []={"Á¬Á±Á¯Á°Á«ÁªÁ®Á­Á²Á³Á·Á¶ÁµÁ´"};
+Nconst char PY_mb_liang []={"Á©Á¼Á¹ÁºÁ¸Á»Á½ÁÁÁÂÁ¾ÁÀÁ¿"};
+Nconst char PY_mb_liao  []={"ÁÊÁÉÁÆÁÄÁÅÁÈÁÎÁÃÁÇÁÍÁÏÁÌ"};
+Nconst char PY_mb_lie   []={"ÁÐÁÓÁÒÁÔÁÑ"};
+Nconst char PY_mb_lin   []={"ÁÚÁÖÁÙÁÜÁÕÁØÁ×ÁÛÁÝÁßÁÞÁà"};
+Nconst char PY_mb_ling  []={"ÁæÁéÁëÁáÁèÁåÁêÁçÁâÁãÁäÁìÁîÁí"};
+Nconst char PY_mb_liu   []={"ÁïÁõÁ÷ÁôÁðÁòÁóÁñÁöÁøÁù"};
+Nconst char PY_mb_long  []={"ÁúÁüÁýÁûÂ¡ÁþÂ¤Â¢Â£"};
+Nconst char PY_mb_lou   []={"Â¦Â¥Â§Â¨ÂªÂ©"};
+Nconst char PY_mb_lu    []={"Â¶Â¬Â®Â«Â¯Â­Â±Â²Â°Â³Â½Â¼Â¸Â¹Â»ÂµÂ·Â¾ÂºÂ´"};
+Nconst char PY_mb_luan  []={"ÂÏÂÍÂÎÂÐÂÑÂÒ"};
+Nconst char PY_mb_lue   []={"ÂÓÂÔ"};
+Nconst char PY_mb_lun   []={"ÂÕÂØÂ×ÂÙÂÚÂÖÂÛ"};
+Nconst char PY_mb_luo   []={"ÂÞÂÜÂßÂàÂáÂâÂÝÂãÂåÂçÂæÂä"};
+Nconst char PY_mb_lv    []={"ÂËÂ¿ÂÀÂÂÂÃÂÁÂÅÂÆÂÄÂÉÂÇÂÊÂÌÂÈ"};
+Nconst char PY_mb_ma    []={"ÂèÂéÂíÂêÂëÂìÂîÂðÂï"};
+Nconst char PY_mb_mai   []={"ÂñÂòÂõÂóÂôÂö"};
+Nconst char PY_mb_man   []={"ÂùÂøÂ÷ÂúÂüÃ¡ÂýÂþÂû"};
+Nconst char PY_mb_mang  []={"Ã¦Ã¢Ã¤Ã£Ã§Ã¥"};
+Nconst char PY_mb_mao   []={"Ã¨Ã«Ã¬Ã©ÃªÃ®Ã­Ã¯Ã°Ã³Ã±Ã²"};
+Nconst char PY_mb_me    []={"Ã´"};
+Nconst char PY_mb_mei   []={"Ã»Ã¶ÃµÃ¼Ã·Ã½ÃºÃ¸Ã¹Ã¿ÃÀÃ¾ÃÃÃÁÃÄÃÂ"};
+Nconst char PY_mb_men   []={"ÃÅÃÆÃÇ"};
+Nconst char PY_mb_meng  []={"ÃÈÃËÃÊÃÍÃÉÃÌÃÏÃÎ"};
+Nconst char PY_mb_mi    []={"ÃÖÃÔÃÕÃÑÃÓÃÒÃ×ÃÐÃÚÃÙÃØÃÜÃÝÃÛ"};
+Nconst char PY_mb_mian  []={"ÃßÃàÃÞÃâÃãÃäÃáÃåÃæ"};
+Nconst char PY_mb_miao  []={"ÃçÃèÃéÃëÃìÃêÃîÃí"};
+Nconst char PY_mb_mie   []={"ÃðÃï"};
+Nconst char PY_mb_min   []={"ÃñÃóÃòÃöÃõÃô"};
+Nconst char PY_mb_ming  []={"ÃûÃ÷ÃùÃúÃøÃü"};
+Nconst char PY_mb_miu   []={"Ãý"};
+Nconst char PY_mb_mo    []={"ºÑÃþÄ¡Ä£Ä¤Ä¦Ä¥Ä¢Ä§Ä¨Ä©Ä­Ä°ÄªÄ¯Ä®Ä«Ä¬"};
+Nconst char PY_mb_mou   []={"Ä²Ä±Ä³"};
+Nconst char PY_mb_mu    []={"Ä¸Ä¶ÄµÄ·Ä´Ä¾Ä¿ÄÁÄ¼Ä¹Ä»ÄÀÄ½ÄºÄÂ"};
+Nconst char PY_mb_na    []={"ÄÃÄÄÄÇÄÉÄÈÄÆÄÅ"};
+Nconst char PY_mb_nai   []={"ÄËÄÌÄÊÄÎÄÍ"};
+Nconst char PY_mb_nan   []={"ÄÐÄÏÄÑ"};
+Nconst char PY_mb_nang  []={"ÄÒ"};
+Nconst char PY_mb_nao   []={"ÄÓÄÕÄÔÄÖÄ×"};
+Nconst char PY_mb_ne    []={"ÄØ"};
+Nconst char PY_mb_nei   []={"ÄÚÄÙ"};
+Nconst char PY_mb_nen   []={"ÄÛ"};
+Nconst char PY_mb_neng  []={"ÄÜ"};
+Nconst char PY_mb_ni    []={"ÄÝÄáÄàÄßÄÞÄãÄâÄæÄäÄçÄå"};
+Nconst char PY_mb_nian  []={"ÄéÄêÄíÄìÄëÄîÄè"};
+Nconst char PY_mb_niang []={"ÄïÄð"};
+Nconst char PY_mb_niao  []={"ÄñÄò"};
+Nconst char PY_mb_nie   []={"ÄóÄùÄôÄöÄ÷ÄøÄõ"};
+Nconst char PY_mb_nin   []={"Äú"};
+Nconst char PY_mb_ning  []={"ÄþÅ¡ÄüÄûÄýÅ¢"};
+Nconst char PY_mb_niu   []={"Å£Å¤Å¦Å¥"};
+Nconst char PY_mb_nong  []={"Å©Å¨Å§Åª"};
+Nconst char PY_mb_nu    []={"Å«Å¬Å­"};
+Nconst char PY_mb_nuan  []={"Å¯"};
+Nconst char PY_mb_nue   []={"Å±Å°"};
+Nconst char PY_mb_nuo   []={"Å²ÅµÅ³Å´"};
+Nconst char PY_mb_nv    []={"Å®"};
+Nconst char PY_mb_o     []={"Å¶"};
+Nconst char PY_mb_ou    []={"Å·Å¹Å¸Å»Å¼ÅºÅ½"};
+Nconst char PY_mb_pa    []={"Å¿Å¾ÅÀ°ÒÅÃÅÁÅÂ"};
+Nconst char PY_mb_pai   []={"ÅÄÅÇÅÅÅÆÅÉÅÈ"};
+Nconst char PY_mb_pan   []={"ÅËÅÊÅÌÅÍÅÐÅÑÅÎÅÏ"};
+Nconst char PY_mb_pang  []={"ÅÒÅÓÅÔÅÕÅÖ"};
+Nconst char PY_mb_pao   []={"Å×ÅÙÅØÅÚÅÛÅÜÅÝ"};
+Nconst char PY_mb_pei   []={"ÅÞÅßÅãÅàÅâÅáÅæÅåÅä"};
+Nconst char PY_mb_pen   []={"ÅçÅè"};
+Nconst char PY_mb_peng  []={"ÅêÅéÅëÅóÅíÅïÅðÅîÅôÅìÅñÅòÅõÅö"};
+Nconst char PY_mb_pi    []={"±ÙÅúÅ÷ÅûÅøÅüÅùÆ¤ÅþÆ£Æ¡ÅýÆ¢Æ¥Æ¦Æ¨Æ§Æ©"};
+Nconst char PY_mb_pian  []={"Æ¬Æ«ÆªÆ­"};
+Nconst char PY_mb_piao  []={"Æ¯Æ®Æ°Æ±"};
+Nconst char PY_mb_pie   []={"Æ²Æ³"};
+Nconst char PY_mb_pin   []={"Æ´Æ¶ÆµÆ·Æ¸"};
+Nconst char PY_mb_ping  []={"Æ¹Æ½ÆÀÆ¾ÆºÆ»ÆÁÆ¿Æ¼"};
+Nconst char PY_mb_po    []={"ÆÂÆÃÆÄÆÅÆÈÆÆÆÉÆÇ"};
+Nconst char PY_mb_pou   []={"ÆÊ"};
+Nconst char PY_mb_pu    []={"¸¬ÆÍÆËÆÌÆÎÆÐÆÏÆÑÆÓÆÔÆÒÆÖÆÕÆ×ÆØ"};
+Nconst char PY_mb_qi    []={"ÆßÆãÆÞÆâÆàÆÜÆÝÆÚÆÛÆáÆîÆëÆäÆæÆçÆíÆêÆéÆèÆïÆåÆìÆòÆóÆñÆôÆðÆøÆýÆùÆúÆûÆüÆõÆöÆ÷"};
+Nconst char PY_mb_qia   []={"ÆþÇ¡Ç¢"};
+Nconst char PY_mb_qian  []={"Ç§ÇªÇ¤Ç¨Ç¥Ç£Ç¦Ç«Ç©Ç°Ç®Ç¯Ç¬Ç±Ç­Ç³Ç²Ç´Ç·ÇµÇ¶Ç¸"};
+Nconst char PY_mb_qiang []={"ÇºÇ¼Ç¹Ç»Ç¿Ç½Ç¾ÇÀ"};
+Nconst char PY_mb_qiao  []={"ÇÄÇÃÇÂÇÁÇÇÇÈÇÅÇÆÇÉÇÎÇÍÇÏÇÌÇËÇÊ"};
+Nconst char PY_mb_qie   []={"ÇÐÇÑÇÒÇÓÇÔ"};
+Nconst char PY_mb_qin   []={"Ç×ÇÖÇÕÇÛÇØÇÙÇÝÇÚÇÜÇÞÇß"};
+Nconst char PY_mb_qing  []={"ÇàÇâÇáÇãÇäÇåÇéÇçÇèÇæÇêÇëÇì"};
+Nconst char PY_mb_qiong []={"ÇîÇí"};
+Nconst char PY_mb_qiu   []={"ÇðÇñÇïÇôÇóÇöÇõÇò"};
+Nconst char PY_mb_qu    []={"ÇøÇúÇýÇüÇùÇûÇ÷ÇþÈ¡È¢È£È¥È¤"};
+Nconst char PY_mb_quan  []={"È¦È«È¨ÈªÈ­È¬È©È§È®È°È¯"};
+Nconst char PY_mb_que   []={"È²È±È³È´È¸È·ÈµÈ¶"};
+Nconst char PY_mb_qun   []={"È¹Èº"};
+Nconst char PY_mb_ran   []={"È»È¼È½È¾"};
+Nconst char PY_mb_rang  []={"È¿ÈÂÈÀÈÁÈÃ"};
+Nconst char PY_mb_rao   []={"ÈÄÈÅÈÆ"};
+Nconst char PY_mb_re    []={"ÈÇÈÈ"};
+Nconst char PY_mb_ren   []={"ÈËÈÊÈÉÈÌÈÐÈÏÈÎÈÒÈÑÈÍ"};
+Nconst char PY_mb_reng  []={"ÈÓÈÔ"};
+Nconst char PY_mb_ri    []={"ÈÕ"};
+Nconst char PY_mb_rong  []={"ÈÖÈÞÈ×ÈÙÈÝÈÜÈØÈÛÈÚÈß"};
+Nconst char PY_mb_rou   []={"ÈáÈàÈâ"};
+Nconst char PY_mb_ru    []={"ÈçÈãÈåÈæÈäÈêÈéÈèÈëÈì"};
+Nconst char PY_mb_ruan  []={"ÈîÈí"};
+Nconst char PY_mb_rui   []={"ÈïÈñÈð"};
+Nconst char PY_mb_run   []={"ÈòÈó"};
+Nconst char PY_mb_ruo   []={"ÈôÈõ"};
+Nconst char PY_mb_sa    []={"ÈöÈ÷Èø"};
+Nconst char PY_mb_sai   []={"ÈûÈùÈúÈü"};
+Nconst char PY_mb_san   []={"ÈýÈþÉ¡É¢"};
+Nconst char PY_mb_sang  []={"É£É¤É¥"};
+Nconst char PY_mb_sao   []={"É¦É§É¨É©"};
+Nconst char PY_mb_se    []={"É«É¬Éª"};
+Nconst char PY_mb_sen   []={"É­"};
+Nconst char PY_mb_seng  []={"É®"};
+Nconst char PY_mb_sha   []={"É±É³É´É°É¯ÉµÉ¶É·ÏÃ"};
+Nconst char PY_mb_shai  []={"É¸É¹"};
+Nconst char PY_mb_shan  []={"É½É¾É¼ÉÀÉºÉ¿ÉÁÉÂÉÇÉ»ÉÈÉÆÉÉÉÃÉÅÉÄÕ¤"};
+Nconst char PY_mb_shang []={"ÉËÉÌÉÊÉÑÉÎÉÍÉÏÉÐ"};
+Nconst char PY_mb_shao  []={"ÉÓÉÒÉÕÉÔÉ×ÉÖÉØÉÙÉÛÉÜÉÚ"};
+Nconst char PY_mb_she   []={"ÉÝÉÞÉàÉßÉáÉèÉçÉäÉæÉâÉåÉã"};
+Nconst char PY_mb_shen  []={"ÉêÉìÉíÉëÉðÉïÉéÉîÉñÉòÉóÉôÉöÉõÉøÉ÷Ê²"};
+Nconst char PY_mb_sheng []={"ÉýÉúÉùÉüÊ¤ÉûÉþÊ¡Ê¥Ê¢Ê£"};
+Nconst char PY_mb_shi   []={"³×Ê¬Ê§Ê¦Ê­Ê«Ê©Ê¨ÊªÊ®Ê¯Ê±Ê¶ÊµÊ°Ê´Ê³Ê·Ê¸Ê¹Ê¼Ê»ÊºÊ¿ÊÏÊÀÊËÊÐÊ¾Ê½ÊÂÊÌÊÆÊÓÊÔÊÎÊÒÊÑÊÃÊÇÊÁÊÊÊÅÊÍÊÈÊÄÊÉËÆ"};
+Nconst char PY_mb_shou  []={"ÊÕÊÖÊØÊ×ÊÙÊÜÊÞÊÛÊÚÊÝ"};
+Nconst char PY_mb_shu   []={"ÊéÊãÊåÊàÊâÊáÊçÊèÊæÊäÊßÊëÊêÊìÊîÊòÊðÊóÊñÊíÊïÊõÊùÊøÊöÊ÷ÊúË¡ÊüÊýÊûÊþÊô"};
+Nconst char PY_mb_shua  []={"Ë¢Ë£"};
+Nconst char PY_mb_shuai []={"Ë¥Ë¤Ë¦Ë§"};
+Nconst char PY_mb_shuan []={"Ë©Ë¨"};
+Nconst char PY_mb_shuang[]={"Ë«ËªË¬"};
+Nconst char PY_mb_shui  []={"Ë­Ë®Ë°Ë¯"};
+Nconst char PY_mb_shun  []={"Ë±Ë³Ë´Ë²"};
+Nconst char PY_mb_shuo  []={"ËµË¸Ë·Ë¶"};
+Nconst char PY_mb_si    []={"Ë¿Ë¾Ë½Ë¼Ë¹Ë»ËºËÀËÈËÄËÂËÅËÇËÃËÁ"};
+Nconst char PY_mb_song  []={"ËÉËËËÊËÏËÎËÐËÍËÌ"};
+Nconst char PY_mb_sou   []={"ËÔËÑËÒËÓ"};
+Nconst char PY_mb_su    []={"ËÕËÖË×ËßËàËØËÙËÚËÜËÝËÛ"};
+Nconst char PY_mb_suan  []={"ËáËâËã"};
+Nconst char PY_mb_sui   []={"ËäËçËåËæËèËêËîËìËéËíËë"};
+Nconst char PY_mb_sun   []={"ËïËðËñ"};
+Nconst char PY_mb_suo   []={"ËôËóËòËõËùË÷ËöËø"};
+Nconst char PY_mb_ta    []={"ËýËûËüËúËþÌ¡Ì¢Ì¤Ì£"};
+Nconst char PY_mb_tai   []={"Ì¥Ì¨Ì§Ì¦Ì«Ì­Ì¬Ì©Ìª"};
+Nconst char PY_mb_tan   []={"Ì®Ì°Ì¯Ì²Ì±Ì³Ì¸ÌµÌ·Ì¶Ì´Ì¹Ì»ÌºÌ¾Ì¿Ì½Ì¼"};
+Nconst char PY_mb_tang  []={"ÌÀÌÆÌÃÌÄÌÁÌÂÌÅÌÇÌÈÌÊÌÉÌÌÌË"};
+Nconst char PY_mb_tao   []={"ÌÎÌÐÌÍÌÏÌÓÌÒÌÕÌÔÌÑÌÖÌ×"};
+Nconst char PY_mb_te    []={"ÌØ"};
+Nconst char PY_mb_teng  []={"ÌÛÌÚÌÜÌÙ"};
+Nconst char PY_mb_ti    []={"ÌÞÌÝÌàÌßÌäÌáÌâÌãÌåÌëÌêÌéÌèÌæÌç"};
+Nconst char PY_mb_tian  []={"ÌìÌíÌïÌñÌðÌîÌóÌò"};
+Nconst char PY_mb_tiao  []={"µ÷ÌôÌõÌöÌ÷Ìø"};
+Nconst char PY_mb_tie   []={"ÌùÌúÌû"};
+Nconst char PY_mb_ting  []={"ÌüÍ¡ÌýÌþÍ¢Í¤Í¥Í£Í¦Í§"};
+Nconst char PY_mb_tong  []={"Í¨Í¬Í®Í©Í­Í¯ÍªÍ«Í³Í±Í°Í²Í´"};
+Nconst char PY_mb_tou   []={"ÍµÍ·Í¶Í¸"};
+Nconst char PY_mb_tu    []={"Í¹ÍºÍ»Í¼Í½Í¿Í¾ÍÀÍÁÍÂÍÃ"};
+Nconst char PY_mb_tuan  []={"ÍÄÍÅ"};
+Nconst char PY_mb_tui   []={"ÍÆÍÇÍÈÍËÍÉÍÊ"};
+Nconst char PY_mb_tun   []={"¶ÚÍÌÍÍÍÎ"};
+Nconst char PY_mb_tuo   []={"ÍÐÍÏÍÑÍÔÍÓÍÕÍÒÍ×ÍÖÍØÍÙ"};
+Nconst char PY_mb_wa    []={"ÍÛÍÞÍÚÍÝÍÜÍßÍà"};
+Nconst char PY_mb_wai   []={"ÍáÍâ"};
+Nconst char PY_mb_wan   []={"ÍäÍåÍãÍèÍêÍæÍçÍéÍðÍìÍíÍñÍïÍîÍëÍòÍó"};
+Nconst char PY_mb_wang  []={"ÍôÍöÍõÍøÍùÍ÷ÍýÍüÍúÍû"};
+Nconst char PY_mb_wei   []={"Î£ÍþÎ¢Î¡ÎªÎ¤Î§Î¥Î¦Î¨Î©Î¬Î«Î°Î±Î²Î³Î­Î¯Î®ÎÀÎ´Î»Î¶Î·Î¸Î¾Î½Î¹Î¼ÎµÎ¿Îº"};
+Nconst char PY_mb_wen   []={"ÎÂÎÁÎÄÎÆÎÅÎÃÎÇÎÉÎÈÎÊ"};
+Nconst char PY_mb_weng  []={"ÎÌÎËÎÍ"};
+Nconst char PY_mb_wo    []={"ÎÎÎÐÎÑÎÏÎÒÎÖÎÔÎÕÎÓ"};
+Nconst char PY_mb_wu    []={"ÎÚÎÛÎØÎ×ÎÝÎÜÎÙÎÞÎãÎâÎáÎßÎàÎåÎçÎéÎëÎäÎêÎæÎèÎðÎñÎìÎïÎóÎòÎîÎí"};
+Nconst char PY_mb_xi    []={"Ï¦Ï«Î÷ÎüÏ£ÎôÎöÎùÏ¢ÎþÏ¤Ï§Ï©ÎøÎúÏ¬Ï¡ÏªÎýÏ¨ÎõÎûÏ¥Ï°Ï¯Ï®Ï±Ï­Ï´Ï²Ï·ÏµÏ¸Ï¶"};
+Nconst char PY_mb_xia   []={"ÏºÏ¹Ï»ÏÀÏ¿ÏÁÏ¾Ï½Ï¼ÏÂÏÅÏÄ"};
+Nconst char PY_mb_xian  []={"Ï³ÏÉÏÈÏËÏÆÏÇÏÊÏÐÏÒÏÍÏÌÏÑÏÏÏÎÏÓÏÔÏÕÏØÏÖÏßÏÞÏÜÏÝÏÚÏÛÏ×ÏÙ"};
+Nconst char PY_mb_xiang []={"ÏçÏàÏãÏáÏæÏäÏåÏâÏêÏéÏèÏíÏìÏëÏòÏïÏîÏóÏñÏð"};
+Nconst char PY_mb_xiao  []={"ÏüÏûÏôÏõÏúÏöÏùÏýÐ¡ÏþÐ¢Ð¤ÏøÐ§Ð£Ð¦Ð¥"};
+Nconst char PY_mb_xie   []={"Ð©Ð¨ÐªÐ«Ð­Ð°Ð²Ð±Ð³Ð¯Ð¬Ð´Ð¹ÐºÐ¶Ð¼ÐµÐ»Ð¸Ð·"};
+Nconst char PY_mb_xin   []={"ÐÄÐÃÐ¾ÐÁÐÀÐ¿ÐÂÐ½ÐÅÐÆ"};
+Nconst char PY_mb_xing  []={"ÐËÐÇÐÊÐÉÐÈÐÌÐÏÐÎÐÍÐÑÐÓÐÕÐÒÐÔ"};
+Nconst char PY_mb_xiong []={"Ð×ÐÖÐÙÐÚÐØÐÛÐÜ"};
+Nconst char PY_mb_xiu   []={"ËÞÐÝÐÞÐßÐàÐãÐåÐäÐâÐá"};
+Nconst char PY_mb_xu    []={"ÐçÐëÐéÐêÐèÐæÐìÐíÐñÐòÐðÐôÐ÷ÐøÐïÐöÐõÐîÓõ"};
+Nconst char PY_mb_xuan  []={"ÐùÐûÐúÐþÐüÐýÑ¡Ñ¢Ñ¤Ñ£"};
+Nconst char PY_mb_xue   []={"Ï÷Ñ¥Ñ¦Ñ¨Ñ§Ñ©Ñª"};
+Nconst char PY_mb_xun   []={"Ñ«Ñ¬Ñ°Ñ²Ñ®Ñ±Ñ¯Ñ­ÑµÑ¶Ñ´Ñ¸Ñ·Ñ³"};
+Nconst char PY_mb_ya    []={"Ñ¾Ñ¹Ñ½ÑºÑ»Ñ¼ÑÀÑ¿ÑÁÑÂÑÄÑÃÑÆÑÅÑÇÑÈ"};
+Nconst char PY_mb_yan   []={"ÑÊÑÌÑÍÑÉÑËÑÓÑÏÑÔÑÒÑØÑ×ÑÐÑÎÑÖÑÑÑÕÑÙÑÜÑÚÑÛÑÝÑáÑåÑâÑäÑçÑÞÑéÑèÑßÑæÑãÑà"};
+Nconst char PY_mb_yang  []={"ÑëÑêÑíÑìÑïÑòÑôÑîÑðÑñÑóÑöÑøÑõÑ÷ÑùÑú"};
+Nconst char PY_mb_yao   []={"½ÄÑýÑüÑûÒ¢Ò¦Ò¤Ò¥Ò¡Ò£ÑþÒ§Ò¨Ò©ÒªÒ«Ô¿"};
+Nconst char PY_mb_ye    []={"Ò¬Ò­Ò¯Ò®Ò²Ò±Ò°ÒµÒ¶Ò·Ò³Ò¹Ò´ÒºÒ¸"};
+Nconst char PY_mb_yi    []={"Ò»ÒÁÒÂÒ½ÒÀÒ¿Ò¼Ò¾ÒÇÒÄÒÊÒËÒÌÒÈÒÆÒÅÒÃÒÉÒÍÒÒÒÑÒÔÒÓÒÏÒÐÒÎÒåÒÚÒäÒÕÒéÒàÒÙÒìÒÛÒÖÒëÒØÒ×ÒïÒèÒßÒæÒêÒîÒÝÒâÒçÒÞÒáÒãÒíÒÜ"};
+Nconst char PY_mb_yin   []={"ÒòÒõÒöÒðÒñÒôÒóÒ÷ÒúÒùÒøÒüÒýÒûÒþÓ¡"};
+Nconst char PY_mb_ying  []={"Ó¦Ó¢Ó¤Ó§Ó£Ó¥Ó­Ó¯Ó«Ó¨Ó©ÓªÓ¬Ó®Ó±Ó°Ó³Ó²"};
+Nconst char PY_mb_yo    []={"Ó´"};
+Nconst char PY_mb_yong  []={"Ó¶ÓµÓ¸Ó¹ÓºÓ·ÓÀÓ½Ó¾ÓÂÓ¿ÓÁÓ¼Ó»ÓÃ"};
+Nconst char PY_mb_you   []={"ÓÅÓÇÓÄÓÆÓÈÓÉÓÌÓÊÓÍÓËÓÎÓÑÓÐÓÏÓÖÓÒÓ×ÓÓÓÕÓÔ"};
+Nconst char PY_mb_yu    []={"ÓØÓÙÓåÓÚÓèÓàÓÛÓãÓáÓéÓæÓçÓäÓâÓÞÓÜÓÝÓßÓëÓîÓìÓðÓêÓíÓïÓñÔ¦ÓóÓýÓôÓüÓøÔ¡Ô¤ÓòÓûÓ÷Ô¢ÓùÔ£ÓöÓúÓþÔ¥"};
+Nconst char PY_mb_yuan  []={"Ô©Ô§Ô¨ÔªÔ±Ô°Ô«Ô­Ô²Ô¬Ô®ÔµÔ´Ô³Ô¯Ô¶Ô·Ô¹ÔºÔ¸"};
+Nconst char PY_mb_yue   []={"Ô»Ô¼ÔÂÔÀÔÃÔÄÔ¾ÔÁÔ½"};
+Nconst char PY_mb_yun   []={"ÔÆÔÈÔÇÔÅÔÊÔÉÔÐÔËÔÎÔÍÔÏÔÌ"};
+Nconst char PY_mb_za    []={"ÔÑÔÓÔÒÕ¦"};
+Nconst char PY_mb_zai   []={"ÔÖÔÕÔÔÔ×ÔØÔÙÔÚ×Ð"};
+Nconst char PY_mb_zan   []={"ÔÛÔÜÔÝÔÞ"};
+Nconst char PY_mb_zang  []={"ÔßÔàÔá"};
+Nconst char PY_mb_zao   []={"ÔâÔãÔäÔçÔæÔéÔèÔåÔîÔíÔìÔëÔïÔê"};
+Nconst char PY_mb_ze    []={"ÔòÔñÔóÔð"};
+Nconst char PY_mb_zei   []={"Ôô"};
+Nconst char PY_mb_zen   []={"Ôõ"};
+Nconst char PY_mb_zeng  []={"ÔöÔ÷Ôù"};
+Nconst char PY_mb_zha   []={"ÔûÔüÔúÔýÔþÕ¢Õ¡Õ£Õ§Õ©Õ¨Õ¥×õ"};
+Nconst char PY_mb_zhai  []={"Õ«ÕªÕ¬µÔÕ­Õ®Õ¯"};
+Nconst char PY_mb_zhan  []={"Õ´Õ±Õ³Õ²Õ°Õ¶Õ¹ÕµÕ¸Õ·Õ¼Õ½Õ»Õ¾ÕÀÕ¿Õº"};
+Nconst char PY_mb_zhang []={"³¤ÕÅÕÂÕÃÕÄÕÁÕÇÕÆÕÉÕÌÕÊÕÈÕÍÕËÕÏÕÎ"};
+Nconst char PY_mb_zhao  []={"ÕÐÕÑÕÒÕÓÕÙÕ×ÕÔÕÕÕÖÕØ×¦"};
+Nconst char PY_mb_zhe   []={"ÕÚÕÛÕÜÕÝÕÞÕßÕàÕâÕãÕá×Å"};
+Nconst char PY_mb_zhen  []={"ÕêÕëÕìÕäÕæÕèÕåÕçÕéÕïÕíÕîÕóÕñÕòÕðÖ¡"};
+Nconst char PY_mb_zheng []={"ÕùÕ÷ÕúÕõÕøÕöÕôÕüÕûÕýÖ¤Ö£ÕþÖ¢"};
+Nconst char PY_mb_zhi   []={"Ö®Ö§Ö­Ö¥Ö¨Ö¦ÖªÖ¯Ö«Ö¬Ö©Ö´Ö¶Ö±ÖµÖ°Ö²Ö³Ö¹Ö»Ö¼Ö·Ö½Ö¸ÖºÖÁÖ¾ÖÆÖÄÖÎÖËÖÊÖÅÖ¿ÖÈÖÂÖÀÖÌÖÏÖÇÖÍÖÉÖÃ"};
+Nconst char PY_mb_zhong []={"ÖÐÖÒÖÕÖÑÖÓÖÔÖ×ÖÖÖÙÖÚÖØ"};
+Nconst char PY_mb_zhou  []={"ÖÝÖÛÖßÖÜÖÞÖàÖáÖâÖãÖäÖæÖçÖåÖè"};
+Nconst char PY_mb_zhu   []={"ÖìÖïÖêÖéÖîÖíÖëÖñÖòÖðÖ÷ÖôÖóÖöÖõ×¡Öú×¢Öü×¤Öù×£ÖøÖûÖþÖý"};
+Nconst char PY_mb_zhua  []={"×¥"};
+Nconst char PY_mb_zhuai []={"×§"};
+Nconst char PY_mb_zhuan []={"×¨×©×ª×«×­"};
+Nconst char PY_mb_zhuang[]={"×±×¯×®×°×³×´´±×²"};
+Nconst char PY_mb_zhui  []={"×·×µ×¶×¹×º×¸"};
+Nconst char PY_mb_zhun  []={"×»×¼"};
+Nconst char PY_mb_zhuo  []={"×¿×¾×½×À×Æ×Â×Ç×Ã×Ä×Á"};
+Nconst char PY_mb_zi    []={"×Î×È×É×Ë×Ê×Í×Ì×Ñ×Ó×Ï×Ò×Ö×Ô×Õ"};
+Nconst char PY_mb_zong  []={"×Ú×Û×Ø×Ù×××Ü×Ý"};
+Nconst char PY_mb_zou   []={"×Þ×ß×à×á"};
+Nconst char PY_mb_zu    []={"×â×ã×ä×å×ç×è×é×æ"};
+Nconst char PY_mb_zuan  []={"×¬×ë×ê"};
+Nconst char PY_mb_zui   []={"×ì×î×ï×í"};
+Nconst char PY_mb_zun   []={"×ð×ñ"};
+Nconst char PY_mb_zuo   []={"×ò×ó×ô×÷×ø×ù×ö"};
+Nconst char PY_mb_none  []={""};
+N
+N//================================================================================================
+N
+N
+N//"Æ´ÒôÊäÈë·¨²éÑ¯Âë±í"
+N//typedef struct                  //
+N//{
+N//       const char* YunMu;               // 
+N//       uint8 offset_low;                       //
+N//       uint8 offset_high;                       //
+N//}typPinYin;
+N
+Ntypedef struct                  //
+N{
+N       const char* YunMu;               // 
+N	   const char* MB;
+N}typPinYin;
+N
+N
+N//const typPinYin PY_index_a[]={
+N//  							{"",0x00,0x00},
+N//  							{"i",0x05,0x00},
+N//  							{"n",0x20,0x00},
+N//  							{"ng",0x33,0x00},
+N//  							{"o",0x3A,0x00}};
+N//const typPinYin PY_index_b[]={
+N//  							{"a",0x4D,0x00},
+N//  							{"ai",0x70,0x00},
+N//  							{"an",0x81,0x00},
+N//  							{"ang",0xA0,0x00},
+N//  							{"ao",0xB9,0x00},
+N//  							{"ei",0xDE,0x00},
+N//  							{"en",0xFD,0x00},
+N//  							{"eng",0x08,0x01},
+N//  							{"i",0x15,0x01},
+N//  							{"ian",0x44,0x01},
+N//  							{"iao",0x5D,0x01},
+N//  							{"ie",0x66,0x01},
+N//  							{"in",0x6F,0x01},
+N//  							{"ing",0x7C,0x01},
+N//  							{"o",0x8F,0x01},
+N//  							{"u",0xB8,0x01}};
+N//const typPinYin PY_index_c[]={
+N//  							{"a",0xCD,0x01},
+N//  							{"ai",0xD0,0x01},
+N//  							{"an",0xE7,0x01},
+N//  							{"ang",0xF6,0x01},
+N//  							{"ao",0x01,0x02},
+N//  							{"e",0x0C,0x02},
+N//  							{"eng",0x17,0x02},
+N//  							{"ha",0x1E,0x02},
+N//  							{"hai",0x37,0x02},
+N//  							{"han",0x3E,0x02},
+N//  							{"hang",0x53,0x02},
+N//  							{"hao",0x6C,0x02},
+N//  							{"he",0x81,0x02},
+N//  							{"hen",0x8E,0x02},
+N//  							{"heng",0xA3,0x02},
+N//  							{"hi",0xC2,0x02},
+N//  							{"hong",0xE1,0x02},
+N//  							{"hou",0xEC,0x02},
+N//  							{"hu",0x05,0x03},
+N//  							{"huai",0x28,0x03},
+N//  							{"huan",0x2B,0x03},
+N//  							{"huang",0x3A,0x03},
+N//  							{"hui",0x45,0x03},
+N//  							{"hun",0x50,0x03},
+N//  							{"huo",0x5F,0x03},
+N//  							{"i",0x62,0x03},
+N//  							{"ong",0x7B,0x03},
+N//  							{"ou",0x88,0x03},
+N//  							{"u",0x8B,0x03},
+N//  							{"uan",0x94,0x03},
+N//  							{"ui",0x9B,0x03},
+N//  							{"un",0xAC,0x03},
+N//  							{"uo",0xB3,0x03}};
+N//const typPinYin PY_index_d[]={
+N//  							{"a",0xC0,0x03},
+N//  							{"ai",0xCD,0x03},
+N//  							{"an",0xE6,0x03},
+N//  							{"ang",0x05,0x04},
+N//  							{"ao",0x10,0x04},
+N//  							{"e",0x29,0x04},
+N//  							{"eng",0x30,0x04},
+N//  							{"i",0x3F,0x04},
+N//  							{"ian",0x64,0x04},
+N//  							{"iao",0x85,0x04},
+N//  							{"ie",0x96,0x04},
+N//  							{"ing",0xA5,0x04},
+N//  							{"iu",0xB8,0x04},
+N//  							{"ong",0xBB,0x04},
+N//  							{"ou",0xD0,0x04},
+N//  							{"u",0xE1,0x04},
+N//  							{"uan",0xFE,0x04},
+N//  							{"ui",0x0B,0x05},
+N//  							{"un",0x14,0x05},
+N//  							{"uo",0x25,0x05}};
+N//const typPinYin PY_index_e[]={
+N//  							{" ",0x3E,0x05},
+N//  							{"n",0x59,0x05},
+N//  							{"r",0x5C,0x05}};
+N//const typPinYin PY_index_f[]={
+N//  							{"a",0x6D,0x05},
+N//  							{"an",0x7E,0x05},
+N//  							{"ang",0xA1,0x05},
+N//  							{"ei",0xB8,0x05},
+N//  							{"en",0xD1,0x05},
+N//  							{"eng",0xF0,0x05},
+N//  							{"o",0x0F,0x06},
+N//  							{"ou",0x12,0x06},
+N//  							{"u",0x15,0x06}};
+N//const typPinYin PY_index_g[]={
+N//  							{"a",0x6E,0x06},
+N//  							{"ai",0x73,0x06},
+N//  							{"an",0x80,0x06},
+N//  							{"ang",0x97,0x06},
+N//  							{"ao",0xAA,0x06},
+N//  							{"e",0xBF,0x06},
+N//  							{"ei",0xE2,0x06},
+N//  							{"en",0xE5,0x06},
+N//  							{"eng",0xEA,0x06},
+N//  							{"ong",0xF9,0x06},
+N//  							{"ou",0x18,0x07},
+N//  							{"u",0x2B,0x07},
+N//  							{"ua",0x50,0x07},
+N//  							{"uai",0x5D,0x07},
+N//  							{"uan",0x64,0x07},
+N//  							{"uang",0x7B,0x07},
+N//  							{"ui",0x82,0x07},
+N//  							{"un",0xA3,0x07},
+N//  							{"uo",0xAA,0x07}};
+N//const typPinYin PY_index_h[]={
+N//  							{"a",0xB7,0x07},
+N//  							{"ai",0xBC,0x07},
+N//  							{"an",0xCB,0x07},
+N//  							{"ang",0xF2,0x07},
+N//  							{"ao",0xF9,0x07},
+N//  							{"e",0x0C,0x08},
+N//  							{"ei",0x2F,0x08},
+N//  							{"en",0x34,0x08},
+N//  							{"eng",0x3D,0x08},
+N//  							{"ong",0x48,0x08},
+N//  							{"ou",0x5B,0x08},
+N//  							{"u",0x6A,0x08},
+N//  							{"ua",0x8F,0x08},
+N//  							{"uai",0xA2,0x08},
+N//  							{"uan",0xAD,0x08},
+N//  							{"uang",0xCA,0x08},
+N//  							{"ui",0xE7,0x08},
+N//  							{"un",0x12,0x09},
+N//  							{"uo",0x1F,0x09}};
+N//const typPinYin PY_index_j[]={
+N//  							{"i",0x34,0x09},
+N//  							{"ia",0xA1,0x09},
+N//  							{"ian",0xC6,0x09},
+N//  							{"iang",0x15,0x0A},
+N//  							{"iao",0x30,0x0A},
+N//  							{"ie",0x69,0x0A},
+N//  							{"in",0x9C,0x0A},
+N//  							{"ing",0xC5,0x0A},
+N//  							{"iong",0xF8,0x0A},
+N//  							{"iu",0xFD,0x0A},
+N//  							{"u",0x20,0x0B},
+N//  							{"uan",0x55,0x0B},
+N//  							{"ue",0x64,0x0B},
+N//  							{"un",0x77,0x0B}};
+N//const typPinYin PY_index_k[]={
+N//  							{"a",0x8E,0x0B},
+N//  							{"ai",0x95,0x0B},
+N//  							{"an",0xA0,0x0B},
+N//  							{"ang",0xAF,0x0B},
+N//  							{"ao",0xBE,0x0B},
+N//  							{"e",0xC7,0x0B},
+N//  							{"en",0xE6,0x0B},
+N//  							{"eng",0xEF,0x0B},
+N//  							{"ong",0xF4,0x0B},
+N//  							{"ou",0xFD,0x0B},
+N//  							{"u",0x06,0x0C},
+N//  							{"ua",0x15,0x0C},
+N//  							{"uai",0x20,0x0C},
+N//  							{"uan",0x29,0x0C},
+N//  							{"uang",0x2E,0x0C},
+N//  							{"ui",0x3F,0x0C},
+N//  							{"un",0x56,0x0C},
+N//  							{"uo",0x5F,0x0C}};
+N//const typPinYin PY_index_l[]={
+N//  							{"a",0x68,0x0C},
+N//  							{"ai",0x77,0x0C},
+N//  							{"an",0x7E,0x0C},
+N//  							{"ang",0x9D,0x0C},
+N//  							{"ao",0xAC,0x0C},
+N//  							{"e",0xBF,0x0C},
+N//  							{"ei",0xC6,0x0C},
+N//  							{"eng",0xDD,0x0C},
+N//  							{"i",0xE4,0x0C},
+N//  							{"ian",0x29,0x0D},
+N//  							{"iang",0x46,0x0D},
+N//  							{"iao",0x5F,0x0D},
+N//  							{"ie",0x78,0x0D},
+N//  							{"in",0x83,0x0D},
+N//  							{"ing",0x9C,0x0D},
+N//  							{"iu",0xB9,0x0D},
+N//  							{"ong",0xD0,0x0D},
+N//  							{"ou",0xE3,0x0D},
+N//  							{"u",0xF0,0x0D},
+N//  							{"uan",0x19,0x0E},
+N//  							{"ue",0x26,0x0E},
+N//  							{"un",0x2B,0x0E},
+N//  							{"uo",0x3A,0x0E},
+N//  							{"v",0x53,0x0E}};
+N//const typPinYin PY_index_m[]={
+N//  							{"a",0x70,0x0E},
+N//  							{"ai",0x83,0x0E},
+N//  							{"an",0x90,0x0E},
+N//  							{"ang",0xA3,0x0E},
+N//  							{"ao",0xB0,0x0E},
+N//  							{"e",0xC9,0x0E},
+N//  							{"ei",0xCC,0x0E},
+N//  							{"en",0xED,0x0E},
+N//  							{"eng",0xF4,0x0E},
+N//  							{"i",0x05,0x0F},
+N//  							{"ian",0x22,0x0F},
+N//  							{"iao",0x35,0x0F},
+N//  							{"ie",0x46,0x0F},
+N//  							{"in",0x4B,0x0F},
+N//  							{"ing",0x58,0x0F},
+N//  							{"iu",0x65,0x0F},
+N//  							{"o",0x68,0x0F},
+N//  							{"ou",0x8D,0x0F},
+N//  							{"u",0x94,0x0F}};
+N//const typPinYin PY_index_n[]={
+N//  							{"a",0xB3,0x0F},
+N//  							{"ai",0xC2,0x0F},
+N//  							{"an",0xCD,0x0F},
+N//  							{"ang",0xD4,0x0F},
+N//  							{"ao",0xD7,0x0F},
+N//  							{"e",0xE2,0x0F},
+N//  							{"ei",0xE5,0x0F},
+N//  							{"en",0xEA,0x0F},
+N//  							{"eng",0xED,0x0F},
+N//  							{"i",0xF0,0x0F},
+N//  							{"ian",0x07,0x10},
+N//  							{"iang",0x16,0x10},
+N//  							{"iao",0x1B,0x10},
+N//  							{"ie",0x20,0x10},
+N//  							{"in",0x2F,0x10},
+N//  							{"ing",0x32,0x10},
+N//  							{"iu",0x3F,0x10},
+N//  							{"ong",0x48,0x10},
+N//  							{"u",0x51,0x10},
+N//  							{"uan",0x58,0x10},
+N//  							{"ue",0x5B,0x10},
+N//  							{"uo",0x60,0x10},
+N//  							{"v",0x69,0x10}};
+N//const typPinYin PY_index_o[]={
+N//  							{" ",0x6C,0x10},
+N//  							{"u",0x6F,0x10}};
+N//const typPinYin PY_index_p[]={
+N//  							{"a",0x7E,0x10},
+N//  							{"ai",0x8D,0x10},
+N//  							{"an",0x9A,0x10},
+N//  							{"ang",0xAB,0x10},
+N//  							{"ao",0xB6,0x10},
+N//  							{"ei",0xC5,0x10},
+N//  							{"en",0xD8,0x10},
+N//  							{"eng",0xDD,0x10},
+N//  							{"i",0xFA,0x10},
+N//  							{"ian",0x1F,0x11},
+N//  							{"iao",0x28,0x11},
+N//  							{"ie",0x31,0x11},
+N//  							{"in",0x36,0x11},
+N//  							{"ing",0x41,0x11},
+N//  							{"o",0x54,0x11},
+N//  							{"ou",0x65,0x11},
+N//  							{"u",0x68,0x11}};
+N//const typPinYin PY_index_q[]={
+N//  							{"i",0x87,0x11},
+N//  							{"ia",0xD0,0x11},
+N//  							{"ian",0xD7,0x11},
+N//  							{"iang",0x04,0x12},
+N//  							{"iao",0x15,0x12},
+N//  							{"ie",0x34,0x12},
+N//  							{"in",0x3F,0x12},
+N//  							{"ing",0x56,0x12},
+N//  							{"iong",0x71,0x12},
+N//  							{"iu",0x76,0x12},
+N//  							{"u",0x87,0x12},
+N//  							{"uan",0xA2,0x12},
+N//  							{"ue",0xB9,0x12},
+N//  							{"un",0xCA,0x12}};
+N//const typPinYin PY_index_r[]={
+N//  							{"an",0xCF,0x12},
+N//  							{"ang",0xD8,0x12},
+N//  							{"ao",0xE3,0x12},
+N//  							{"e",0xEA,0x12},
+N//  							{"en",0xEF,0x12},
+N//  							{"eng",0x04,0x13},
+N//  							{"i",0x09,0x13},
+N//  							{"ong",0x0C,0x13},
+N//  							{"ou",0x21,0x13},
+N//  							{"u",0x28,0x13},
+N//  							{"uan",0x3D,0x13},
+N//  							{"ui",0x42,0x13},
+N//  							{"un",0x49,0x13},
+N//  							{"uo",0x4E,0x13}};
+N//const typPinYin PY_index_s[]={
+N//  							{"a",0x53,0x13},
+N//  							{"ai",0x5A,0x13},
+N//  							{"an",0x63,0x13},
+N//  							{"ang",0x6C,0x13},
+N//  							{"ao",0x73,0x13},
+N//  							{"e",0x7C,0x13},
+N//  							{"en",0x83,0x13},
+N//  							{"eng",0x86,0x13},
+N//  							{"ha",0x89,0x13},
+N//  							{"hai",0x9C,0x13},
+N//  							{"han",0xA1,0x13},
+N//  							{"hang",0xC4,0x13},
+N//  							{"hao",0xD5,0x13},
+N//  							{"he",0xEC,0x13},
+N//  							{"hen",0x05,0x14},
+N//  							{"heng",0x28,0x14},
+N//  							{"hi",0x3F,0x14},
+N//  							{"hou",0xA0,0x14},
+N//  							{"hu",0xB5,0x14},
+N//  							{"hua",0xF8,0x14},
+N//  							{"huai",0xFD,0x14},
+N//  							{"huan",0x06,0x15},
+N//  							{"huang",0x0B,0x15},
+N//  							{"hui",0x12,0x15},
+N//  							{"hun",0x1B,0x15},
+N//  							{"huo",0x24,0x15},
+N//  							{"i",0x2D,0x15},
+N//  							{"ong",0x4C,0x15},
+N//  							{"ou",0x5D,0x15},
+N//  							{"u",0x66,0x15},
+N//  							{"uan",0x7D,0x15},
+N//  							{"ui",0x84,0x15},
+N//  							{"un",0x9B,0x15},
+N//  							{"uo",0xA2,0x15}};
+N//const typPinYin PY_index_t[]={
+N//  							{"a",0xB3,0x15},
+N//  							{"ai",0xC6,0x15},
+N//  							{"an",0xD9,0x15},
+N//  							{"ang",0xFE,0x15},
+N//  							{"ao",0x19,0x16},
+N//  							{"e",0x30,0x16},
+N//  							{"eng",0x33,0x16},
+N//  							{"i",0x3C,0x16},
+N//  							{"ian",0x5B,0x16},
+N//  							{"iao",0x6C,0x16},
+N//  							{"ie",0x79,0x16},
+N//  							{"ing",0x80,0x16},
+N//  							{"ong",0x95,0x16},
+N//  							{"ou",0xB0,0x16},
+N//  							{"u",0xB9,0x16},
+N//  							{"uan",0xD0,0x16},
+N//  							{"ui",0xD5,0x16},
+N//  							{"un",0xE2,0x16},
+N//  							{"uo",0xEB,0x16}};
+N//const typPinYin PY_index_w[]={
+N//  							{"a",0x02,0x17},
+N//  							{"ai",0x11,0x17},
+N//  							{"an",0x16,0x17},
+N//  							{"ang",0x39,0x17},
+N//  							{"ei",0x4E,0x17},
+N//  							{"en",0x91,0x17},
+N//  							{"eng",0xA6,0x17},
+N//  							{"o",0xAD,0x17},
+N//  							{"u",0xC0,0x17}};
+N//const typPinYin PY_index_x[]={
+N//  							{"i",0xFB,0x17},
+N//  							{"ia",0x40,0x18},
+N//  							{"ian",0x59,0x18},
+N//  							{"iang",0x90,0x18},
+N//  							{"iao",0xB9,0x18},
+N//  							{"ie",0xDC,0x18},
+N//  							{"in",0x05,0x19},
+N//  							{"ing",0x1A,0x19},
+N//  							{"iong",0x37,0x19},
+N//  							{"iu",0x46,0x19},
+N//  							{"u",0x5B,0x19},
+N//  							{"uan",0x82,0x19},
+N//  							{"ue",0x97,0x19},
+N//  							{"un",0xA6,0x19}};
+N//const typPinYin PY_index_y[]={
+N//  							{"a",0xC3,0x19},
+N//  							{"an",0xE4,0x19},
+N//  							{"ang",0x27,0x1A},
+N//  							{"ao",0x4A,0x1A},
+N//  							{"e",0x6D,0x1A},
+N//  							{"i",0x8C,0x1A},
+N//  							{"in",0xF7,0x1A},
+N//  							{"ing",0x18,0x1B},
+N//  							{"o",0x3D,0x1B},
+N//  							{"ong",0x40,0x1B},
+N//  							{"ou",0x5F,0x1B},
+N//  							{"u",0x88,0x1B},
+N//  							{"uan",0xE1,0x1B},
+N//  							{"ue",0x0A,0x1C},
+N//  							{"un",0x1D,0x1C}};
+N//const typPinYin PY_index_z[]={
+N//  							{"a",0x36,0x1C},
+N//  							{"ai",0x3F,0x1C},
+N//  							{"an",0x50,0x1C},
+N//  							{"ang",0x59,0x1C},
+N//  							{"ao",0x60,0x1C},
+N//  							{"e",0x7D,0x1C},
+N//  							{"ei",0x86,0x1C},
+N//  							{"en",0x89,0x1C},
+N//  							{"eng",0x8C,0x1C},
+N//  							{"ha",0x93,0x1C},
+N//  							{"hai",0xAE,0x1C},
+N//  							{"han",0xBD,0x1C},
+N//  							{"hang",0xE0,0x1C},
+N//  							{"hao",0x01,0x1D},
+N//  							{"he",0x18,0x1D},
+N//  							{"hen",0x2F,0x1D},
+N//  							{"heng",0x52,0x1D},
+N//  							{"hi",0x6F,0x1D},
+N//  							{"hong",0xC6,0x1D},
+N//  							{"hou",0xDD,0x1D},
+N//  							{"hu",0xFA,0x1D},
+N//  							{"hua",0x2F,0x1E},
+N//  							{"huai",0x32,0x1E},
+N//  							{"huan",0x35,0x1E},
+N//  							{"huang",0x40,0x1E},
+N//  							{"hui",0x51,0x1E},
+N//  							{"hun",0x5E,0x1E},
+N//  							{"huo",0x63,0x1E},
+N//  							{"i",0x78,0x1E},
+N//  							{"ong",0x95,0x1E},
+N//  							{"ou",0xA4,0x1E},
+N//  							{"u",0xAD,0x1E},
+N//  							{"uan",0xBE,0x1E},
+N//  							{"ui",0xC5,0x1E},
+N//  							{"un",0xCE,0x1E},
+N//  							{"uo",0xD3,0x1E}};
+N//const typPinYin PY_index_end[]={" ",0,0};
+N
+N
+N
+Nconst typPinYin PY_index_a[]={
+N  							{"",PY_mb_a},
+N  							{"i",PY_mb_ai},
+N  							{"n",PY_mb_an},
+N  							{"ng",PY_mb_ang},
+N  							{"o",PY_mb_ao}};
+Nconst typPinYin PY_index_b[]={
+N  							{"a",PY_mb_ba},
+N  							{"ai",PY_mb_bai},
+N  							{"an",PY_mb_ban},
+N  							{"ang",PY_mb_bang},
+N  							{"ao",PY_mb_bao},
+N  							{"ei",PY_mb_bei},
+N  							{"en",PY_mb_ben},
+N  							{"eng",PY_mb_beng},
+N  							{"i",PY_mb_bi},
+N  							{"ian",PY_mb_bian},
+N  							{"iao",PY_mb_biao},
+N  							{"ie",PY_mb_bie},
+N  							{"in",PY_mb_bin},
+N  							{"ing",PY_mb_bing},
+N  							{"o",PY_mb_bo},
+N  							{"u",PY_mb_bu}};
+Nconst typPinYin PY_index_c[]={
+N  							{"a",PY_mb_ca},
+N  							{"ai",PY_mb_cai},
+N  							{"an",PY_mb_can},
+N  							{"ang",PY_mb_cang},
+N  							{"ao",PY_mb_cao},
+N  							{"e",PY_mb_ce},
+N  							{"eng",PY_mb_ceng},
+N  							{"ha",PY_mb_cha},
+N  							{"hai",PY_mb_chai},
+N  							{"han",PY_mb_chan},
+N  							{"hang",PY_mb_chang},
+N  							{"hao",PY_mb_chao},
+N  							{"he",PY_mb_che},
+N  							{"hen",PY_mb_chen},
+N  							{"heng",PY_mb_cheng},
+N  							{"hi",PY_mb_chi},
+N  							{"hong",PY_mb_chong},
+N  							{"hou",PY_mb_chou},
+N  							{"hu",PY_mb_chu},
+N  							{"huai",PY_mb_chuai},
+N  							{"huan",PY_mb_chuan},
+N  							{"huang",PY_mb_chuang},
+N  							{"hui",PY_mb_chui},
+N  							{"hun",PY_mb_chun},
+N  							{"huo",	PY_mb_chuo},
+N  							{"i",	PY_mb_ci},
+N  							{"ong",	PY_mb_cong},
+N  							{"ou",	PY_mb_cou},
+N  							{"u",	PY_mb_cu},
+N  							{"uan",	PY_mb_cuan},
+N  							{"ui",	PY_mb_cui},
+N  							{"un",	PY_mb_cun},
+N  							{"uo",	PY_mb_cuo}};
+Nconst typPinYin PY_index_d[]={
+N  							{"a",	PY_mb_da},
+N  							{"ai",	PY_mb_dai},
+N  							{"an",	PY_mb_dan},
+N  							{"ang",	PY_mb_dang},
+N  							{"ao",	PY_mb_dao},
+N  							{"e",	PY_mb_de},
+N  							{"eng",	PY_mb_deng},
+N  							{"i",	PY_mb_di},
+N  							{"ian",	PY_mb_dian},
+N  							{"iao",	PY_mb_diao},
+N  							{"ie",	PY_mb_die},
+N  							{"ing",	PY_mb_ding},
+N  							{"iu",	PY_mb_diu},
+N  							{"ong",	PY_mb_dong},
+N  							{"ou",	PY_mb_dou},
+N  							{"u",	PY_mb_du},
+N  							{"uan",	PY_mb_duan},
+N  							{"ui",	PY_mb_dui},
+N  							{"un",	PY_mb_dun},
+N  							{"uo",	PY_mb_duo}};
+Nconst typPinYin PY_index_e[]={
+N  							{" ",	PY_mb_e},
+N  							{"n",	PY_mb_en},
+N  							{"r",	PY_mb_er}};
+Nconst typPinYin PY_index_f[]={
+N  							{"a",	PY_mb_fa},
+N  							{"an",	PY_mb_fan},
+N  							{"ang",	PY_mb_fang},
+N  							{"ei",	PY_mb_fei},
+N  							{"en",	PY_mb_fen},
+N  							{"eng",	PY_mb_feng},
+N  							{"o",	PY_mb_fo},
+N  							{"ou",	PY_mb_fou},
+N  							{"u",	PY_mb_fu}};
+Nconst typPinYin PY_index_g[]={
+N  							{"a",	PY_mb_ga},
+N  							{"ai",	PY_mb_gai},
+N  							{"an",	PY_mb_gan},
+N  							{"ang",	PY_mb_gang},
+N  							{"ao",	PY_mb_gao},
+N  							{"e",	PY_mb_ge},
+N  							{"ei",	PY_mb_gei},
+N  							{"en",	PY_mb_gen},
+N  							{"eng",	PY_mb_geng},
+N  							{"ong",	PY_mb_gong},
+N  							{"ou",	PY_mb_gou},
+N  							{"u",	PY_mb_gu},
+N  							{"ua",	PY_mb_gua},
+N  							{"uai",	PY_mb_guai},
+N  							{"uan",	PY_mb_guan},
+N  							{"uang",PY_mb_guang},
+N  							{"ui",	PY_mb_gui},
+N  							{"un",	PY_mb_gun},
+N  							{"uo",	PY_mb_guo}};
+Nconst typPinYin PY_index_h[]={
+N  							{"a",	PY_mb_ha},
+N  							{"ai",	PY_mb_hai},
+N  							{"an",	PY_mb_han},
+N  							{"ang",	PY_mb_hang},
+N  							{"ao",	PY_mb_hao},
+N  							{"e",	PY_mb_he},
+N  							{"ei",	PY_mb_hei},
+N  							{"en",	PY_mb_hen},
+N  							{"eng",	PY_mb_heng},
+N  							{"ong",	PY_mb_hong},
+N  							{"ou",	PY_mb_hou},
+N  							{"u",	PY_mb_hu},
+N  							{"ua",	PY_mb_hua},
+N  							{"uai",	PY_mb_huai},
+N  							{"uan",	PY_mb_huan},
+N  							{"uang",PY_mb_huang},
+N  							{"ui",	PY_mb_hui},
+N  							{"un",	PY_mb_hun},
+N  							{"uo",	PY_mb_huo}};
+Nconst typPinYin PY_index_j[]={
+N  							{"i",	PY_mb_ji},
+N  							{"ia",	PY_mb_jia},
+N  							{"ian",	PY_mb_jian},
+N  							{"iang",PY_mb_jiang},
+N  							{"iao",	PY_mb_jiao},
+N  							{"ie",	PY_mb_jie},
+N  							{"in",	PY_mb_jin},
+N  							{"ing",	PY_mb_jing},
+N  							{"iong",PY_mb_jiong},
+N  							{"iu",	PY_mb_jiu},
+N  							{"u",	PY_mb_ju},
+N  							{"uan",	PY_mb_juan},
+N  							{"ue",	PY_mb_jue},
+N  							{"un",	PY_mb_jun}};
+Nconst typPinYin PY_index_k[]={
+N  							{"a",	PY_mb_ka},
+N  							{"ai",	PY_mb_kai},
+N  							{"an",	PY_mb_kan},
+N  							{"ang",	PY_mb_kang},
+N  							{"ao",	PY_mb_kao},
+N  							{"e",	PY_mb_ke},
+N  							{"en",	PY_mb_ken},
+N  							{"eng",	PY_mb_keng},
+N  							{"ong",	PY_mb_kong},
+N  							{"ou",	PY_mb_kou},
+N  							{"u",	PY_mb_ku},
+N  							{"ua",	PY_mb_kua},
+N  							{"uai",	PY_mb_kuai},
+N  							{"uan",	PY_mb_kuan},
+N  							{"uang",PY_mb_kuang},
+N  							{"ui",	PY_mb_kui},
+N  							{"un",	PY_mb_kun},
+N  							{"uo",	PY_mb_kuo}};
+Nconst typPinYin PY_index_l[]={
+N  							{"a",	PY_mb_la},
+N  							{"ai",	PY_mb_lai},
+N  							{"an",	PY_mb_lan},
+N  							{"ang",	PY_mb_lang},
+N  							{"ao",	PY_mb_lao},
+N  							{"e",	PY_mb_le},
+N  							{"ei",	PY_mb_lei},
+N  							{"eng",	PY_mb_leng},
+N  							{"i",	PY_mb_li},
+N  							{"ian",	PY_mb_lian},
+N  							{"iang",PY_mb_liang},
+N  							{"iao",	PY_mb_liao},
+N  							{"ie",	PY_mb_lie},
+N  							{"in",	PY_mb_lin},
+N  							{"ing",	PY_mb_ling},
+N  							{"iu",	PY_mb_liu},
+N  							{"ong",	PY_mb_long},
+N  							{"ou",	PY_mb_lou},
+N  							{"u",	PY_mb_lu},
+N  							{"uan",	PY_mb_luan},
+N  							{"ue",	PY_mb_lue},
+N  							{"un",	PY_mb_lun},
+N  							{"uo",	PY_mb_luo},
+N  							{"v",	PY_mb_lv}};
+Nconst typPinYin PY_index_m[]={
+N  							{"a",	PY_mb_ma},
+N  							{"ai",	PY_mb_ma},
+N  							{"an",	PY_mb_man},
+N  							{"ang",	PY_mb_mang},
+N  							{"ao",	PY_mb_mao},
+N  							{"e",	PY_mb_me},
+N  							{"ei",	PY_mb_mei},
+N  							{"en",	PY_mb_men},
+N  							{"eng",	PY_mb_meng},
+N  							{"i",	PY_mb_mi},
+N  							{"ian",	PY_mb_mian},
+N  							{"iao",	PY_mb_miao},
+N  							{"ie",	PY_mb_mie},
+N  							{"in",	PY_mb_min},
+N  							{"ing",	PY_mb_ming},
+N  							{"iu",	PY_mb_miu},
+N  							{"o",	PY_mb_mo},
+N  							{"ou",	PY_mb_mou},
+N  							{"u",	PY_mb_mu}};
+Nconst typPinYin PY_index_n[]={
+N  							{"a",	PY_mb_na},
+N  							{"ai",	PY_mb_nai},
+N  							{"an",	PY_mb_nan},
+N  							{"ang",	PY_mb_nang},
+N  							{"ao",	PY_mb_nao},
+N  							{"e",	PY_mb_ne},
+N  							{"ei",	PY_mb_nei},
+N  							{"en",	PY_mb_nen},
+N  							{"eng",	PY_mb_neng},
+N  							{"i",	PY_mb_ni},
+N  							{"ian",	PY_mb_nian},
+N  							{"iang",PY_mb_niang},
+N  							{"iao",	PY_mb_niao},
+N  							{"ie",	PY_mb_nie},
+N  							{"in",	PY_mb_nin},
+N  							{"ing",	PY_mb_ning},
+N  							{"iu",	PY_mb_niu},
+N  							{"ong",	PY_mb_nong},
+N  							{"u",	PY_mb_nu},
+N  							{"uan",	PY_mb_nuan},
+N  							{"ue",	PY_mb_nue},
+N  							{"uo",	PY_mb_nuo},
+N  							{"v",	PY_mb_nv}};
+Nconst typPinYin PY_index_o[]={
+N  							{"",	PY_mb_o},
+N  							{"u",	PY_mb_ou}};
+Nconst typPinYin PY_index_p[]={
+N  							{"a",	PY_mb_pa},
+N  							{"ai",	PY_mb_pai},
+N  							{"an",	PY_mb_pan},
+N  							{"ang",	PY_mb_pang},
+N  							{"ao",	PY_mb_pao},
+N  							{"ei",	PY_mb_pei},
+N  							{"en",	PY_mb_pen},
+N  							{"eng",	PY_mb_peng},
+N  							{"i",	PY_mb_pi},
+N  							{"ian",	PY_mb_pian},
+N  							{"iao",	PY_mb_piao},
+N  							{"ie",	PY_mb_pie},
+N  							{"in",	PY_mb_pin},
+N  							{"ing",	PY_mb_ping},
+N  							{"o",	PY_mb_po},
+N  							{"ou",	PY_mb_pou},
+N  							{"u",	PY_mb_pu}};
+Nconst typPinYin PY_index_q[]={
+N  							{"i",	PY_mb_qi},
+N  							{"ia",	PY_mb_qia},
+N  							{"ian",	PY_mb_qian},
+N  							{"iang",PY_mb_qiang},
+N  							{"iao",	PY_mb_qiao},
+N  							{"ie",	PY_mb_qie},
+N  							{"in",	PY_mb_qin},
+N  							{"ing",	PY_mb_qing},
+N  							{"iong",PY_mb_qiong},
+N  							{"iu",	PY_mb_qiu},
+N  							{"u",	PY_mb_qu},
+N  							{"uan",	PY_mb_quan},
+N  							{"ue",	PY_mb_que},
+N  							{"un",	PY_mb_qun}};
+Nconst typPinYin PY_index_r[]={
+N  							{"an",	PY_mb_ran},
+N  							{"ang",	PY_mb_rang},
+N  							{"ao",	PY_mb_rao},
+N  							{"e",	PY_mb_re},
+N  							{"en",	PY_mb_ren},
+N  							{"eng",	PY_mb_reng},
+N  							{"i",	PY_mb_ri},
+N  							{"ong",	PY_mb_rong},
+N  							{"ou",	PY_mb_rou},
+N  							{"u",	PY_mb_ru},
+N  							{"uan",	PY_mb_ruan},
+N  							{"ui",	PY_mb_rui},
+N  							{"un",	PY_mb_run},
+N  							{"uo",	PY_mb_ruo}};
+Nconst typPinYin PY_index_s[]={
+N  							{"a",	PY_mb_sa},
+N  							{"ai",	PY_mb_sai},
+N  							{"an",	PY_mb_san},
+N  							{"ang",	PY_mb_sang},
+N  							{"ao",	PY_mb_sao},
+N  							{"e",	PY_mb_se},
+N  							{"en",	PY_mb_sen},
+N  							{"eng",	PY_mb_seng},
+N  							{"ha",	PY_mb_sha},
+N  							{"hai",	PY_mb_shai},
+N  							{"han",	PY_mb_shan},
+N  							{"hang",PY_mb_shang},
+N  							{"hao",	PY_mb_shao},
+N  							{"he",	PY_mb_she},
+N  							{"hen",	PY_mb_shen},
+N  							{"heng",PY_mb_sheng},
+N  							{"hi",	PY_mb_shi},
+N  							{"hou",	PY_mb_shou},
+N  							{"hu",	PY_mb_shu},
+N  							{"hua",	PY_mb_shua},
+N  							{"huai",PY_mb_shuai},
+N  							{"huan",PY_mb_shuan},
+N  							{"huang",PY_mb_shuang},
+N  							{"hui",	PY_mb_shui},
+N  							{"hun",	PY_mb_shun},
+N  							{"huo",	PY_mb_shuo},
+N  							{"i",	PY_mb_si},
+N  							{"ong",	PY_mb_song},
+N  							{"ou",	PY_mb_sou},
+N  							{"u",	PY_mb_su},
+N  							{"uan",	PY_mb_suan},
+N  							{"ui",	PY_mb_sui},
+N  							{"un",	PY_mb_sun},
+N  							{"uo",	PY_mb_suo}};
+Nconst typPinYin PY_index_t[]={
+N  							{"a",	PY_mb_ta},
+N  							{"ai",	PY_mb_tai},
+N  							{"an",	PY_mb_tan},
+N  							{"ang",	PY_mb_tang},
+N  							{"ao",	PY_mb_tao},
+N  							{"e",	PY_mb_te},
+N  							{"eng",	PY_mb_teng},
+N  							{"i",	PY_mb_ti},//
+N  							{"ian",	PY_mb_tian},
+N  							{"iao",	PY_mb_tiao},
+N  							{"ie",	PY_mb_tie},
+N  							{"ing",	PY_mb_ting},
+N  							{"ong",	PY_mb_tong},
+N  							{"ou",	PY_mb_tou},
+N  							{"u",	PY_mb_tu},
+N  							{"uan",	PY_mb_tuan},
+N  							{"ui",	PY_mb_tui},
+N  							{"un",	PY_mb_tun},
+N  							{"uo",	PY_mb_tuo}};
+Nconst typPinYin PY_index_w[]={
+N  							{"a",	PY_mb_wa},
+N  							{"ai",	PY_mb_wai},
+N  							{"an",	PY_mb_wan},
+N  							{"ang",	PY_mb_wang},
+N  							{"ei",	PY_mb_wei},
+N  							{"en",	PY_mb_wen},
+N  							{"eng",	PY_mb_weng},
+N  							{"o",	PY_mb_wo},
+N  							{"u",	PY_mb_wu}};
+Nconst typPinYin PY_index_x[]={
+N  							{"i",	PY_mb_xi},
+N  							{"ia",	PY_mb_xia},
+N  							{"ian",	PY_mb_xian},
+N  							{"iang",PY_mb_xiang},
+N  							{"iao",	PY_mb_xiao},
+N  							{"ie",	PY_mb_xie},
+N  							{"in",	PY_mb_xin},
+N  							{"ing",	PY_mb_xing},
+N  							{"iong",PY_mb_xiong},
+N  							{"iu",	PY_mb_xiu},
+N  							{"u",	PY_mb_xu},
+N  							{"uan",	PY_mb_xuan},
+N  							{"ue",	PY_mb_xue},
+N  							{"un",	PY_mb_xun}};
+Nconst typPinYin PY_index_y[]={
+N  							{"a",	PY_mb_ya},
+N  							{"an",	PY_mb_yan},
+N  							{"ang",	PY_mb_yang},
+N  							{"ao",	PY_mb_yao},
+N  							{"e",	PY_mb_ye},
+N  							{"i",	PY_mb_yi},
+N  							{"in",	PY_mb_yin},
+N  							{"ing",	PY_mb_ying},
+N  							{"o",	PY_mb_yo},
+N  							{"ong",	PY_mb_yong},
+N  							{"ou",	PY_mb_you},
+N  							{"u",	PY_mb_yu},
+N  							{"uan",	PY_mb_yuan},
+N  							{"ue",	PY_mb_yue},
+N  							{"un",	PY_mb_yun}};
+Nconst typPinYin PY_index_z[]={
+N  							{"a",	PY_mb_za},
+N  							{"ai",	PY_mb_zai},
+N  							{"an",	PY_mb_zan},
+N  							{"ang",	PY_mb_zang},
+N  							{"ao",	PY_mb_zao},
+N  							{"e",	PY_mb_ze},
+N  							{"ei",	PY_mb_zei},
+N  							{"en",	PY_mb_zen},
+N  							{"eng",	PY_mb_zeng},
+N  							{"ha",	PY_mb_zha},
+N  							{"hai",	PY_mb_zhai},
+N  							{"han",	PY_mb_zhan},
+N  							{"hang",PY_mb_zhang},
+N  							{"hao",	PY_mb_zhao},
+N  							{"he",	PY_mb_zhe},
+N  							{"hen",	PY_mb_zhen},
+N  							{"heng",PY_mb_zheng},
+N  							{"hi",	PY_mb_zhi},
+N  							{"hong",PY_mb_zhong},
+N  							{"hou",	PY_mb_zhou},
+N  							{"hu",	PY_mb_zhu},
+N  							{"hua",	PY_mb_zhua},
+N  							{"huai",PY_mb_zhuai},
+N  							{"huan",PY_mb_zhuan},
+N  							{"huang",PY_mb_zhuang},
+N  							{"hui",	PY_mb_zhui},
+N  							{"hun",	PY_mb_zhun},
+N  							{"huo",	PY_mb_zhuo},
+N  							{"i",	PY_mb_zi},
+N  							{"ong",	PY_mb_zong},
+N  							{"ou",	PY_mb_zou},
+N  							{"u",	PY_mb_zu},
+N  							{"uan",	PY_mb_zuan},
+N  							{"ui",	PY_mb_zui},
+N  							{"un",	PY_mb_zun},
+N  							{"uo",	PY_mb_zuo}};
+Nconst typPinYin PY_index_end[]={" ",PY_mb_none};
+N
+N
+N
+N//================================================================================================
+N
+N
+N
+N//================================================================================================
+N
+N//"========================================±äÁ¿ÉùÃ÷========================================"
+N//unsigned int py_mb_begin=(unsigned int)&PY_mb_a[0];
+Nconst typPinYin*  PY_index_pointer[27]={	PY_index_a,PY_index_b,PY_index_c,PY_index_d,PY_index_e,PY_index_f,PY_index_g,PY_index_h,
+N											PY_index_j,PY_index_j,PY_index_k,PY_index_l,PY_index_m,PY_index_n,PY_index_o,PY_index_p,
+N											PY_index_q,PY_index_r,PY_index_s,PY_index_t,PY_index_w,PY_index_w,PY_index_w,PY_index_x,
+N											PY_index_y,PY_index_z,PY_index_end};
+N
+N
+N//"========================================Ö÷³ÌÐòÌå========================================"
+N
+Nconst char * py_ime(unsigned char input_py[])
+N{
+N	const typPinYin* p1;
+N	const typPinYin* p2;
+N	const char* ret;
+N	uint8_t* pInput = input_py;
+N	
+N	while(*pInput != '\0')
+N	{
+N		if(*pInput>=0x80)
+N			pInput+=2;
+N		else
+N			break;
+N	}
+N	
+N	if (pInput[0]==0) return(0);																				//"Èç¹ûÊäÈë¿Õ×Ö·û·µ»Ø0"
+N	if(pInput[0]<'a' || pInput[0]>'z') return (0);
+N	if (pInput[0]=='i') return(0);
+N	if (pInput[0]=='u') return(0);
+N	if (pInput[0]=='v') return(0);
+N//	if (input_py_val[0]=='i') return(0);
+N//	if (input_py_val[0]=='u') return(0);
+N//	if (input_py_val[0]=='v') return(0);
+N	
+N	
+N	p1=PY_index_pointer[pInput[0]-0x61];															//"¼ÆËãÈë¿ÚÊ÷¸ù"
+N	p2=PY_index_pointer[pInput[0]-0x60];																//"ÉèÖÃÖ¸Õë½çÏÞ"
+N	while(p1<p2)
+N	{
+N		if(strcmp(p1->YunMu,(const char*)&pInput[1])== 0 )
+N		{
+N//			ret = (const char*)(p1->offset_high *256 + p1->offset_low +py_mb_begin);
+N			ret = (const char*)(p1->MB);
+N			return ret;
+N		}
+N		else
+N		{
+N			p1++;
+N		}
+N	}
+N	
+N	return 0;
+N}
+N
+N
+N
+N

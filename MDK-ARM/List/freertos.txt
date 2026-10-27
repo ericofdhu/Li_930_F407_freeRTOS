@@ -5,196 +5,151 @@
                           AREA ||i.MX_FREERTOS_Init||, CODE, READONLY, ALIGN=2
 
                   MX_FREERTOS_Init PROC
-;;;407     */
-;;;408    void MX_FREERTOS_Init(void) {
+;;;409     */
+;;;410    void MX_FREERTOS_Init(void) {
 000000  b510              PUSH     {r4,lr}
-;;;409      /* USER CODE BEGIN Init */
-;;;410    
-;;;411      /* USER CODE END Init */
+;;;411      /* USER CODE BEGIN Init */
 ;;;412    
-;;;413      /* USER CODE BEGIN RTOS_MUTEX */
-;;;414      /* add mutexes, ... */
-;;;415      /* USER CODE END RTOS_MUTEX */
-;;;416    
-;;;417      /* USER CODE BEGIN RTOS_SEMAPHORES */
-;;;418      /* add semaphores, ... */
-;;;419      /* USER CODE END RTOS_SEMAPHORES */
-;;;420    
-;;;421      /* USER CODE BEGIN RTOS_TIMERS */
-;;;422      /* start timers, add new ones, ... */
-;;;423      /* USER CODE END RTOS_TIMERS */
-;;;424    
-;;;425      /* USER CODE BEGIN RTOS_QUEUES */
-;;;426      /* add queues, ... */
-;;;427      g_ActionQueue = xQueueCreate(1U, COLOR_WM_MESSAGE_SIZE);
+;;;413      /* USER CODE END Init */
+;;;414    
+;;;415      /* USER CODE BEGIN RTOS_MUTEX */
+;;;416      /* add mutexes, ... */
+;;;417      /* USER CODE END RTOS_MUTEX */
+;;;418    
+;;;419      /* USER CODE BEGIN RTOS_SEMAPHORES */
+;;;420      /* add semaphores, ... */
+;;;421      /* USER CODE END RTOS_SEMAPHORES */
+;;;422    
+;;;423      /* USER CODE BEGIN RTOS_TIMERS */
+;;;424      /* start timers, add new ones, ... */
+;;;425      /* USER CODE END RTOS_TIMERS */
+;;;426    
+;;;427      /* USER CODE BEGIN RTOS_QUEUES */
+;;;428      /* add queues, ... */
+;;;429      g_ActionQueue = xQueueCreate(1U, COLOR_WM_MESSAGE_SIZE);
 000002  2200              MOVS     r2,#0
 000004  2120              MOVS     r1,#0x20
 000006  2001              MOVS     r0,#1
 000008  f7fffffe          BL       xQueueGenericCreate
-00000c  4923              LDR      r1,|L1.156|
+00000c  4917              LDR      r1,|L1.108|
 00000e  6008              STR      r0,[r1,#0]  ; g_ActionQueue
-;;;428      if (g_ActionQueue == NULL)
+;;;430      if (g_ActionQueue == NULL)
 000010  4608              MOV      r0,r1
 000012  6800              LDR      r0,[r0,#0]  ; g_ActionQueue
 000014  b908              CBNZ     r0,|L1.26|
-;;;429      {
-;;;430        Error_Handler();
+;;;431      {
+;;;432        Error_Handler();
 000016  f7fffffe          BL       Error_Handler
                   |L1.26|
-;;;431      }
-;;;432      g_WaveLengthStepperQueue = xQueueCreate(
+;;;433      }
+;;;434      g_WaveLengthStepperQueue = xQueueCreate(
 00001a  2200              MOVS     r2,#0
 00001c  2108              MOVS     r1,#8
 00001e  2001              MOVS     r0,#1
 000020  f7fffffe          BL       xQueueGenericCreate
-000024  491e              LDR      r1,|L1.160|
+000024  4912              LDR      r1,|L1.112|
 000026  6008              STR      r0,[r1,#0]  ; g_WaveLengthStepperQueue
-;;;433          1U, sizeof(StepperCommandMessage_t));
-;;;434      if (g_WaveLengthStepperQueue == NULL)
+;;;435          1U, sizeof(StepperCommandMessage_t));
+;;;436      if (g_WaveLengthStepperQueue == NULL)
 000028  4608              MOV      r0,r1
 00002a  6800              LDR      r0,[r0,#0]  ; g_WaveLengthStepperQueue
 00002c  b908              CBNZ     r0,|L1.50|
-;;;435      {
-;;;436        Error_Handler();
+;;;437      {
+;;;438        Error_Handler();
 00002e  f7fffffe          BL       Error_Handler
                   |L1.50|
-;;;437      }
-;;;438      TouchKeyEventQueueReady =
+;;;439      }
+;;;440      TouchKeyEventQueueReady =
 000032  f7fffffe          BL       TouchKeyEventQueue_Init
 000036  b908              CBNZ     r0,|L1.60|
-;;;439          (TouchKeyEventQueue_Init() == osOK) ? 1U : 0U;
+;;;441          (TouchKeyEventQueue_Init() == osOK) ? 1U : 0U;
 000038  2001              MOVS     r0,#1
 00003a  e000              B        |L1.62|
                   |L1.60|
 00003c  2000              MOVS     r0,#0
                   |L1.62|
-00003e  4919              LDR      r1,|L1.164|
+00003e  490d              LDR      r1,|L1.116|
 000040  7008              STRB     r0,[r1,#0]
-;;;440      TouchKey_Init();
+;;;442      TouchKey_Init();
 000042  f7fffffe          BL       TouchKey_Init
-;;;441      /* USER CODE END RTOS_QUEUES */
-;;;442    
-;;;443      /* Create the thread(s) */
-;;;444      /* creation of Task_Start */
-;;;445      Task_Start_Handle = osThreadNew(Task_StartFunc, NULL, &Task_Start_attributes);
-000046  4a18              LDR      r2,|L1.168|
+;;;443      /* USER CODE END RTOS_QUEUES */
+;;;444    
+;;;445      /* Create the thread(s) */
+;;;446      /* creation of Task_Start */
+;;;447      Task_Start_Handle = osThreadNew(Task_StartFunc, NULL, &Task_Start_attributes);
+000046  4a0c              LDR      r2,|L1.120|
 000048  2100              MOVS     r1,#0
-00004a  4818              LDR      r0,|L1.172|
+00004a  480c              LDR      r0,|L1.124|
 00004c  f7fffffe          BL       osThreadNew
-000050  4917              LDR      r1,|L1.176|
+000050  490b              LDR      r1,|L1.128|
 000052  6008              STR      r0,[r1,#0]  ; Task_Start_Handle
-;;;446      Task_SysRun_Handle = osThreadNew(Task_SysRun, NULL, &Task_SysRun_attributes);
-000054  4a17              LDR      r2,|L1.180|
+;;;448      Task_SysRun_Handle = osThreadNew(Task_SysRun, NULL, &Task_SysRun_attributes);
+000054  4a0b              LDR      r2,|L1.132|
 000056  2100              MOVS     r1,#0
-000058  4817              LDR      r0,|L1.184|
+000058  480b              LDR      r0,|L1.136|
 00005a  f7fffffe          BL       osThreadNew
-00005e  4917              LDR      r1,|L1.188|
+00005e  490b              LDR      r1,|L1.140|
 000060  6008              STR      r0,[r1,#0]  ; Task_SysRun_Handle
-;;;447      Task_Action_Handle = osThreadNew(Task_Action, NULL, &Task_Action_attributes);
-000062  4a17              LDR      r2,|L1.192|
-000064  2100              MOVS     r1,#0
-000066  4817              LDR      r0,|L1.196|
-000068  f7fffffe          BL       osThreadNew
-00006c  4916              LDR      r1,|L1.200|
-00006e  6008              STR      r0,[r1,#0]  ; Task_Action_Handle
-;;;448      if (Task_Action_Handle == NULL)
-000070  4608              MOV      r0,r1
-000072  6800              LDR      r0,[r0,#0]  ; Task_Action_Handle
-000074  b908              CBNZ     r0,|L1.122|
-;;;449      {
-;;;450        Error_Handler();
-000076  f7fffffe          BL       Error_Handler
-                  |L1.122|
-;;;451      }
-;;;452      Task_WaveLengthStepper_Handle = osThreadNew(
-00007a  4a14              LDR      r2,|L1.204|
-00007c  2100              MOVS     r1,#0
-00007e  4814              LDR      r0,|L1.208|
-000080  f7fffffe          BL       osThreadNew
-000084  4913              LDR      r1,|L1.212|
-000086  6008              STR      r0,[r1,#0]  ; Task_WaveLengthStepper_Handle
-;;;453          Task_WaveLengthStepper, NULL, &Task_WaveLengthStepper_attributes);
-;;;454      if (Task_WaveLengthStepper_Handle == NULL)
-000088  4608              MOV      r0,r1
-00008a  6800              LDR      r0,[r0,#0]  ; Task_WaveLengthStepper_Handle
-00008c  b908              CBNZ     r0,|L1.146|
-;;;455      {
-;;;456        Error_Handler();
-00008e  f7fffffe          BL       Error_Handler
-                  |L1.146|
-;;;457      }
-;;;458      /* USER CODE BEGIN RTOS_THREADS */
-;;;459      /* add threads, ... */
-;;;460      /* USER CODE END RTOS_THREADS */
-;;;461    
-;;;462      /* USER CODE BEGIN RTOS_EVENTS */
-;;;463      /* add events, ... */
-;;;464      (void)MyInitFlag_Init();
-000092  f7fffffe          BL       MyInitFlag_Init
-;;;465      (void)MyOsFlag_Init();
-000096  f7fffffe          BL       MyOsFlag_Init
-;;;466      /* USER CODE END RTOS_EVENTS */
-;;;467    
-;;;468    }
-00009a  bd10              POP      {r4,pc}
-;;;469    
+;;;449      /* USER CODE BEGIN RTOS_THREADS */
+;;;450      /* add threads, ... */
+;;;451      /* USER CODE END RTOS_THREADS */
+;;;452    
+;;;453      /* USER CODE BEGIN RTOS_EVENTS */
+;;;454      /* add events, ... */
+;;;455      (void)MyInitFlag_Init();
+000062  f7fffffe          BL       MyInitFlag_Init
+;;;456      (void)MyOsFlag_Init();
+000066  f7fffffe          BL       MyOsFlag_Init
+;;;457      /* USER CODE END RTOS_EVENTS */
+;;;458    
+;;;459    }
+00006a  bd10              POP      {r4,pc}
+;;;460    
                           ENDP
 
-                  |L1.156|
+                  |L1.108|
                           DCD      g_ActionQueue
-                  |L1.160|
+                  |L1.112|
                           DCD      g_WaveLengthStepperQueue
-                  |L1.164|
+                  |L1.116|
                           DCD      TouchKeyEventQueueReady
-                  |L1.168|
+                  |L1.120|
                           DCD      Task_Start_attributes
-                  |L1.172|
+                  |L1.124|
                           DCD      Task_StartFunc
-                  |L1.176|
+                  |L1.128|
                           DCD      Task_Start_Handle
-                  |L1.180|
+                  |L1.132|
                           DCD      Task_SysRun_attributes
-                  |L1.184|
+                  |L1.136|
                           DCD      Task_SysRun
-                  |L1.188|
+                  |L1.140|
                           DCD      Task_SysRun_Handle
-                  |L1.192|
-                          DCD      Task_Action_attributes
-                  |L1.196|
-                          DCD      Task_Action
-                  |L1.200|
-                          DCD      Task_Action_Handle
-                  |L1.204|
-                          DCD      Task_WaveLengthStepper_attributes
-                  |L1.208|
-                          DCD      Task_WaveLengthStepper
-                  |L1.212|
-                          DCD      Task_WaveLengthStepper_Handle
 
                           AREA ||i.MyInitFlag_Init||, CODE, READONLY, ALIGN=2
 
                   MyInitFlag_Init PROC
-;;;172     */
-;;;173    EventGroupHandle_t MyInitFlag_Init(void)
+;;;174     */
+;;;175    EventGroupHandle_t MyInitFlag_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;174    {
-;;;175    	if (MyInitFlag == NULL)
+;;;176    {
+;;;177    	if (MyInitFlag == NULL)
 000002  4805              LDR      r0,|L2.24|
 000004  6800              LDR      r0,[r0,#0]  ; MyInitFlag
 000006  b918              CBNZ     r0,|L2.16|
-;;;176    	{
-;;;177    		MyInitFlag = xEventGroupCreate();
+;;;178    	{
+;;;179    		MyInitFlag = xEventGroupCreate();
 000008  f7fffffe          BL       xEventGroupCreate
 00000c  4902              LDR      r1,|L2.24|
 00000e  6008              STR      r0,[r1,#0]  ; MyInitFlag
                   |L2.16|
-;;;178    	}
-;;;179    	return MyInitFlag;
+;;;180    	}
+;;;181    	return MyInitFlag;
 000010  4801              LDR      r0,|L2.24|
 000012  6800              LDR      r0,[r0,#0]  ; MyInitFlag
-;;;180    }
+;;;182    }
 000014  bd10              POP      {r4,pc}
-;;;181    
+;;;183    
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -204,27 +159,27 @@
                           AREA ||i.MyOsFlag_Init||, CODE, READONLY, ALIGN=2
 
                   MyOsFlag_Init PROC
-;;;187     */
-;;;188    EventGroupHandle_t MyOsFlag_Init(void)
+;;;189     */
+;;;190    EventGroupHandle_t MyOsFlag_Init(void)
 000000  b510              PUSH     {r4,lr}
-;;;189    {
-;;;190    	if (MyOsFlag == NULL)
+;;;191    {
+;;;192    	if (MyOsFlag == NULL)
 000002  4805              LDR      r0,|L3.24|
 000004  6800              LDR      r0,[r0,#0]  ; MyOsFlag
 000006  b918              CBNZ     r0,|L3.16|
-;;;191    	{
-;;;192    		MyOsFlag = xEventGroupCreate();
+;;;193    	{
+;;;194    		MyOsFlag = xEventGroupCreate();
 000008  f7fffffe          BL       xEventGroupCreate
 00000c  4902              LDR      r1,|L3.24|
 00000e  6008              STR      r0,[r1,#0]  ; MyOsFlag
                   |L3.16|
-;;;193    	}
-;;;194    	return MyOsFlag;
+;;;195    	}
+;;;196    	return MyOsFlag;
 000010  4801              LDR      r0,|L3.24|
 000012  6800              LDR      r0,[r0,#0]  ; MyOsFlag
-;;;195    }
+;;;197    }
 000014  bd10              POP      {r4,pc}
-;;;196    
+;;;198    
                           ENDP
 
 000016  0000              DCW      0x0000
@@ -234,32 +189,32 @@
                           AREA ||i.SysRun_GetBeep||, CODE, READONLY, ALIGN=2
 
                   SysRun_GetBeep PROC
-;;;911     */
-;;;912    void SysRun_GetBeep(uint8_t *enabled, uint32_t *ticks)
+;;;993     */
+;;;994    void SysRun_GetBeep(uint8_t *enabled, uint32_t *ticks)
 000000  b110              CBZ      r0,|L4.8|
-;;;913    {
-;;;914    //  taskENTER_CRITICAL();
-;;;915      if (enabled != NULL)
-;;;916      {
-;;;917        *enabled = Beep.En;
+;;;995    {
+;;;996    //  taskENTER_CRITICAL();
+;;;997      if (enabled != NULL)
+;;;998      {
+;;;999        *enabled = Beep.En;
 000002  4a04              LDR      r2,|L4.20|
 000004  7812              LDRB     r2,[r2,#0]  ; Beep
 000006  7002              STRB     r2,[r0,#0]
                   |L4.8|
-;;;918      }
-;;;919      if (ticks != NULL)
+;;;1000     }
+;;;1001     if (ticks != NULL)
 000008  b111              CBZ      r1,|L4.16|
-;;;920      {
-;;;921        *ticks = Beep.cnt;
+;;;1002     {
+;;;1003       *ticks = Beep.cnt;
 00000a  4a02              LDR      r2,|L4.20|
 00000c  6852              LDR      r2,[r2,#4]  ; Beep
 00000e  600a              STR      r2,[r1,#0]
                   |L4.16|
-;;;922      }
-;;;923    //  taskEXIT_CRITICAL();
-;;;924    }
+;;;1004     }
+;;;1005   //  taskEXIT_CRITICAL();
+;;;1006   }
 000010  4770              BX       lr
-;;;925    
+;;;1007   
                           ENDP
 
 000012  0000              DCW      0x0000
@@ -269,14 +224,14 @@
                           AREA ||i.SysRun_SetBeep||, CODE, READONLY, ALIGN=2
 
                   SysRun_SetBeep PROC
-;;;896     */
-;;;897    void SysRun_SetBeep(uint32_t ticks)
+;;;978     */
+;;;979    void SysRun_SetBeep(uint32_t ticks)
 000000  4904              LDR      r1,|L5.20|
-;;;898    {
-;;;899    //  taskENTER_CRITICAL();
-;;;900      Beep.cnt = ticks;
+;;;980    {
+;;;981    //  taskENTER_CRITICAL();
+;;;982      Beep.cnt = ticks;
 000002  6048              STR      r0,[r1,#4]  ; Beep
-;;;901      Beep.En = (ticks > 0U) ? 1U : 0U;
+;;;983      Beep.En = (ticks > 0U) ? 1U : 0U;
 000004  b108              CBZ      r0,|L5.10|
 000006  2101              MOVS     r1,#1
 000008  e000              B        |L5.12|
@@ -285,10 +240,10 @@
                   |L5.12|
 00000c  4a01              LDR      r2,|L5.20|
 00000e  7011              STRB     r1,[r2,#0]
-;;;902    //  taskEXIT_CRITICAL();
-;;;903    }
+;;;984    //  taskEXIT_CRITICAL();
+;;;985    }
 000010  4770              BX       lr
-;;;904    
+;;;986    
                           ENDP
 
 000012  0000              DCW      0x0000
@@ -298,159 +253,193 @@
                           AREA ||i.Task_ADS1256_Sampling||, CODE, READONLY, ALIGN=1
 
                   Task_ADS1256_Sampling PROC
-;;;592     */
-;;;593    void Task_ADS1256_Sampling(void *argument)
+;;;599     */
+;;;600    void Task_ADS1256_Sampling(void *argument)
 000000  b508              PUSH     {r3,lr}
-;;;594    {
-;;;595      int32_t sample;
-;;;596    
-;;;597      (void)argument;
-;;;598      for (;;)
+;;;601    {
+;;;602      int32_t sample;
+;;;603    
+;;;604      (void)argument;
+;;;605      for (;;)
 000002  bf00              NOP      
                   |L6.4|
-;;;599      {
-;;;600        if ((ADS1256_WaitDataReady(osWaitForever) == osOK) &&
+;;;606      {
+;;;607        if ((ADS1256_WaitDataReady(osWaitForever) == osOK) &&
 000004  f04f30ff          MOV      r0,#0xffffffff
 000008  f7fffffe          BL       ADS1256_WaitDataReady
 00000c  2800              CMP      r0,#0
 00000e  d1f9              BNE      |L6.4|
-;;;601            (ADS1256_ReadData(&sample) != ADS1256_OK))
+;;;608            (ADS1256_ReadData(&sample) != ADS1256_OK))
 000010  4668              MOV      r0,sp
 000012  f7fffffe          BL       ADS1256_ReadData
 000016  2800              CMP      r0,#0
 000018  d0f4              BEQ      |L6.4|
-;;;602        {
-;;;603          osDelay(1U);
+;;;609        {
+;;;610          osDelay(1U);
 00001a  2001              MOVS     r0,#1
 00001c  f7fffffe          BL       osDelay
 000020  e7f0              B        |L6.4|
-;;;604        }
-;;;605      }
-;;;606    }
-;;;607    
+;;;611        }
+;;;612      }
+;;;613    }
+;;;614    
                           ENDP
 
 
                           AREA ||i.Task_Action||, CODE, READONLY, ALIGN=2
 
                           REQUIRE _printf_percent
-                          REQUIRE _printf_u
+                          REQUIRE _printf_d
                           REQUIRE _printf_int_dec
+                          REQUIRE _printf_u
                   Task_Action PROC
-;;;630     */
-;;;631    static void Task_Action(void *argument)
+;;;692     */
+;;;693    static void Task_Action(void *argument)
 000000  b088              SUB      sp,sp,#0x20
-;;;632    {
-;;;633      uint8_t actionMessage[COLOR_WM_MESSAGE_SIZE];
-;;;634      BaseType_t queueStatus;
-;;;635    
-;;;636      (void)argument;
-;;;637    
-;;;638      for (;;)
-000002  bf00              NOP      
-                  |L7.4|
-;;;639      {
-;;;640        queueStatus = xQueueReceive(g_ActionQueue, actionMessage, portMAX_DELAY);
-000004  f04f32ff          MOV      r2,#0xffffffff
-000008  4669              MOV      r1,sp
-00000a  4813              LDR      r0,|L7.88|
-00000c  6800              LDR      r0,[r0,#0]  ; g_ActionQueue
-00000e  f7fffffe          BL       xQueueReceive
-000012  4604              MOV      r4,r0
-;;;641        if (queueStatus != pdPASS)
-000014  2c01              CMP      r4,#1
-000016  d003              BEQ      |L7.32|
-;;;642        {
-;;;643          printf("Failed to receive action queue message\r\n");
-000018  a010              ADR      r0,|L7.92|
-00001a  f7fffffe          BL       __2printf
-;;;644          continue;
-00001e  e7f1              B        |L7.4|
-                  |L7.32|
-;;;645        }
-;;;646    
-;;;647        switch (actionMessage[0])
-000020  f89d0000          LDRB     r0,[sp,#0]
-000024  2803              CMP      r0,#3
-000026  d10e              BNE      |L7.70|
-;;;648        {
-;;;649          case MSG_SCAN:
-;;;650            taskENTER_CRITICAL();
-000028  f7fffffe          BL       vPortEnterCritical
-;;;651            SysFlag.RunWaveScanFlag = 1U;
-00002c  4816              LDR      r0,|L7.136|
-00002e  6800              LDR      r0,[r0,#0]  ; SysFlag
-000030  f0200008          BIC      r0,r0,#8
-000034  3008              ADDS     r0,r0,#8
-000036  4914              LDR      r1,|L7.136|
-000038  6008              STR      r0,[r1,#0]  ; SysFlag
-;;;652            taskEXIT_CRITICAL();
-00003a  f7fffffe          BL       vPortExitCritical
-;;;653            printf("Scan action triggered\r\n");
-00003e  a013              ADR      r0,|L7.140|
-000040  f7fffffe          BL       __2printf
-;;;654    
-;;;655            break;
-000044  e005              B        |L7.82|
-                  |L7.70|
-;;;656    
-;;;657          default:
-;;;658            printf("Unsupported action message type: %u\r\n",
-000046  f89d1000          LDRB     r1,[sp,#0]
-00004a  a016              ADR      r0,|L7.164|
-00004c  f7fffffe          BL       __2printf
-;;;659                   (unsigned int)actionMessage[0]);
-;;;660            break;
-000050  bf00              NOP      
-                  |L7.82|
-000052  bf00              NOP                            ;655
-000054  e7d6              B        |L7.4|
-;;;661        }
-;;;662      }
-;;;663    }
-;;;664    /**
+;;;694    {
+;;;695      uint8_t actionMessage[COLOR_WM_MESSAGE_SIZE];
+;;;696      BaseType_t queueStatus;
+;;;697    
+;;;698      (void)argument;
+;;;699    
+;;;700    
+;;;701    
+;;;702    	CircularBuffer_Init(&cb_normal,normal_Buffer,NORMAL_BUFF_LEN);
+000002  221e              MOVS     r2,#0x1e
+000004  491c              LDR      r1,|L7.120|
+000006  481d              LDR      r0,|L7.124|
+000008  f7fffffe          BL       CircularBuffer_Init
+;;;703    	rc_filter_init(&normal_filter, TIME_SCAN_CUTO_FREQ, TIME_SCAN_SAMPLE_FREQ);
+00000c  eef20a04          VMOV.F32 s1,#10.00000000
+000010  ed9f0a1b          VLDR     s0,|L7.128|
+000014  481b              LDR      r0,|L7.132|
+000016  f7fffffe          BL       rc_filter_init
+;;;704    
+;;;705    
+;;;706    
+;;;707    
+;;;708    
+;;;709      for (;;)
+00001a  bf00              NOP      
+                  |L7.28|
+;;;710      {
+;;;711        queueStatus = xQueueReceive(g_ActionQueue, actionMessage, pdMS_TO_TICKS(20U));
+00001c  2214              MOVS     r2,#0x14
+00001e  4669              MOV      r1,sp
+000020  4819              LDR      r0,|L7.136|
+000022  6800              LDR      r0,[r0,#0]  ; g_ActionQueue
+000024  f7fffffe          BL       xQueueReceive
+000028  4604              MOV      r4,r0
+;;;712        if (queueStatus != pdPASS)
+00002a  2c01              CMP      r4,#1
+00002c  d00a              BEQ      |L7.68|
+;;;713        {
+;;;714          // printf("Failed to receive action queue message\r\n");
+;;;715    			MySysAbs.data_E = get_normal_time_value();
+00002e  f7fffffe          BL       get_normal_time_value
+000032  4916              LDR      r1,|L7.140|
+000034  8108              STRH     r0,[r1,#8]
+;;;716          printf("Normal time value: %d\r\n", MySysAbs.data_E);
+000036  4608              MOV      r0,r1
+000038  f9b01008          LDRSH    r1,[r0,#8]  ; MySysAbs
+00003c  a014              ADR      r0,|L7.144|
+00003e  f7fffffe          BL       __2printf
+000042  e7eb              B        |L7.28|
+                  |L7.68|
+;;;717    
+;;;718    
+;;;719        }
+;;;720        else
+;;;721        {
+;;;722    
+;;;723          switch (actionMessage[0])
+000044  f89d0000          LDRB     r0,[sp,#0]
+000048  2803              CMP      r0,#3
+00004a  d10e              BNE      |L7.106|
+;;;724          {
+;;;725            case MSG_SCAN:
+;;;726              taskENTER_CRITICAL();
+00004c  f7fffffe          BL       vPortEnterCritical
+;;;727              SysFlag.RunWaveScanFlag = 1U;
+000050  4815              LDR      r0,|L7.168|
+000052  6800              LDR      r0,[r0,#0]  ; SysFlag
+000054  f0200008          BIC      r0,r0,#8
+000058  3008              ADDS     r0,r0,#8
+00005a  4913              LDR      r1,|L7.168|
+00005c  6008              STR      r0,[r1,#0]  ; SysFlag
+;;;728              taskEXIT_CRITICAL();
+00005e  f7fffffe          BL       vPortExitCritical
+;;;729              printf("Scan action triggered\r\n");
+000062  a012              ADR      r0,|L7.172|
+000064  f7fffffe          BL       __2printf
+;;;730    
+;;;731              break;
+000068  e005              B        |L7.118|
+                  |L7.106|
+;;;732    
+;;;733            default:
+;;;734              printf("Unsupported action message type: %u\r\n",
+00006a  f89d1000          LDRB     r1,[sp,#0]
+00006e  a015              ADR      r0,|L7.196|
+000070  f7fffffe          BL       __2printf
+;;;735                    (unsigned int)actionMessage[0]);
+;;;736              break;
+000074  bf00              NOP      
+                  |L7.118|
+000076  e7d1              B        |L7.28|
+;;;737          }
+;;;738    
+;;;739        }
+;;;740    
+;;;741    
+;;;742    
+;;;743    
+;;;744      }
+;;;745    }
+;;;746    /**
                           ENDP
 
-000056  0000              DCW      0x0000
-                  |L7.88|
-                          DCD      g_ActionQueue
-                  |L7.92|
-00005c  4661696c          DCB      "Failed to receive action queue message\r\n",0
-000060  65642074
-000064  6f207265
-000068  63656976
-00006c  65206163
-000070  74696f6e
-000074  20717565
-000078  7565206d
-00007c  65737361
-000080  67650d0a
-000084  00      
-000085  00                DCB      0
-000086  00                DCB      0
-000087  00                DCB      0
+                  |L7.120|
+                          DCD      normal_Buffer
+                  |L7.124|
+                          DCD      cb_normal
+                  |L7.128|
+000080  3e4ccccd          DCFS     0x3e4ccccd ; 0.20000000298023224
+                  |L7.132|
+                          DCD      normal_filter
                   |L7.136|
-                          DCD      SysFlag
+                          DCD      g_ActionQueue
                   |L7.140|
-00008c  5363616e          DCB      "Scan action triggered\r\n",0
-000090  20616374
-000094  696f6e20
-000098  74726967
-00009c  67657265
-0000a0  640d0a00
-                  |L7.164|
-0000a4  556e7375          DCB      "Unsupported action message type: %u\r\n",0
-0000a8  70706f72
-0000ac  74656420
-0000b0  61637469
-0000b4  6f6e206d
-0000b8  65737361
-0000bc  67652074
-0000c0  7970653a
-0000c4  2025750d
-0000c8  0a00    
-0000ca  00                DCB      0
-0000cb  00                DCB      0
+                          DCD      MySysAbs
+                  |L7.144|
+000090  4e6f726d          DCB      "Normal time value: %d\r\n",0
+000094  616c2074
+000098  696d6520
+00009c  76616c75
+0000a0  653a2025
+0000a4  640d0a00
+                  |L7.168|
+                          DCD      SysFlag
+                  |L7.172|
+0000ac  5363616e          DCB      "Scan action triggered\r\n",0
+0000b0  20616374
+0000b4  696f6e20
+0000b8  74726967
+0000bc  67657265
+0000c0  640d0a00
+                  |L7.196|
+0000c4  556e7375          DCB      "Unsupported action message type: %u\r\n",0
+0000c8  70706f72
+0000cc  74656420
+0000d0  61637469
+0000d4  6f6e206d
+0000d8  65737361
+0000dc  67652074
+0000e0  7970653a
+0000e4  2025750d
+0000e8  0a00    
+0000ea  00                DCB      0
+0000eb  00                DCB      0
 
                           AREA ||i.Task_ChildDisp||, CODE, READONLY, ALIGN=2
 
@@ -459,86 +448,86 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   Task_ChildDisp PROC
-;;;750     */
-;;;751    static void Task_ChildDisp(void *argument)
+;;;832     */
+;;;833    static void Task_ChildDisp(void *argument)
 000000  b508              PUSH     {r3,lr}
-;;;752    {
-;;;753      uint8_t event;
-;;;754      osStatus_t status;
-;;;755    
-;;;756      (void)argument;
-;;;757    
-;;;758      for (;;)
+;;;834    {
+;;;835      uint8_t event;
+;;;836      osStatus_t status;
+;;;837    
+;;;838      (void)argument;
+;;;839    
+;;;840      for (;;)
 000002  bf00              NOP      
                   |L8.4|
-;;;759      {
-;;;760        status = TouchKeyEventQueue_Get(
+;;;841      {
+;;;842        status = TouchKeyEventQueue_Get(
 000004  22c8              MOVS     r2,#0xc8
 000006  4669              MOV      r1,sp
 000008  2001              MOVS     r0,#1
 00000a  f7fffffe          BL       TouchKeyEventQueue_Get
 00000e  4604              MOV      r4,r0
-;;;761            TOUCH_KEY_EVENT_CHILD, &event, pdMS_TO_TICKS(200U));
-;;;762        if ((status != osOK) && (status != osErrorTimeout))
+;;;843            TOUCH_KEY_EVENT_CHILD, &event, pdMS_TO_TICKS(200U));
+;;;844        if ((status != osOK) && (status != osErrorTimeout))
 000010  b14c              CBZ      r4,|L8.38|
 000012  1ca0              ADDS     r0,r4,#2
 000014  b138              CBZ      r0,|L8.38|
-;;;763        {
-;;;764          printf("Failed to receive child window event: %ld\r\n", (long)status);
+;;;845        {
+;;;846          printf("Failed to receive child window event: %ld\r\n", (long)status);
 000016  4621              MOV      r1,r4
 000018  a011              ADR      r0,|L8.96|
 00001a  f7fffffe          BL       __2printf
-;;;765          osDelay(1U);
+;;;847          osDelay(1U);
 00001e  2001              MOVS     r0,#1
 000020  f7fffffe          BL       osDelay
-;;;766          continue;
+;;;848          continue;
 000024  e7ee              B        |L8.4|
                   |L8.38|
-;;;767        }
-;;;768    
-;;;769        status = osMutexAcquire(DisplayMutex, osWaitForever);
+;;;849        }
+;;;850    
+;;;851        status = osMutexAcquire(DisplayMutex, osWaitForever);
 000026  f04f31ff          MOV      r1,#0xffffffff
 00002a  4818              LDR      r0,|L8.140|
 00002c  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 00002e  f7fffffe          BL       osMutexAcquire
 000032  4604              MOV      r4,r0
-;;;770        if (status != osOK)
+;;;852        if (status != osOK)
 000034  b13c              CBZ      r4,|L8.70|
-;;;771        {
-;;;772          printf("Failed to acquire display mutex for child window: %ld\r\n",
+;;;853        {
+;;;854          printf("Failed to acquire display mutex for child window: %ld\r\n",
 000036  4621              MOV      r1,r4
 000038  a015              ADR      r0,|L8.144|
 00003a  f7fffffe          BL       __2printf
-;;;773                 (long)status);
-;;;774          osDelay(1U);
+;;;855                 (long)status);
+;;;856          osDelay(1U);
 00003e  2001              MOVS     r0,#1
 000040  f7fffffe          BL       osDelay
-;;;775          continue;
+;;;857          continue;
 000044  e7de              B        |L8.4|
                   |L8.70|
-;;;776        }
-;;;777    
-;;;778        DisplayChildWindow();
+;;;858        }
+;;;859    
+;;;860        DisplayChildWindow();
 000046  f7fffffe          BL       DisplayChildWindow
-;;;779        status = osMutexRelease(DisplayMutex);
+;;;861        status = osMutexRelease(DisplayMutex);
 00004a  4810              LDR      r0,|L8.140|
 00004c  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 00004e  f7fffffe          BL       osMutexRelease
 000052  4604              MOV      r4,r0
-;;;780        if (status != osOK)
+;;;862        if (status != osOK)
 000054  b11c              CBZ      r4,|L8.94|
-;;;781        {
-;;;782          printf("Failed to release display mutex for child window: %ld\r\n",
+;;;863        {
+;;;864          printf("Failed to release display mutex for child window: %ld\r\n",
 000056  4621              MOV      r1,r4
 000058  a01b              ADR      r0,|L8.200|
 00005a  f7fffffe          BL       __2printf
                   |L8.94|
 00005e  e7d1              B        |L8.4|
-;;;783                 (long)status);
-;;;784        }
-;;;785      }
-;;;786    }
-;;;787    
+;;;865                 (long)status);
+;;;866        }
+;;;867      }
+;;;868    }
+;;;869    
                           ENDP
 
                   |L8.96|
@@ -595,176 +584,176 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   Task_Disp PROC
-;;;669     */
-;;;670    static void Task_Disp(void *argument)
+;;;751     */
+;;;752    static void Task_Disp(void *argument)
 000000  b508              PUSH     {r3,lr}
-;;;671    {
-;;;672      uint8_t event;
-;;;673      osStatus_t status;
-;;;674    
-;;;675      (void)argument;
-;;;676    
-;;;677      status = osMutexAcquire(DisplayMutex, osWaitForever);
+;;;753    {
+;;;754      uint8_t event;
+;;;755      osStatus_t status;
+;;;756    
+;;;757      (void)argument;
+;;;758    
+;;;759      status = osMutexAcquire(DisplayMutex, osWaitForever);
 000002  f04f31ff          MOV      r1,#0xffffffff
 000006  4836              LDR      r0,|L9.224|
 000008  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 00000a  f7fffffe          BL       osMutexAcquire
 00000e  4604              MOV      r4,r0
-;;;678      if (status == osOK)
+;;;760      if (status == osOK)
 000010  b98c              CBNZ     r4,|L9.54|
-;;;679      {
-;;;680        ColorWindowsControl(WIN_NUM_WELCOME, 0U);
+;;;761      {
+;;;762        ColorWindowsControl(WIN_NUM_WELCOME, 0U);
 000012  2100              MOVS     r1,#0
 000014  4608              MOV      r0,r1
 000016  f7fffffe          BL       ColorWindowsControl
-;;;681        DisplayWindow();
+;;;763        DisplayWindow();
 00001a  f7fffffe          BL       DisplayWindow
-;;;682        status = osMutexRelease(DisplayMutex);
+;;;764        status = osMutexRelease(DisplayMutex);
 00001e  4830              LDR      r0,|L9.224|
 000020  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 000022  f7fffffe          BL       osMutexRelease
 000026  4604              MOV      r4,r0
-;;;683        if (status != osOK)
+;;;765        if (status != osOK)
 000028  2c00              CMP      r4,#0
 00002a  d008              BEQ      |L9.62|
-;;;684        {
-;;;685          printf("Failed to release display mutex after welcome screen: %ld\r\n",
+;;;766        {
+;;;767          printf("Failed to release display mutex after welcome screen: %ld\r\n",
 00002c  4621              MOV      r1,r4
 00002e  a02d              ADR      r0,|L9.228|
 000030  f7fffffe          BL       __2printf
 000034  e003              B        |L9.62|
                   |L9.54|
-;;;686                 (long)status);
-;;;687        }
-;;;688      }
-;;;689      else
-;;;690      {
-;;;691        printf("Failed to acquire display mutex for welcome screen: %ld\r\n",
+;;;768                 (long)status);
+;;;769        }
+;;;770      }
+;;;771      else
+;;;772      {
+;;;773        printf("Failed to acquire display mutex for welcome screen: %ld\r\n",
 000036  4621              MOV      r1,r4
 000038  a039              ADR      r0,|L9.288|
 00003a  f7fffffe          BL       __2printf
                   |L9.62|
-;;;692               (long)status);
-;;;693      }
-;;;694    
-;;;695      osDelay(pdMS_TO_TICKS(1000U));
+;;;774               (long)status);
+;;;775      }
+;;;776    
+;;;777      osDelay(pdMS_TO_TICKS(1000U));
 00003e  f44f707a          MOV      r0,#0x3e8
 000042  f7fffffe          BL       osDelay
-;;;696    
-;;;697      status = osMutexAcquire(DisplayMutex, osWaitForever);
+;;;778    
+;;;779      status = osMutexAcquire(DisplayMutex, osWaitForever);
 000046  f04f31ff          MOV      r1,#0xffffffff
 00004a  4825              LDR      r0,|L9.224|
 00004c  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 00004e  f7fffffe          BL       osMutexAcquire
 000052  4604              MOV      r4,r0
-;;;698      if (status == osOK)
+;;;780      if (status == osOK)
 000054  b98c              CBNZ     r4,|L9.122|
-;;;699      {
-;;;700        ColorWindowsControl(WIN_NUM_INIT, 0U);
+;;;781      {
+;;;782        ColorWindowsControl(WIN_NUM_INIT, 0U);
 000056  2100              MOVS     r1,#0
 000058  2002              MOVS     r0,#2
 00005a  f7fffffe          BL       ColorWindowsControl
-;;;701        DisplayWindow();
+;;;783        DisplayWindow();
 00005e  f7fffffe          BL       DisplayWindow
-;;;702        status = osMutexRelease(DisplayMutex);
+;;;784        status = osMutexRelease(DisplayMutex);
 000062  481f              LDR      r0,|L9.224|
 000064  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 000066  f7fffffe          BL       osMutexRelease
 00006a  4604              MOV      r4,r0
-;;;703        if (status != osOK)
+;;;785        if (status != osOK)
 00006c  2c00              CMP      r4,#0
 00006e  d008              BEQ      |L9.130|
-;;;704        {
-;;;705          printf("Failed to release display mutex after init screen: %ld\r\n",
+;;;786        {
+;;;787          printf("Failed to release display mutex after init screen: %ld\r\n",
 000070  4621              MOV      r1,r4
 000072  a03a              ADR      r0,|L9.348|
 000074  f7fffffe          BL       __2printf
 000078  e003              B        |L9.130|
                   |L9.122|
-;;;706                 (long)status);
-;;;707        }
-;;;708      }
-;;;709      else
-;;;710      {
-;;;711        printf("Failed to acquire display mutex for init screen: %ld\r\n",
+;;;788                 (long)status);
+;;;789        }
+;;;790      }
+;;;791      else
+;;;792      {
+;;;793        printf("Failed to acquire display mutex for init screen: %ld\r\n",
 00007a  4621              MOV      r1,r4
 00007c  a046              ADR      r0,|L9.408|
 00007e  f7fffffe          BL       __2printf
                   |L9.130|
-;;;712               (long)status);
-;;;713      }
-;;;714    
-;;;715      for (;;)
+;;;794               (long)status);
+;;;795      }
+;;;796    
+;;;797      for (;;)
 000082  bf00              NOP      
                   |L9.132|
-;;;716      {
-;;;717        status = TouchKeyEventQueue_Get(
+;;;798      {
+;;;799        status = TouchKeyEventQueue_Get(
 000084  22c8              MOVS     r2,#0xc8
 000086  4669              MOV      r1,sp
 000088  2000              MOVS     r0,#0
 00008a  f7fffffe          BL       TouchKeyEventQueue_Get
 00008e  4604              MOV      r4,r0
-;;;718            TOUCH_KEY_EVENT_FATHER, &event, pdMS_TO_TICKS(200U));
-;;;719        if ((status != osOK) && (status != osErrorTimeout))
+;;;800            TOUCH_KEY_EVENT_FATHER, &event, pdMS_TO_TICKS(200U));
+;;;801        if ((status != osOK) && (status != osErrorTimeout))
 000090  b14c              CBZ      r4,|L9.166|
 000092  1ca0              ADDS     r0,r4,#2
 000094  b138              CBZ      r0,|L9.166|
-;;;720        {
-;;;721          printf("Failed to receive parent window event: %ld\r\n", (long)status);
+;;;802        {
+;;;803          printf("Failed to receive parent window event: %ld\r\n", (long)status);
 000096  4621              MOV      r1,r4
 000098  a04d              ADR      r0,|L9.464|
 00009a  f7fffffe          BL       __2printf
-;;;722          osDelay(1U);
+;;;804          osDelay(1U);
 00009e  2001              MOVS     r0,#1
 0000a0  f7fffffe          BL       osDelay
-;;;723          continue;
+;;;805          continue;
 0000a4  e7ee              B        |L9.132|
                   |L9.166|
-;;;724        }
-;;;725    
-;;;726        status = osMutexAcquire(DisplayMutex, osWaitForever);
+;;;806        }
+;;;807    
+;;;808        status = osMutexAcquire(DisplayMutex, osWaitForever);
 0000a6  f04f31ff          MOV      r1,#0xffffffff
 0000aa  480d              LDR      r0,|L9.224|
 0000ac  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 0000ae  f7fffffe          BL       osMutexAcquire
 0000b2  4604              MOV      r4,r0
-;;;727        if (status != osOK)
+;;;809        if (status != osOK)
 0000b4  b13c              CBZ      r4,|L9.198|
-;;;728        {
-;;;729          printf("Failed to acquire display mutex for parent window: %ld\r\n",
+;;;810        {
+;;;811          printf("Failed to acquire display mutex for parent window: %ld\r\n",
 0000b6  4621              MOV      r1,r4
 0000b8  a051              ADR      r0,|L9.512|
 0000ba  f7fffffe          BL       __2printf
-;;;730                 (long)status);
-;;;731          osDelay(1U);
+;;;812                 (long)status);
+;;;813          osDelay(1U);
 0000be  2001              MOVS     r0,#1
 0000c0  f7fffffe          BL       osDelay
-;;;732          continue;
+;;;814          continue;
 0000c4  e7de              B        |L9.132|
                   |L9.198|
-;;;733        }
-;;;734    
-;;;735        DisplayWindow();
+;;;815        }
+;;;816    
+;;;817        DisplayWindow();
 0000c6  f7fffffe          BL       DisplayWindow
-;;;736        status = osMutexRelease(DisplayMutex);
+;;;818        status = osMutexRelease(DisplayMutex);
 0000ca  4805              LDR      r0,|L9.224|
 0000cc  6800              LDR      r0,[r0,#0]  ; DisplayMutex
 0000ce  f7fffffe          BL       osMutexRelease
 0000d2  4604              MOV      r4,r0
-;;;737        if (status != osOK)
+;;;819        if (status != osOK)
 0000d4  b11c              CBZ      r4,|L9.222|
-;;;738        {
-;;;739          printf("Failed to release display mutex for parent window: %ld\r\n",
+;;;820        {
+;;;821          printf("Failed to release display mutex for parent window: %ld\r\n",
 0000d6  4621              MOV      r1,r4
 0000d8  a058              ADR      r0,|L9.572|
 0000da  f7fffffe          BL       __2printf
                   |L9.222|
 0000de  e7d1              B        |L9.132|
-;;;740                 (long)status);
-;;;741        }
-;;;742      }
-;;;743    }
-;;;744    
+;;;822                 (long)status);
+;;;823        }
+;;;824      }
+;;;825    }
+;;;826    
                           ENDP
 
                   |L9.224|
@@ -901,424 +890,451 @@
                           REQUIRE _printf_d
                           REQUIRE _printf_int_dec
                   Task_StartFunc PROC
-;;;477    /* USER CODE END Header_Task_StartFunc */
-;;;478    void Task_StartFunc(void *argument)
+;;;467    /* USER CODE END Header_Task_StartFunc */
+;;;468    void Task_StartFunc(void *argument)
 000000  f7fffffe          BL       MX_USB_DEVICE_Init
-;;;479    {
-;;;480    //  static uint8_t formatWork[_MAX_SS];
-;;;481      ADS1256_Status ads1256InitResult;
-;;;482    
-;;;483      /* init code for USB_DEVICE */
-;;;484      MX_USB_DEVICE_Init();
-;;;485      /* USER CODE BEGIN Task_StartFunc */
-;;;486      if (TouchKeyEventQueueReady == 0U)
-000004  4845              LDR      r0,|L10.284|
+;;;469    {
+;;;470    //  static uint8_t formatWork[_MAX_SS];
+;;;471      ADS1256_Status ads1256InitResult;
+;;;472    
+;;;473      /* init code for USB_DEVICE */
+;;;474      MX_USB_DEVICE_Init();
+;;;475      /* USER CODE BEGIN Task_StartFunc */
+;;;476      if (TouchKeyEventQueueReady == 0U)
+000004  4849              LDR      r0,|L10.300|
 000006  7800              LDRB     r0,[r0,#0]  ; TouchKeyEventQueueReady
 000008  b910              CBNZ     r0,|L10.16|
-;;;487      {
-;;;488        printf("Failed to initialize touch event queue\r\n");
-00000a  a045              ADR      r0,|L10.288|
+;;;477      {
+;;;478        printf("Failed to initialize touch event queue\r\n");
+00000a  a049              ADR      r0,|L10.304|
 00000c  f7fffffe          BL       __2printf
                   |L10.16|
-;;;489      }
-;;;490    
-;;;491    
-;;;492    
-;;;493      FileInit();
+;;;479      }
+;;;480    
+;;;481    
+;;;482    
+;;;483      FileInit();
 000010  f7fffffe          BL       FileInit
-;;;494    	wl_table_init();
+;;;484    	wl_table_init();
 000014  f7fffffe          BL       wl_table_init
-;;;495    
-;;;496    
-;;;497      ads1256InitResult = ADS1256_Init();
+;;;485    
+;;;486    
+;;;487      ads1256InitResult = ADS1256_Init();
 000018  f7fffffe          BL       ADS1256_Init
-00001c  4604              MOV      r4,r0
-;;;498      if (ads1256InitResult == ADS1256_OK)
-00001e  b964              CBNZ     r4,|L10.58|
-;;;499      {
-;;;500        Task_ADS1256_Handle = osThreadNew(Task_ADS1256_Sampling, NULL,
-000020  4a4a              LDR      r2,|L10.332|
-000022  2100              MOVS     r1,#0
-000024  484a              LDR      r0,|L10.336|
-000026  f7fffffe          BL       osThreadNew
-00002a  494a              LDR      r1,|L10.340|
-00002c  6008              STR      r0,[r1,#0]  ; Task_ADS1256_Handle
-;;;501                                        &Task_ADS1256_attributes);
-;;;502        if (Task_ADS1256_Handle == NULL)
-00002e  4608              MOV      r0,r1
-000030  6800              LDR      r0,[r0,#0]  ; Task_ADS1256_Handle
-000032  b910              CBNZ     r0,|L10.58|
-;;;503        {
-;;;504          ADS1256_LastStatus = ADS1256_ERROR_RTOS;
-000034  2002              MOVS     r0,#2
-000036  4948              LDR      r1,|L10.344|
-000038  7008              STRB     r0,[r1,#0]
-                  |L10.58|
-;;;505        }
-;;;506      }
-;;;507    
-;;;508    
-;;;509      if(TMC_5130_Init())
-00003a  f7fffffe          BL       TMC_5130_Init
-00003e  b118              CBZ      r0,|L10.72|
-;;;510      {
-;;;511        printf("TMC5130初始化成功\r\n");
-000040  a046              ADR      r0,|L10.348|
-000042  f7fffffe          BL       __2printf
-000046  e002              B        |L10.78|
+;;;488      Task_Action_Handle = osThreadNew(Task_Action, NULL, &Task_Action_attributes);
+00001c  4a4f              LDR      r2,|L10.348|
+00001e  2100              MOVS     r1,#0
+000020  484f              LDR      r0,|L10.352|
+000022  f7fffffe          BL       osThreadNew
+000026  494f              LDR      r1,|L10.356|
+000028  6008              STR      r0,[r1,#0]  ; Task_Action_Handle
+;;;489      if (Task_Action_Handle == NULL)
+00002a  4608              MOV      r0,r1
+00002c  6800              LDR      r0,[r0,#0]  ; Task_Action_Handle
+00002e  b908              CBNZ     r0,|L10.52|
+;;;490      {
+;;;491        Error_Handler();
+000030  f7fffffe          BL       Error_Handler
+                  |L10.52|
+;;;492      }
+;;;493      // if (ads1256InitResult == ADS1256_OK)
+;;;494      // {
+;;;495      //   Task_ADS1256_Handle = osThreadNew(Task_ADS1256_Sampling, NULL,
+;;;496      //                                   &Task_ADS1256_attributes);
+;;;497      //   if (Task_ADS1256_Handle == NULL)
+;;;498      //   {
+;;;499      //     ADS1256_LastStatus = ADS1256_ERROR_RTOS;
+;;;500      //   }
+;;;501      // }
+;;;502    
+;;;503    
+;;;504      if(TMC_5130_Init())
+000034  f7fffffe          BL       TMC_5130_Init
+000038  b118              CBZ      r0,|L10.66|
+;;;505      {
+;;;506        printf("TMC5130初始化成功\r\n");
+00003a  a04b              ADR      r0,|L10.360|
+00003c  f7fffffe          BL       __2printf
+000040  e002              B        |L10.72|
+                  |L10.66|
+;;;507      }
+;;;508      else
+;;;509      {
+;;;510        printf("TMC5130初始化失败\r\n");
+000042  a04e              ADR      r0,|L10.380|
+000044  f7fffffe          BL       __2printf
                   |L10.72|
-;;;512      }
-;;;513      else
-;;;514      {
-;;;515        printf("TMC5130初始化失败\r\n");
-000048  a049              ADR      r0,|L10.368|
-00004a  f7fffffe          BL       __2printf
-                  |L10.78|
-;;;516      }
-;;;517    
-;;;518      USART3_ProcessStartResult = USART3_Process_Init();
-00004e  f7fffffe          BL       USART3_Process_Init
-000052  494c              LDR      r1,|L10.388|
-000054  7008              STRB     r0,[r1,#0]
-;;;519      if (USART3_ProcessStartResult == HAL_OK)
+;;;511      }
+;;;512    
+;;;513    
+;;;514      Task_WaveLengthStepper_Handle = osThreadNew(
+000048  4a51              LDR      r2,|L10.400|
+00004a  2100              MOVS     r1,#0
+00004c  4851              LDR      r0,|L10.404|
+00004e  f7fffffe          BL       osThreadNew
+000052  4951              LDR      r1,|L10.408|
+000054  6008              STR      r0,[r1,#0]  ; Task_WaveLengthStepper_Handle
+;;;515          Task_WaveLengthStepper, NULL, &Task_WaveLengthStepper_attributes);
+;;;516      if (Task_WaveLengthStepper_Handle == NULL)
 000056  4608              MOV      r0,r1
-000058  7800              LDRB     r0,[r0,#0]  ; USART3_ProcessStartResult
-00005a  b968              CBNZ     r0,|L10.120|
-;;;520      {
-;;;521        Task_USART3_Process_Handle = osThreadNew(
-00005c  4a4a              LDR      r2,|L10.392|
-00005e  2100              MOVS     r1,#0
-000060  484a              LDR      r0,|L10.396|
-000062  f7fffffe          BL       osThreadNew
-000066  494a              LDR      r1,|L10.400|
-000068  6008              STR      r0,[r1,#0]  ; Task_USART3_Process_Handle
-;;;522            Task_USART3_Process, NULL, &Task_USART3_Process_attributes);
-;;;523        if (Task_USART3_Process_Handle == NULL)
-00006a  4608              MOV      r0,r1
-00006c  6800              LDR      r0,[r0,#0]  ; Task_USART3_Process_Handle
-00006e  b940              CBNZ     r0,|L10.130|
-;;;524        {
-;;;525          printf("Failed to create USART3 process task\r\n");
-000070  a048              ADR      r0,|L10.404|
-000072  f7fffffe          BL       __2printf
-000076  e004              B        |L10.130|
-                  |L10.120|
-;;;526        }
-;;;527      }
-;;;528      else
-;;;529      {
-;;;530        printf("Failed to initialize USART3 receiver: %d\r\n",
-000078  4842              LDR      r0,|L10.388|
-00007a  7801              LDRB     r1,[r0,#0]  ; USART3_ProcessStartResult
-00007c  a04f              ADR      r0,|L10.444|
-00007e  f7fffffe          BL       __2printf
-                  |L10.130|
-;;;531               (int)USART3_ProcessStartResult);
-;;;532      }
-;;;533    
-;;;534      USART2_ProcessStartResult = USART2_Process_Init();
-000082  f7fffffe          BL       USART2_Process_Init
-000086  4958              LDR      r1,|L10.488|
-000088  7008              STRB     r0,[r1,#0]
-;;;535      if (USART2_ProcessStartResult != HAL_OK)
-00008a  4608              MOV      r0,r1
-00008c  7800              LDRB     r0,[r0,#0]  ; USART2_ProcessStartResult
-00008e  b128              CBZ      r0,|L10.156|
+000058  6800              LDR      r0,[r0,#0]  ; Task_WaveLengthStepper_Handle
+00005a  b908              CBNZ     r0,|L10.96|
+;;;517      {
+;;;518        Error_Handler();
+00005c  f7fffffe          BL       Error_Handler
+                  |L10.96|
+;;;519      }
+;;;520    
+;;;521    
+;;;522    
+;;;523    
+;;;524    
+;;;525      USART3_ProcessStartResult = USART3_Process_Init();
+000060  f7fffffe          BL       USART3_Process_Init
+000064  494d              LDR      r1,|L10.412|
+000066  7008              STRB     r0,[r1,#0]
+;;;526      if (USART3_ProcessStartResult == HAL_OK)
+000068  4608              MOV      r0,r1
+00006a  7800              LDRB     r0,[r0,#0]  ; USART3_ProcessStartResult
+00006c  b968              CBNZ     r0,|L10.138|
+;;;527      {
+;;;528        Task_USART3_Process_Handle = osThreadNew(
+00006e  4a4c              LDR      r2,|L10.416|
+000070  2100              MOVS     r1,#0
+000072  484c              LDR      r0,|L10.420|
+000074  f7fffffe          BL       osThreadNew
+000078  494b              LDR      r1,|L10.424|
+00007a  6008              STR      r0,[r1,#0]  ; Task_USART3_Process_Handle
+;;;529            Task_USART3_Process, NULL, &Task_USART3_Process_attributes);
+;;;530        if (Task_USART3_Process_Handle == NULL)
+00007c  4608              MOV      r0,r1
+00007e  6800              LDR      r0,[r0,#0]  ; Task_USART3_Process_Handle
+000080  b940              CBNZ     r0,|L10.148|
+;;;531        {
+;;;532          printf("Failed to create USART3 process task\r\n");
+000082  a04a              ADR      r0,|L10.428|
+000084  f7fffffe          BL       __2printf
+000088  e004              B        |L10.148|
+                  |L10.138|
+;;;533        }
+;;;534      }
+;;;535      else
 ;;;536      {
-;;;537        printf("Failed to initialize USART2 receiver: %d\r\n",
-000090  4608              MOV      r0,r1
-000092  7801              LDRB     r1,[r0,#0]  ; USART2_ProcessStartResult
-000094  a055              ADR      r0,|L10.492|
-000096  f7fffffe          BL       __2printf
-00009a  e036              B        |L10.266|
-                  |L10.156|
-;;;538               (int)USART2_ProcessStartResult);
+;;;537        printf("Failed to initialize USART3 receiver: %d\r\n",
+00008a  4844              LDR      r0,|L10.412|
+00008c  7801              LDRB     r1,[r0,#0]  ; USART3_ProcessStartResult
+00008e  a051              ADR      r0,|L10.468|
+000090  f7fffffe          BL       __2printf
+                  |L10.148|
+;;;538               (int)USART3_ProcessStartResult);
 ;;;539      }
-;;;540      else
-;;;541      {
-;;;542        Task_USART2_Process_Handle = osThreadNew(
-00009c  4a5e              LDR      r2,|L10.536|
-00009e  2100              MOVS     r1,#0
-0000a0  485e              LDR      r0,|L10.540|
-0000a2  f7fffffe          BL       osThreadNew
-0000a6  495e              LDR      r1,|L10.544|
-0000a8  6008              STR      r0,[r1,#0]  ; Task_USART2_Process_Handle
-;;;543            Task_USART2_Process, NULL, &Task_USART2_Process_attributes);
-;;;544        if (Task_USART2_Process_Handle == NULL)
-0000aa  4608              MOV      r0,r1
-0000ac  6800              LDR      r0,[r0,#0]  ; Task_USART2_Process_Handle
-0000ae  b910              CBNZ     r0,|L10.182|
-;;;545        {
-;;;546          printf("Failed to create USART2 process task\r\n");
-0000b0  a05c              ADR      r0,|L10.548|
-0000b2  f7fffffe          BL       __2printf
-                  |L10.182|
-;;;547        }
-;;;548    
-;;;549        if (TouchKeyEventQueueReady != 0U)
-0000b6  4819              LDR      r0,|L10.284|
-0000b8  7800              LDRB     r0,[r0,#0]  ; TouchKeyEventQueueReady
-0000ba  2800              CMP      r0,#0
-0000bc  d025              BEQ      |L10.266|
-;;;550        {
-;;;551          DisplayMutex = osMutexNew(NULL);
-0000be  2000              MOVS     r0,#0
-0000c0  f7fffffe          BL       osMutexNew
-0000c4  4961              LDR      r1,|L10.588|
-0000c6  6008              STR      r0,[r1,#0]  ; DisplayMutex
-;;;552          if (DisplayMutex == NULL)
-0000c8  4608              MOV      r0,r1
-0000ca  6800              LDR      r0,[r0,#0]  ; DisplayMutex
-0000cc  b918              CBNZ     r0,|L10.214|
-;;;553          {
-;;;554            printf("Failed to create display mutex\r\n");
-0000ce  a060              ADR      r0,|L10.592|
-0000d0  f7fffffe          BL       __2printf
-0000d4  e019              B        |L10.266|
-                  |L10.214|
-;;;555          }
-;;;556          else
-;;;557          {
-;;;558            Task_Disp_Handle = osThreadNew(Task_Disp, NULL, &Task_Disp_attributes);
-0000d6  4a67              LDR      r2,|L10.628|
-0000d8  2100              MOVS     r1,#0
-0000da  4867              LDR      r0,|L10.632|
-0000dc  f7fffffe          BL       osThreadNew
-0000e0  4966              LDR      r1,|L10.636|
-0000e2  6008              STR      r0,[r1,#0]  ; Task_Disp_Handle
-;;;559            if (Task_Disp_Handle == NULL)
-0000e4  4608              MOV      r0,r1
-0000e6  6800              LDR      r0,[r0,#0]  ; Task_Disp_Handle
-0000e8  b910              CBNZ     r0,|L10.240|
-;;;560            {
-;;;561              printf("Failed to create parent display task\r\n");
-0000ea  a065              ADR      r0,|L10.640|
-0000ec  f7fffffe          BL       __2printf
-                  |L10.240|
-;;;562            }
-;;;563    
-;;;564            Task_ChildDisp_Handle = osThreadNew(
-0000f0  4a6d              LDR      r2,|L10.680|
-0000f2  2100              MOVS     r1,#0
-0000f4  486d              LDR      r0,|L10.684|
-0000f6  f7fffffe          BL       osThreadNew
-0000fa  496d              LDR      r1,|L10.688|
-0000fc  6008              STR      r0,[r1,#0]  ; Task_ChildDisp_Handle
-;;;565                Task_ChildDisp, NULL, &Task_ChildDisp_attributes);
-;;;566            if (Task_ChildDisp_Handle == NULL)
-0000fe  4608              MOV      r0,r1
-000100  6800              LDR      r0,[r0,#0]  ; Task_ChildDisp_Handle
-000102  b910              CBNZ     r0,|L10.266|
+;;;540    
+;;;541      USART2_ProcessStartResult = USART2_Process_Init();
+000094  f7fffffe          BL       USART2_Process_Init
+000098  4959              LDR      r1,|L10.512|
+00009a  7008              STRB     r0,[r1,#0]
+;;;542      if (USART2_ProcessStartResult != HAL_OK)
+00009c  4608              MOV      r0,r1
+00009e  7800              LDRB     r0,[r0,#0]  ; USART2_ProcessStartResult
+0000a0  b128              CBZ      r0,|L10.174|
+;;;543      {
+;;;544        printf("Failed to initialize USART2 receiver: %d\r\n",
+0000a2  4608              MOV      r0,r1
+0000a4  7801              LDRB     r1,[r0,#0]  ; USART2_ProcessStartResult
+0000a6  a057              ADR      r0,|L10.516|
+0000a8  f7fffffe          BL       __2printf
+0000ac  e036              B        |L10.284|
+                  |L10.174|
+;;;545               (int)USART2_ProcessStartResult);
+;;;546      }
+;;;547      else
+;;;548      {
+;;;549        Task_USART2_Process_Handle = osThreadNew(
+0000ae  4a60              LDR      r2,|L10.560|
+0000b0  2100              MOVS     r1,#0
+0000b2  4860              LDR      r0,|L10.564|
+0000b4  f7fffffe          BL       osThreadNew
+0000b8  495f              LDR      r1,|L10.568|
+0000ba  6008              STR      r0,[r1,#0]  ; Task_USART2_Process_Handle
+;;;550            Task_USART2_Process, NULL, &Task_USART2_Process_attributes);
+;;;551        if (Task_USART2_Process_Handle == NULL)
+0000bc  4608              MOV      r0,r1
+0000be  6800              LDR      r0,[r0,#0]  ; Task_USART2_Process_Handle
+0000c0  b910              CBNZ     r0,|L10.200|
+;;;552        {
+;;;553          printf("Failed to create USART2 process task\r\n");
+0000c2  a05e              ADR      r0,|L10.572|
+0000c4  f7fffffe          BL       __2printf
+                  |L10.200|
+;;;554        }
+;;;555    
+;;;556        if (TouchKeyEventQueueReady != 0U)
+0000c8  4818              LDR      r0,|L10.300|
+0000ca  7800              LDRB     r0,[r0,#0]  ; TouchKeyEventQueueReady
+0000cc  2800              CMP      r0,#0
+0000ce  d025              BEQ      |L10.284|
+;;;557        {
+;;;558          DisplayMutex = osMutexNew(NULL);
+0000d0  2000              MOVS     r0,#0
+0000d2  f7fffffe          BL       osMutexNew
+0000d6  4963              LDR      r1,|L10.612|
+0000d8  6008              STR      r0,[r1,#0]  ; DisplayMutex
+;;;559          if (DisplayMutex == NULL)
+0000da  4608              MOV      r0,r1
+0000dc  6800              LDR      r0,[r0,#0]  ; DisplayMutex
+0000de  b918              CBNZ     r0,|L10.232|
+;;;560          {
+;;;561            printf("Failed to create display mutex\r\n");
+0000e0  a061              ADR      r0,|L10.616|
+0000e2  f7fffffe          BL       __2printf
+0000e6  e019              B        |L10.284|
+                  |L10.232|
+;;;562          }
+;;;563          else
+;;;564          {
+;;;565            Task_Disp_Handle = osThreadNew(Task_Disp, NULL, &Task_Disp_attributes);
+0000e8  4a68              LDR      r2,|L10.652|
+0000ea  2100              MOVS     r1,#0
+0000ec  4868              LDR      r0,|L10.656|
+0000ee  f7fffffe          BL       osThreadNew
+0000f2  4968              LDR      r1,|L10.660|
+0000f4  6008              STR      r0,[r1,#0]  ; Task_Disp_Handle
+;;;566            if (Task_Disp_Handle == NULL)
+0000f6  4608              MOV      r0,r1
+0000f8  6800              LDR      r0,[r0,#0]  ; Task_Disp_Handle
+0000fa  b910              CBNZ     r0,|L10.258|
 ;;;567            {
-;;;568              printf("Failed to create child display task\r\n");
-000104  a06b              ADR      r0,|L10.692|
-000106  f7fffffe          BL       __2printf
-                  |L10.266|
+;;;568              printf("Failed to create parent display task\r\n");
+0000fc  a066              ADR      r0,|L10.664|
+0000fe  f7fffffe          BL       __2printf
+                  |L10.258|
 ;;;569            }
-;;;570          }
-;;;571        }
-;;;572      }
-;;;573    
-;;;574      DeviceInit();
-00010a  f7fffffe          BL       DeviceInit
-;;;575    
-;;;576    
-;;;577    
-;;;578      /* Infinite loop */
-;;;579      for(;;)
-00010e  bf00              NOP      
-                  |L10.272|
-;;;580      {
-;;;581        osDelay(1000U);
-000110  f44f707a          MOV      r0,#0x3e8
-000114  f7fffffe          BL       osDelay
-000118  e7fa              B        |L10.272|
-;;;582      }
-;;;583      /* USER CODE END Task_StartFunc */
-;;;584    }
-;;;585    
+;;;570    
+;;;571            Task_ChildDisp_Handle = osThreadNew(
+000102  4a6f              LDR      r2,|L10.704|
+000104  2100              MOVS     r1,#0
+000106  486f              LDR      r0,|L10.708|
+000108  f7fffffe          BL       osThreadNew
+00010c  496e              LDR      r1,|L10.712|
+00010e  6008              STR      r0,[r1,#0]  ; Task_ChildDisp_Handle
+;;;572                Task_ChildDisp, NULL, &Task_ChildDisp_attributes);
+;;;573            if (Task_ChildDisp_Handle == NULL)
+000110  4608              MOV      r0,r1
+000112  6800              LDR      r0,[r0,#0]  ; Task_ChildDisp_Handle
+000114  b910              CBNZ     r0,|L10.284|
+;;;574            {
+;;;575              printf("Failed to create child display task\r\n");
+000116  a06d              ADR      r0,|L10.716|
+000118  f7fffffe          BL       __2printf
+                  |L10.284|
+;;;576            }
+;;;577          }
+;;;578        }
+;;;579      }
+;;;580    
+;;;581      DeviceInit();
+00011c  f7fffffe          BL       DeviceInit
+;;;582    
+;;;583    
+;;;584    
+;;;585      /* Infinite loop */
+;;;586      for(;;)
+000120  bf00              NOP      
+                  |L10.290|
+;;;587      {
+;;;588        osDelay(1000U);
+000122  f44f707a          MOV      r0,#0x3e8
+000126  f7fffffe          BL       osDelay
+00012a  e7fa              B        |L10.290|
+;;;589      }
+;;;590      /* USER CODE END Task_StartFunc */
+;;;591    }
+;;;592    
                           ENDP
 
-00011a  0000              DCW      0x0000
-                  |L10.284|
+                  |L10.300|
                           DCD      TouchKeyEventQueueReady
-                  |L10.288|
-000120  4661696c          DCB      "Failed to initialize touch event queue\r\n",0
-000124  65642074
-000128  6f20696e
-00012c  69746961
-000130  6c697a65
-000134  20746f75
-000138  63682065
-00013c  76656e74
-000140  20717565
-000144  75650d0a
-000148  00      
-000149  00                DCB      0
-00014a  00                DCB      0
-00014b  00                DCB      0
-                  |L10.332|
-                          DCD      Task_ADS1256_attributes
-                  |L10.336|
-                          DCD      Task_ADS1256_Sampling
-                  |L10.340|
-                          DCD      Task_ADS1256_Handle
-                  |L10.344|
-                          DCD      ADS1256_LastStatus
+                  |L10.304|
+000130  4661696c          DCB      "Failed to initialize touch event queue\r\n",0
+000134  65642074
+000138  6f20696e
+00013c  69746961
+000140  6c697a65
+000144  20746f75
+000148  63682065
+00014c  76656e74
+000150  20717565
+000154  75650d0a
+000158  00      
+000159  00                DCB      0
+00015a  00                DCB      0
+00015b  00                DCB      0
                   |L10.348|
-00015c  544d4335          DCB      "TMC5130",179,245,202,188,187,175,179,201,185,166,"\r\n",0
-000160  313330b3
-000164  f5cabcbb
-000168  afb3c9b9
-00016c  a60d0a00
-                  |L10.368|
-000170  544d4335          DCB      "TMC5130",179,245,202,188,187,175,202,167,176,220,"\r\n",0
-000174  313330b3
-000178  f5cabcbb
-00017c  afcaa7b0
-000180  dc0d0a00
-                  |L10.388|
-                          DCD      USART3_ProcessStartResult
-                  |L10.392|
-                          DCD      Task_USART3_Process_attributes
-                  |L10.396|
-                          DCD      Task_USART3_Process
+                          DCD      Task_Action_attributes
+                  |L10.352|
+                          DCD      Task_Action
+                  |L10.356|
+                          DCD      Task_Action_Handle
+                  |L10.360|
+000168  544d4335          DCB      "TMC5130",179,245,202,188,187,175,179,201,185,166,"\r\n",0
+00016c  313330b3
+000170  f5cabcbb
+000174  afb3c9b9
+000178  a60d0a00
+                  |L10.380|
+00017c  544d4335          DCB      "TMC5130",179,245,202,188,187,175,202,167,176,220,"\r\n",0
+000180  313330b3
+000184  f5cabcbb
+000188  afcaa7b0
+00018c  dc0d0a00
                   |L10.400|
-                          DCD      Task_USART3_Process_Handle
+                          DCD      Task_WaveLengthStepper_attributes
                   |L10.404|
-000194  4661696c          DCB      "Failed to create USART3 process task\r\n",0
-000198  65642074
-00019c  6f206372
-0001a0  65617465
-0001a4  20555341
-0001a8  52543320
-0001ac  70726f63
-0001b0  65737320
-0001b4  7461736b
-0001b8  0d0a00  
-0001bb  00                DCB      0
-                  |L10.444|
-0001bc  4661696c          DCB      "Failed to initialize USART3 receiver: %d\r\n",0
-0001c0  65642074
-0001c4  6f20696e
-0001c8  69746961
-0001cc  6c697a65
-0001d0  20555341
-0001d4  52543320
-0001d8  72656365
-0001dc  69766572
-0001e0  3a202564
-0001e4  0d0a00  
-0001e7  00                DCB      0
-                  |L10.488|
+                          DCD      Task_WaveLengthStepper
+                  |L10.408|
+                          DCD      Task_WaveLengthStepper_Handle
+                  |L10.412|
+                          DCD      USART3_ProcessStartResult
+                  |L10.416|
+                          DCD      Task_USART3_Process_attributes
+                  |L10.420|
+                          DCD      Task_USART3_Process
+                  |L10.424|
+                          DCD      Task_USART3_Process_Handle
+                  |L10.428|
+0001ac  4661696c          DCB      "Failed to create USART3 process task\r\n",0
+0001b0  65642074
+0001b4  6f206372
+0001b8  65617465
+0001bc  20555341
+0001c0  52543320
+0001c4  70726f63
+0001c8  65737320
+0001cc  7461736b
+0001d0  0d0a00  
+0001d3  00                DCB      0
+                  |L10.468|
+0001d4  4661696c          DCB      "Failed to initialize USART3 receiver: %d\r\n",0
+0001d8  65642074
+0001dc  6f20696e
+0001e0  69746961
+0001e4  6c697a65
+0001e8  20555341
+0001ec  52543320
+0001f0  72656365
+0001f4  69766572
+0001f8  3a202564
+0001fc  0d0a00  
+0001ff  00                DCB      0
+                  |L10.512|
                           DCD      USART2_ProcessStartResult
-                  |L10.492|
-0001ec  4661696c          DCB      "Failed to initialize USART2 receiver: %d\r\n",0
-0001f0  65642074
-0001f4  6f20696e
-0001f8  69746961
-0001fc  6c697a65
-000200  20555341
-000204  52543220
-000208  72656365
-00020c  69766572
-000210  3a202564
-000214  0d0a00  
-000217  00                DCB      0
-                  |L10.536|
+                  |L10.516|
+000204  4661696c          DCB      "Failed to initialize USART2 receiver: %d\r\n",0
+000208  65642074
+00020c  6f20696e
+000210  69746961
+000214  6c697a65
+000218  20555341
+00021c  52543220
+000220  72656365
+000224  69766572
+000228  3a202564
+00022c  0d0a00  
+00022f  00                DCB      0
+                  |L10.560|
                           DCD      Task_USART2_Process_attributes
-                  |L10.540|
+                  |L10.564|
                           DCD      Task_USART2_Process
-                  |L10.544|
+                  |L10.568|
                           DCD      Task_USART2_Process_Handle
-                  |L10.548|
-000224  4661696c          DCB      "Failed to create USART2 process task\r\n",0
-000228  65642074
-00022c  6f206372
-000230  65617465
-000234  20555341
-000238  52543220
-00023c  70726f63
-000240  65737320
-000244  7461736b
-000248  0d0a00  
-00024b  00                DCB      0
-                  |L10.588|
+                  |L10.572|
+00023c  4661696c          DCB      "Failed to create USART2 process task\r\n",0
+000240  65642074
+000244  6f206372
+000248  65617465
+00024c  20555341
+000250  52543220
+000254  70726f63
+000258  65737320
+00025c  7461736b
+000260  0d0a00  
+000263  00                DCB      0
+                  |L10.612|
                           DCD      DisplayMutex
-                  |L10.592|
-000250  4661696c          DCB      "Failed to create display mutex\r\n",0
-000254  65642074
-000258  6f206372
-00025c  65617465
-000260  20646973
-000264  706c6179
-000268  206d7574
-00026c  65780d0a
-000270  00      
-000271  00                DCB      0
-000272  00                DCB      0
-000273  00                DCB      0
-                  |L10.628|
+                  |L10.616|
+000268  4661696c          DCB      "Failed to create display mutex\r\n",0
+00026c  65642074
+000270  6f206372
+000274  65617465
+000278  20646973
+00027c  706c6179
+000280  206d7574
+000284  65780d0a
+000288  00      
+000289  00                DCB      0
+00028a  00                DCB      0
+00028b  00                DCB      0
+                  |L10.652|
                           DCD      Task_Disp_attributes
-                  |L10.632|
+                  |L10.656|
                           DCD      Task_Disp
-                  |L10.636|
+                  |L10.660|
                           DCD      Task_Disp_Handle
-                  |L10.640|
-000280  4661696c          DCB      "Failed to create parent display task\r\n",0
-000284  65642074
-000288  6f206372
-00028c  65617465
-000290  20706172
-000294  656e7420
-000298  64697370
-00029c  6c617920
-0002a0  7461736b
-0002a4  0d0a00  
-0002a7  00                DCB      0
-                  |L10.680|
+                  |L10.664|
+000298  4661696c          DCB      "Failed to create parent display task\r\n",0
+00029c  65642074
+0002a0  6f206372
+0002a4  65617465
+0002a8  20706172
+0002ac  656e7420
+0002b0  64697370
+0002b4  6c617920
+0002b8  7461736b
+0002bc  0d0a00  
+0002bf  00                DCB      0
+                  |L10.704|
                           DCD      Task_ChildDisp_attributes
-                  |L10.684|
+                  |L10.708|
                           DCD      Task_ChildDisp
-                  |L10.688|
+                  |L10.712|
                           DCD      Task_ChildDisp_Handle
-                  |L10.692|
-0002b4  4661696c          DCB      "Failed to create child display task\r\n",0
-0002b8  65642074
-0002bc  6f206372
-0002c0  65617465
-0002c4  20636869
-0002c8  6c642064
-0002cc  6973706c
-0002d0  61792074
-0002d4  61736b0d
-0002d8  0a00    
-0002da  00                DCB      0
-0002db  00                DCB      0
+                  |L10.716|
+0002cc  4661696c          DCB      "Failed to create child display task\r\n",0
+0002d0  65642074
+0002d4  6f206372
+0002d8  65617465
+0002dc  20636869
+0002e0  6c642064
+0002e4  6973706c
+0002e8  61792074
+0002ec  61736b0d
+0002f0  0a00    
+0002f2  00                DCB      0
+0002f3  00                DCB      0
 
                           AREA ||i.Task_SysRun||, CODE, READONLY, ALIGN=2
 
                   Task_SysRun PROC
-;;;613     */
-;;;614    void Task_SysRun(void *argument)
+;;;620     */
+;;;621    void Task_SysRun(void *argument)
 000000  bf00              NOP      
                   |L11.2|
-;;;615    {
-;;;616    
-;;;617      (void)argument;
-;;;618      for (;;)
-;;;619      {
-;;;620        HAL_GPIO_TogglePin(SYS_LED1_GPIO_Port, SYS_LED1_Pin);
+;;;622    {
+;;;623    
+;;;624      (void)argument;
+;;;625      for (;;)
+;;;626      {
+;;;627        HAL_GPIO_TogglePin(SYS_LED1_GPIO_Port, SYS_LED1_Pin);
 000002  2140              MOVS     r1,#0x40
 000004  4803              LDR      r0,|L11.20|
 000006  f7fffffe          BL       HAL_GPIO_TogglePin
-;;;621        osDelay(100U);
+;;;628        osDelay(100U);
 00000a  2064              MOVS     r0,#0x64
 00000c  f7fffffe          BL       osDelay
 000010  e7f7              B        |L11.2|
-;;;622      }
-;;;623    }
-;;;624    
+;;;629      }
+;;;630    }
+;;;631    
                           ENDP
 
 000012  0000              DCW      0x0000
@@ -1339,162 +1355,162 @@
                           REQUIRE _printf_s
                           REQUIRE _printf_str
                   Task_USART2_Process PROC
-;;;301     */
-;;;302    static void Task_USART2_Process(void *argument)
+;;;303     */
+;;;304    static void Task_USART2_Process(void *argument)
 000000  f5ad6da7          SUB      sp,sp,#0x538
-;;;303    {
-;;;304      USART2_ProcessFrame frame;
-;;;305      uint8_t touchMessage[USART2_PROCESS_MAX_FRAME_LENGTH + 1U];
-;;;306      char output[USART2_PROCESS_MAX_FRAME_LENGTH * 3U + 48U];
-;;;307      size_t outputLength;
-;;;308      uint16_t index;
-;;;309      uint16_t requiredPayloadLength;
-;;;310      int written;
-;;;311      osStatus_t status;
-;;;312    
-;;;313      (void)argument;
+;;;305    {
+;;;306      USART2_ProcessFrame frame;
+;;;307      uint8_t touchMessage[USART2_PROCESS_MAX_FRAME_LENGTH + 1U];
+;;;308      char output[USART2_PROCESS_MAX_FRAME_LENGTH * 3U + 48U];
+;;;309      size_t outputLength;
+;;;310      uint16_t index;
+;;;311      uint16_t requiredPayloadLength;
+;;;312      int written;
+;;;313      osStatus_t status;
 ;;;314    
-;;;315      for (;;)
+;;;315      (void)argument;
+;;;316    
+;;;317      for (;;)
 000004  bf00              NOP      
                   |L12.6|
-;;;316      {
-;;;317        status = USART2_Process_GetFrame(&frame, osWaitForever);
+;;;318      {
+;;;319        status = USART2_Process_GetFrame(&frame, osWaitForever);
 000006  f04f31ff          MOV      r1,#0xffffffff
 00000a  f20d4034          ADD      r0,sp,#0x434
 00000e  f7fffffe          BL       USART2_Process_GetFrame
 000012  4607              MOV      r7,r0
-;;;318        if (status != osOK)
+;;;320        if (status != osOK)
 000014  b11f              CBZ      r7,|L12.30|
-;;;319        {
-;;;320    //      printf("USART2 frame queue error: %ld\r\n", (long)status);
-;;;321          osDelay(10U);
+;;;321        {
+;;;322    //      printf("USART2 frame queue error: %ld\r\n", (long)status);
+;;;323          osDelay(10U);
 000016  200a              MOVS     r0,#0xa
 000018  f7fffffe          BL       osDelay
-;;;322          continue;
+;;;324          continue;
 00001c  e7f3              B        |L12.6|
                   |L12.30|
-;;;323        }
-;;;324    
-;;;325        if (frame.length > USART2_PROCESS_MAX_FRAME_LENGTH)
+;;;325        }
+;;;326    
+;;;327        if (frame.length > USART2_PROCESS_MAX_FRAME_LENGTH)
 00001e  f8bd0434          LDRH     r0,[sp,#0x434]
 000022  f5b07f80          CMP      r0,#0x100
 000026  d905              BLS      |L12.52|
-;;;326        {
-;;;327          printf("USART2 frame length is invalid: %u\r\n",
+;;;328        {
+;;;329          printf("USART2 frame length is invalid: %u\r\n",
 000028  f8bd1434          LDRH     r1,[sp,#0x434]
 00002c  a03f              ADR      r0,|L12.300|
 00002e  f7fffffe          BL       __2printf
-;;;328                 (unsigned int)frame.length);
-;;;329          continue;
+;;;330                 (unsigned int)frame.length);
+;;;331          continue;
 000032  e7e8              B        |L12.6|
                   |L12.52|
-;;;330        }
-;;;331    
-;;;332        if (frame.length > 0U)
+;;;332        }
+;;;333    
+;;;334        if (frame.length > 0U)
 000034  f8bd0434          LDRH     r0,[sp,#0x434]
 000038  2800              CMP      r0,#0
 00003a  d02e              BEQ      |L12.154|
-;;;333        {
-;;;334          if (frame.data[0] == 0x73U)
+;;;335        {
+;;;336          if (frame.data[0] == 0x73U)
 00003c  f89d0436          LDRB     r0,[sp,#0x436]
 000040  2873              CMP      r0,#0x73
 000042  d102              BNE      |L12.74|
-;;;335          {
-;;;336            requiredPayloadLength = 5U;
+;;;337          {
+;;;338            requiredPayloadLength = 5U;
 000044  f04f0805          MOV      r8,#5
 000048  e008              B        |L12.92|
                   |L12.74|
-;;;337          }
-;;;338          else if (frame.data[0] == 0x72U)
+;;;339          }
+;;;340          else if (frame.data[0] == 0x72U)
 00004a  f89d0436          LDRB     r0,[sp,#0x436]
 00004e  2872              CMP      r0,#0x72
 000050  d102              BNE      |L12.88|
-;;;339          {
-;;;340            requiredPayloadLength = 1U;
+;;;341          {
+;;;342            requiredPayloadLength = 1U;
 000052  f04f0801          MOV      r8,#1
 000056  e001              B        |L12.92|
                   |L12.88|
-;;;341          }
-;;;342          else
-;;;343          {
-;;;344            requiredPayloadLength = 0U;
+;;;343          }
+;;;344          else
+;;;345          {
+;;;346            requiredPayloadLength = 0U;
 000058  f04f0800          MOV      r8,#0
                   |L12.92|
-;;;345          }
-;;;346    
-;;;347          if (requiredPayloadLength > 0U)
+;;;347          }
+;;;348    
+;;;349          if (requiredPayloadLength > 0U)
 00005c  f1b80f00          CMP      r8,#0
 000060  d01b              BEQ      |L12.154|
-;;;348          {
-;;;349            if (frame.length < requiredPayloadLength)
+;;;350          {
+;;;351            if (frame.length < requiredPayloadLength)
 000062  f8bd0434          LDRH     r0,[sp,#0x434]
 000066  4540              CMP      r0,r8
 000068  da05              BGE      |L12.118|
-;;;350            {
-;;;351              printf("Incomplete USART2 touch frame: %u bytes\r\n",
+;;;352            {
+;;;353              printf("Incomplete USART2 touch frame: %u bytes\r\n",
 00006a  f8bd1434          LDRH     r1,[sp,#0x434]
 00006e  a039              ADR      r0,|L12.340|
 000070  f7fffffe          BL       __2printf
 000074  e011              B        |L12.154|
                   |L12.118|
-;;;352                     (unsigned int)frame.length);
-;;;353            }
-;;;354            else
-;;;355            {
-;;;356              touchMessage[0] = USART2_PROCESS_FRAME_START;
+;;;354                     (unsigned int)frame.length);
+;;;355            }
+;;;356            else
+;;;357            {
+;;;358              touchMessage[0] = USART2_PROCESS_FRAME_START;
 000076  20aa              MOVS     r0,#0xaa
 000078  f88d0330          STRB     r0,[sp,#0x330]
-;;;357              memcpy(&touchMessage[1], frame.data, frame.length);
+;;;359              memcpy(&touchMessage[1], frame.data, frame.length);
 00007c  f8bd2434          LDRH     r2,[sp,#0x434]
 000080  f20d4136          ADD      r1,sp,#0x436
 000084  f20d3031          ADD      r0,sp,#0x331
 000088  f7fffffe          BL       __aeabi_memcpy
-;;;358              if (Get_TouchKeyAssignments(touchMessage) != 0U)
+;;;360              if (Get_TouchKeyAssignments(touchMessage) != 0U)
 00008c  a8cc              ADD      r0,sp,#0x330
 00008e  f7fffffe          BL       Get_TouchKeyAssignments
 000092  b110              CBZ      r0,|L12.154|
-;;;359              {
-;;;360                printf("Failed to queue USART2 touch event\r\n");
+;;;361              {
+;;;362                printf("Failed to queue USART2 touch event\r\n");
 000094  a03a              ADR      r0,|L12.384|
 000096  f7fffffe          BL       __2printf
                   |L12.154|
-;;;361              }
-;;;362            }
-;;;363          }
-;;;364        }
-;;;365    
-;;;366        written = snprintf(output, sizeof(output),
+;;;363              }
+;;;364            }
+;;;365          }
+;;;366        }
+;;;367    
+;;;368        written = snprintf(output, sizeof(output),
 00009a  f8bd3434          LDRH     r3,[sp,#0x434]
 00009e  a242              ADR      r2,|L12.424|
 0000a0  f44f714c          MOV      r1,#0x330
 0000a4  4668              MOV      r0,sp
 0000a6  f7fffffe          BL       __2snprintf
 0000aa  4605              MOV      r5,r0
-;;;367                           "USART2 RX (%u bytes):",
-;;;368                           (unsigned int)frame.length);
-;;;369        if ((written < 0) || ((size_t)written >= sizeof(output)))
+;;;369                           "USART2 RX (%u bytes):",
+;;;370                           (unsigned int)frame.length);
+;;;371        if ((written < 0) || ((size_t)written >= sizeof(output)))
 0000ac  2d00              CMP      r5,#0
 0000ae  db02              BLT      |L12.182|
 0000b0  f5b57f4c          CMP      r5,#0x330
 0000b4  d303              BCC      |L12.190|
                   |L12.182|
-;;;370        {
-;;;371          printf("USART2 frame output format error\r\n");
+;;;372        {
+;;;373          printf("USART2 frame output format error\r\n");
 0000b6  a042              ADR      r0,|L12.448|
 0000b8  f7fffffe          BL       __2printf
-;;;372          continue;
+;;;374          continue;
 0000bc  e7a3              B        |L12.6|
                   |L12.190|
-;;;373        }
-;;;374        outputLength = (size_t)written;
+;;;375        }
+;;;376        outputLength = (size_t)written;
 0000be  462c              MOV      r4,r5
-;;;375    
-;;;376        for (index = 0U; index < frame.length; index++)
+;;;377    
+;;;378        for (index = 0U; index < frame.length; index++)
 0000c0  2600              MOVS     r6,#0
 0000c2  e014              B        |L12.238|
                   |L12.196|
-;;;377        {
-;;;378          written = snprintf(&output[outputLength],
+;;;379        {
+;;;380          written = snprintf(&output[outputLength],
 0000c4  f20d4236          ADD      r2,sp,#0x436
 0000c8  5d93              LDRB     r3,[r2,r6]
 0000ca  f5c4714c          RSB      r1,r4,#0x330
@@ -1502,67 +1518,67 @@
 0000d2  a244              ADR      r2,|L12.484|
 0000d4  f7fffffe          BL       __2snprintf
 0000d8  4605              MOV      r5,r0
-;;;379                             sizeof(output) - outputLength,
-;;;380                             " %02X", frame.data[index]);
-;;;381          if ((written < 0) ||
+;;;381                             sizeof(output) - outputLength,
+;;;382                             " %02X", frame.data[index]);
+;;;383          if ((written < 0) ||
 0000da  2d00              CMP      r5,#0
 0000dc  db03              BLT      |L12.230|
-;;;382              ((size_t)written >= (sizeof(output) - outputLength)))
+;;;384              ((size_t)written >= (sizeof(output) - outputLength)))
 0000de  f5c4704c          RSB      r0,r4,#0x330
 0000e2  42a8              CMP      r0,r5
 0000e4  d800              BHI      |L12.232|
                   |L12.230|
-;;;383          {
-;;;384            break;
+;;;385          {
+;;;386            break;
 0000e6  e006              B        |L12.246|
                   |L12.232|
-;;;385          }
-;;;386          outputLength += (size_t)written;
+;;;387          }
+;;;388          outputLength += (size_t)written;
 0000e8  442c              ADD      r4,r4,r5
-0000ea  1c70              ADDS     r0,r6,#1              ;376
-0000ec  b286              UXTH     r6,r0                 ;376
+0000ea  1c70              ADDS     r0,r6,#1              ;378
+0000ec  b286              UXTH     r6,r0                 ;378
                   |L12.238|
-0000ee  f8bd0434          LDRH     r0,[sp,#0x434]        ;376
-0000f2  42b0              CMP      r0,r6                 ;376
+0000ee  f8bd0434          LDRH     r0,[sp,#0x434]        ;378
+0000f2  42b0              CMP      r0,r6                 ;378
 0000f4  dce6              BGT      |L12.196|
                   |L12.246|
-0000f6  bf00              NOP                            ;384
-;;;387        }
-;;;388    
-;;;389        if (index != frame.length)
+0000f6  bf00              NOP                            ;386
+;;;389        }
+;;;390    
+;;;391        if (index != frame.length)
 0000f8  f8bd0434          LDRH     r0,[sp,#0x434]
 0000fc  42b0              CMP      r0,r6
 0000fe  d003              BEQ      |L12.264|
-;;;390        {
-;;;391          printf("USART2 frame output buffer too small\r\n");
+;;;392        {
+;;;393          printf("USART2 frame output buffer too small\r\n");
 000100  a03a              ADR      r0,|L12.492|
 000102  f7fffffe          BL       __2printf
-;;;392          continue;
+;;;394          continue;
 000106  e77e              B        |L12.6|
                   |L12.264|
-;;;393        }
-;;;394    
-;;;395        output[outputLength++] = '\r';
+;;;395        }
+;;;396    
+;;;397        output[outputLength++] = '\r';
 000108  220d              MOVS     r2,#0xd
 00010a  4620              MOV      r0,r4
 00010c  1c64              ADDS     r4,r4,#1
 00010e  f80d2000          STRB     r2,[sp,r0]
-;;;396        output[outputLength++] = '\n';
+;;;398        output[outputLength++] = '\n';
 000112  220a              MOVS     r2,#0xa
 000114  4620              MOV      r0,r4
 000116  1c64              ADDS     r4,r4,#1
 000118  f80d2000          STRB     r2,[sp,r0]
-;;;397        output[outputLength] = '\0';
+;;;399        output[outputLength] = '\0';
 00011c  2000              MOVS     r0,#0
 00011e  f80d0004          STRB     r0,[sp,r4]
-;;;398        printf("%s", output);
+;;;400        printf("%s", output);
 000122  4669              MOV      r1,sp
 000124  a03b              ADR      r0,|L12.532|
 000126  f7fffffe          BL       __2printf
 00012a  e76c              B        |L12.6|
-;;;399      }
-;;;400    }
-;;;401    
+;;;401      }
+;;;402    }
+;;;403    
                           ENDP
 
                   |L12.300|
@@ -1664,75 +1680,75 @@
                           REQUIRE _printf_s
                           REQUIRE _printf_str
                   Task_USART3_Process PROC
-;;;238     */
-;;;239    static void Task_USART3_Process(void *argument)
+;;;240     */
+;;;241    static void Task_USART3_Process(void *argument)
 000000  f5ad6d87          SUB      sp,sp,#0x438
-;;;240    {
-;;;241      USART3_ProcessFrame frame;
-;;;242      char output[USART3_PROCESS_MAX_FRAME_LENGTH * 3U + 48U];
-;;;243      size_t outputLength;
-;;;244      uint16_t index;
-;;;245      int written;
-;;;246      osStatus_t status;
-;;;247    
-;;;248      (void)argument;
+;;;242    {
+;;;243      USART3_ProcessFrame frame;
+;;;244      char output[USART3_PROCESS_MAX_FRAME_LENGTH * 3U + 48U];
+;;;245      size_t outputLength;
+;;;246      uint16_t index;
+;;;247      int written;
+;;;248      osStatus_t status;
 ;;;249    
-;;;250      for (;;)
+;;;250      (void)argument;
+;;;251    
+;;;252      for (;;)
 000004  bf00              NOP      
                   |L13.6|
-;;;251      {
-;;;252        status = USART3_Process_GetFrame(&frame, osWaitForever);
+;;;253      {
+;;;254        status = USART3_Process_GetFrame(&frame, osWaitForever);
 000006  f04f31ff          MOV      r1,#0xffffffff
 00000a  a8cd              ADD      r0,sp,#0x334
 00000c  f7fffffe          BL       USART3_Process_GetFrame
 000010  4607              MOV      r7,r0
-;;;253        if (status != osOK)
+;;;255        if (status != osOK)
 000012  b13f              CBZ      r7,|L13.36|
-;;;254        {
-;;;255          printf("USART3 frame queue error: %ld\r\n", (long)status);
+;;;256        {
+;;;257          printf("USART3 frame queue error: %ld\r\n", (long)status);
 000014  4639              MOV      r1,r7
 000016  a026              ADR      r0,|L13.176|
 000018  f7fffffe          BL       __2printf
-;;;256          osDelay(10U);
+;;;258          osDelay(10U);
 00001c  200a              MOVS     r0,#0xa
 00001e  f7fffffe          BL       osDelay
-;;;257          continue;
+;;;259          continue;
 000022  e7f0              B        |L13.6|
                   |L13.36|
-;;;258        }
-;;;259    
-;;;260        written = snprintf(output, sizeof(output),
+;;;260        }
+;;;261    
+;;;262        written = snprintf(output, sizeof(output),
 000024  f8bd3334          LDRH     r3,[sp,#0x334]
 000028  a229              ADR      r2,|L13.208|
 00002a  f44f714c          MOV      r1,#0x330
 00002e  a801              ADD      r0,sp,#4
 000030  f7fffffe          BL       __2snprintf
 000034  4605              MOV      r5,r0
-;;;261                           "USART3 RX (%u bytes):",
-;;;262                           (unsigned int)frame.length);
-;;;263        if ((written < 0) || ((size_t)written >= sizeof(output)))
+;;;263                           "USART3 RX (%u bytes):",
+;;;264                           (unsigned int)frame.length);
+;;;265        if ((written < 0) || ((size_t)written >= sizeof(output)))
 000036  2d00              CMP      r5,#0
 000038  db02              BLT      |L13.64|
 00003a  f5b57f4c          CMP      r5,#0x330
 00003e  d303              BCC      |L13.72|
                   |L13.64|
-;;;264        {
-;;;265          printf("USART3 frame output format error\r\n");
+;;;266        {
+;;;267          printf("USART3 frame output format error\r\n");
 000040  a029              ADR      r0,|L13.232|
 000042  f7fffffe          BL       __2printf
-;;;266          continue;
+;;;268          continue;
 000046  e7de              B        |L13.6|
                   |L13.72|
-;;;267        }
-;;;268        outputLength = (size_t)written;
+;;;269        }
+;;;270        outputLength = (size_t)written;
 000048  462c              MOV      r4,r5
-;;;269    
-;;;270        for (index = 0U; index < frame.length; index++)
+;;;271    
+;;;272        for (index = 0U; index < frame.length; index++)
 00004a  2600              MOVS     r6,#0
 00004c  e014              B        |L13.120|
                   |L13.78|
-;;;271        {
-;;;272          written = snprintf(&output[outputLength],
+;;;273        {
+;;;274          written = snprintf(&output[outputLength],
 00004e  f20d3236          ADD      r2,sp,#0x336
 000052  5d93              LDRB     r3,[r2,r6]
 000054  f5c4714c          RSB      r1,r4,#0x330
@@ -1741,67 +1757,67 @@
 00005c  a22b              ADR      r2,|L13.268|
 00005e  f7fffffe          BL       __2snprintf
 000062  4605              MOV      r5,r0
-;;;273                             sizeof(output) - outputLength,
-;;;274                             " %02X", frame.data[index]);
-;;;275          if ((written < 0) ||
+;;;275                             sizeof(output) - outputLength,
+;;;276                             " %02X", frame.data[index]);
+;;;277          if ((written < 0) ||
 000064  2d00              CMP      r5,#0
 000066  db03              BLT      |L13.112|
-;;;276              ((size_t)written >= (sizeof(output) - outputLength)))
+;;;278              ((size_t)written >= (sizeof(output) - outputLength)))
 000068  f5c4704c          RSB      r0,r4,#0x330
 00006c  42a8              CMP      r0,r5
 00006e  d800              BHI      |L13.114|
                   |L13.112|
-;;;277          {
-;;;278            break;
+;;;279          {
+;;;280            break;
 000070  e006              B        |L13.128|
                   |L13.114|
-;;;279          }
-;;;280          outputLength += (size_t)written;
+;;;281          }
+;;;282          outputLength += (size_t)written;
 000072  442c              ADD      r4,r4,r5
-000074  1c70              ADDS     r0,r6,#1              ;270
-000076  b286              UXTH     r6,r0                 ;270
+000074  1c70              ADDS     r0,r6,#1              ;272
+000076  b286              UXTH     r6,r0                 ;272
                   |L13.120|
-000078  f8bd0334          LDRH     r0,[sp,#0x334]        ;270
-00007c  42b0              CMP      r0,r6                 ;270
+000078  f8bd0334          LDRH     r0,[sp,#0x334]        ;272
+00007c  42b0              CMP      r0,r6                 ;272
 00007e  dce6              BGT      |L13.78|
                   |L13.128|
-000080  bf00              NOP                            ;278
-;;;281        }
-;;;282    
-;;;283        if (index != frame.length)
+000080  bf00              NOP                            ;280
+;;;283        }
+;;;284    
+;;;285        if (index != frame.length)
 000082  f8bd0334          LDRH     r0,[sp,#0x334]
 000086  42b0              CMP      r0,r6
 000088  d003              BEQ      |L13.146|
-;;;284        {
-;;;285          printf("USART3 frame output buffer too small\r\n");
+;;;286        {
+;;;287          printf("USART3 frame output buffer too small\r\n");
 00008a  a022              ADR      r0,|L13.276|
 00008c  f7fffffe          BL       __2printf
-;;;286          continue;
+;;;288          continue;
 000090  e7b9              B        |L13.6|
                   |L13.146|
-;;;287        }
-;;;288    
-;;;289        output[outputLength++] = '\r';
+;;;289        }
+;;;290    
+;;;291        output[outputLength++] = '\r';
 000092  220d              MOVS     r2,#0xd
 000094  4620              MOV      r0,r4
 000096  1c64              ADDS     r4,r4,#1
 000098  a901              ADD      r1,sp,#4
 00009a  540a              STRB     r2,[r1,r0]
-;;;290        output[outputLength++] = '\n';
+;;;292        output[outputLength++] = '\n';
 00009c  220a              MOVS     r2,#0xa
 00009e  4620              MOV      r0,r4
 0000a0  1c64              ADDS     r4,r4,#1
 0000a2  540a              STRB     r2,[r1,r0]
-;;;291        output[outputLength] = '\0';
+;;;293        output[outputLength] = '\0';
 0000a4  2000              MOVS     r0,#0
 0000a6  5508              STRB     r0,[r1,r4]
-;;;292        printf("%s", output);
+;;;294        printf("%s", output);
 0000a8  a024              ADR      r0,|L13.316|
 0000aa  f7fffffe          BL       __2printf
 0000ae  e7aa              B        |L13.6|
-;;;293      }
-;;;294    }
-;;;295    
+;;;295      }
+;;;296    }
+;;;297    
                           ENDP
 
                   |L13.176|
@@ -1860,57 +1876,57 @@
                           REQUIRE _printf_u
                           REQUIRE _printf_int_dec
                   Task_WaveLengthStepper PROC
-;;;796     */
-;;;797    void Task_WaveLengthStepper(void *p_arg)
+;;;878     */
+;;;879    void Task_WaveLengthStepper(void *p_arg)
 000000  ed2d8b02          VPUSH    {d8}
-;;;798    {
+;;;880    {
 000004  b082              SUB      sp,sp,#8
-;;;799    	StepperCommandMessage_t message;
-;;;800    	BaseType_t queueStatus;
-;;;801    	int32_t currentPosition;
-;;;802    	int32_t targetPosition;
-;;;803    	int32_t steps;
-;;;804    	int32_t desWavelength;
-;;;805    	float correctionWavelength;
-;;;806    
-;;;807    	(void)p_arg;
-;;;808    
-;;;809    	for (;;)
+;;;881    	StepperCommandMessage_t message;
+;;;882    	BaseType_t queueStatus;
+;;;883    	int32_t currentPosition;
+;;;884    	int32_t targetPosition;
+;;;885    	int32_t steps;
+;;;886    	int32_t desWavelength;
+;;;887    	float correctionWavelength;
+;;;888    
+;;;889    	(void)p_arg;
+;;;890    
+;;;891    	for (;;)
 000006  bf00              NOP      
                   |L14.8|
-;;;810    	{
-;;;811    		queueStatus = xQueueReceive(g_WaveLengthStepperQueue, &message,
+;;;892    	{
+;;;893    		queueStatus = xQueueReceive(g_WaveLengthStepperQueue, &message,
 000008  f04f32ff          MOV      r2,#0xffffffff
 00000c  4669              MOV      r1,sp
 00000e  484e              LDR      r0,|L14.328|
 000010  6800              LDR      r0,[r0,#0]  ; g_WaveLengthStepperQueue
 000012  f7fffffe          BL       xQueueReceive
 000016  4604              MOV      r4,r0
-;;;812    		                            portMAX_DELAY);
-;;;813    		if (queueStatus != pdPASS)
+;;;894    		                            portMAX_DELAY);
+;;;895    		if (queueStatus != pdPASS)
 000018  2c01              CMP      r4,#1
 00001a  d006              BEQ      |L14.42|
-;;;814    		{
-;;;815    			printf("Failed to receive wavelength stepper command\r\n");
+;;;896    		{
+;;;897    			printf("Failed to receive wavelength stepper command\r\n");
 00001c  a04b              ADR      r0,|L14.332|
 00001e  f7fffffe          BL       __2printf
-;;;816    			osDelay(1U);
+;;;898    			osDelay(1U);
 000022  2001              MOVS     r0,#1
 000024  f7fffffe          BL       osDelay
-;;;817    			continue;
+;;;899    			continue;
 000028  e7ee              B        |L14.8|
                   |L14.42|
-;;;818    		}
-;;;819    
-;;;820    #if defined(STEPPER_DEBUG) && (STEPPER_DEBUG > 0)
-;;;821    		if (MyOsFlag != NULL)
-;;;822    		{
-;;;823    			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
-;;;824    		}
-;;;825    		continue;
-;;;826    #endif
-;;;827    
-;;;828    		switch (message.command)
+;;;900    		}
+;;;901    
+;;;902    #if defined(STEPPER_DEBUG) && (STEPPER_DEBUG > 0)
+;;;903    		if (MyOsFlag != NULL)
+;;;904    		{
+;;;905    			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
+;;;906    		}
+;;;907    		continue;
+;;;908    #endif
+;;;909    
+;;;910    		switch (message.command)
 00002a  f89d0000          LDRB     r0,[sp,#0]
 00002e  2801              CMP      r0,#1
 000030  d004              BEQ      |L14.60|
@@ -1920,179 +1936,179 @@
 000038  d175              BNE      |L14.294|
 00003a  e022              B        |L14.130|
                   |L14.60|
-;;;829    		{
-;;;830    			case STEPPER_CMD_MOVE_TO_WAVELENGTH:
-;;;831    				TMC5130_SetMaxSpeed(TMC5130_NORMAL_MOVE_SPEED);
+;;;911    		{
+;;;912    			case STEPPER_CMD_MOVE_TO_WAVELENGTH:
+;;;913    				TMC5130_SetMaxSpeed(TMC5130_NORMAL_MOVE_SPEED);
 00003c  f64030b8          MOV      r0,#0xbb8
 000040  f7fffffe          BL       TMC5130_SetMaxSpeed
-;;;832    				currentPosition = WavelengthToPosition(CurWaveLen);
+;;;914    				currentPosition = WavelengthToPosition(CurWaveLen);
 000044  484d              LDR      r0,|L14.380|
 000046  6800              LDR      r0,[r0,#0]  ; CurWaveLen
 000048  f7fffffe          BL       WavelengthToPosition
 00004c  4606              MOV      r6,r0
-;;;833    				targetPosition = WavelengthToPosition(
+;;;915    				targetPosition = WavelengthToPosition(
 00004e  9801              LDR      r0,[sp,#4]
 000050  f7fffffe          BL       WavelengthToPosition
 000054  4605              MOV      r5,r0
-;;;834    				    message.value.targetWavelength);
-;;;835    				steps = targetPosition - currentPosition;
+;;;916    				    message.value.targetWavelength);
+;;;917    				steps = targetPosition - currentPosition;
 000056  eba50806          SUB      r8,r5,r6
-;;;836    				MoveNStep(WaveLenStepper, FORWARD, steps);
+;;;918    				MoveNStep(WaveLenStepper, FORWARD, steps);
 00005a  4642              MOV      r2,r8
 00005c  2100              MOVS     r1,#0
 00005e  4608              MOV      r0,r1
 000060  f7fffffe          BL       MoveNStep
-;;;837    				while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+;;;919    				while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
 000064  e002              B        |L14.108|
                   |L14.102|
-;;;838    				{
-;;;839    					osDelay(pdMS_TO_TICKS(5U));
+;;;920    				{
+;;;921    					osDelay(pdMS_TO_TICKS(5U));
 000066  2005              MOVS     r0,#5
 000068  f7fffffe          BL       osDelay
                   |L14.108|
 00006c  f7fffffe          BL       TMC5130_GetMotionStatus
-000070  2804              CMP      r0,#4                 ;837
+000070  2804              CMP      r0,#4                 ;919
 000072  d1f8              BNE      |L14.102|
-;;;840    				}
-;;;841    				CurWaveLen = message.value.targetWavelength;
+;;;922    				}
+;;;923    				CurWaveLen = message.value.targetWavelength;
 000074  4941              LDR      r1,|L14.380|
 000076  9801              LDR      r0,[sp,#4]
 000078  6008              STR      r0,[r1,#0]  ; CurWaveLen
-;;;842    				StepperControlStat[WaveLenStepper].Cnt = targetPosition;
+;;;924    				StepperControlStat[WaveLenStepper].Cnt = targetPosition;
 00007a  4841              LDR      r0,|L14.384|
 00007c  6045              STR      r5,[r0,#4]  ; StepperControlStat
-;;;843    				break;
+;;;925    				break;
 00007e  e058              B        |L14.306|
                   |L14.128|
-;;;844    
-;;;845    			case STEPPER_CMD_INITIALIZE:
-;;;846    				break;
+;;;926    
+;;;927    			case STEPPER_CMD_INITIALIZE:
+;;;928    				break;
 000080  e057              B        |L14.306|
                   |L14.130|
-;;;847    
-;;;848    			case STEPPER_CMD_CORRECT_WAVELENGTH:
-;;;849    				desWavelength = CurWaveLen;
+;;;929    
+;;;930    			case STEPPER_CMD_CORRECT_WAVELENGTH:
+;;;931    				desWavelength = CurWaveLen;
 000082  483e              LDR      r0,|L14.380|
 000084  6807              LDR      r7,[r0,#0]  ; CurWaveLen
-;;;850    				correctionWavelength = message.value.correction;
+;;;932    				correctionWavelength = message.value.correction;
 000086  ed9d8a01          VLDR     s16,[sp,#4]
-;;;851    				if (correctionWavelength > 0.0f)
+;;;933    				if (correctionWavelength > 0.0f)
 00008a  eeb58ac0          VCMPE.F32 s16,#0.0
 00008e  eef1fa10          VMRS     APSR_nzcv,FPSCR
 000092  dd28              BLE      |L14.230|
-;;;852    				{
-;;;853    					steps = (int32_t)(correctionWavelength * 10.0f) + 200;
+;;;934    				{
+;;;935    					steps = (int32_t)(correctionWavelength * 10.0f) + 200;
 000094  eeb20a04          VMOV.F32 s0,#10.00000000
 000098  ee280a00          VMUL.F32 s0,s16,s0
 00009c  eebd0ac0          VCVT.S32.F32 s0,s0
 0000a0  ee100a10          VMOV     r0,s0
 0000a4  f10008c8          ADD      r8,r0,#0xc8
-;;;854    					MoveNStep(WaveLenStepper, FORWARD, steps);
+;;;936    					MoveNStep(WaveLenStepper, FORWARD, steps);
 0000a8  4642              MOV      r2,r8
 0000aa  2100              MOVS     r1,#0
 0000ac  4608              MOV      r0,r1
 0000ae  f7fffffe          BL       MoveNStep
-;;;855    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+;;;937    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
 0000b2  e002              B        |L14.186|
                   |L14.180|
-;;;856    					{
-;;;857    						osDelay(pdMS_TO_TICKS(5U));
+;;;938    					{
+;;;939    						osDelay(pdMS_TO_TICKS(5U));
 0000b4  2005              MOVS     r0,#5
 0000b6  f7fffffe          BL       osDelay
                   |L14.186|
 0000ba  f7fffffe          BL       TMC5130_GetMotionStatus
-0000be  2804              CMP      r0,#4                 ;855
+0000be  2804              CMP      r0,#4                 ;937
 0000c0  d1f8              BNE      |L14.180|
-;;;858    					}
-;;;859    						osDelay(pdMS_TO_TICKS(500U));
+;;;940    					}
+;;;941    						osDelay(pdMS_TO_TICKS(500U));
 0000c2  f44f70fa          MOV      r0,#0x1f4
 0000c6  f7fffffe          BL       osDelay
-;;;860    					MoveNStep(WaveLenStepper, BACKWARD, 200);
+;;;942    					MoveNStep(WaveLenStepper, BACKWARD, 200);
 0000ca  22c8              MOVS     r2,#0xc8
 0000cc  2101              MOVS     r1,#1
 0000ce  2000              MOVS     r0,#0
 0000d0  f7fffffe          BL       MoveNStep
-;;;861    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+;;;943    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
 0000d4  e002              B        |L14.220|
                   |L14.214|
-;;;862    					{
-;;;863    						osDelay(pdMS_TO_TICKS(5U));
+;;;944    					{
+;;;945    						osDelay(pdMS_TO_TICKS(5U));
 0000d6  2005              MOVS     r0,#5
 0000d8  f7fffffe          BL       osDelay
                   |L14.220|
 0000dc  f7fffffe          BL       TMC5130_GetMotionStatus
-0000e0  2804              CMP      r0,#4                 ;861
+0000e0  2804              CMP      r0,#4                 ;943
 0000e2  d1f8              BNE      |L14.214|
 0000e4  e01b              B        |L14.286|
                   |L14.230|
-;;;864    					}
-;;;865    				}
-;;;866    				else if (correctionWavelength < 0.0f)
+;;;946    					}
+;;;947    				}
+;;;948    				else if (correctionWavelength < 0.0f)
 0000e6  eeb58ac0          VCMPE.F32 s16,#0.0
 0000ea  eef1fa10          VMRS     APSR_nzcv,FPSCR
 0000ee  d216              BCS      |L14.286|
-;;;867    				{
-;;;868    					steps = (int32_t)(-correctionWavelength * 10.0f);
+;;;949    				{
+;;;950    					steps = (int32_t)(-correctionWavelength * 10.0f);
 0000f0  eeb10a48          VNEG.F32 s0,s16
 0000f4  eef20a04          VMOV.F32 s1,#10.00000000
 0000f8  ee200a20          VMUL.F32 s0,s0,s1
 0000fc  eebd0ac0          VCVT.S32.F32 s0,s0
 000100  ee108a10          VMOV     r8,s0
-;;;869    					MoveNStep(WaveLenStepper, BACKWARD, steps);
+;;;951    					MoveNStep(WaveLenStepper, BACKWARD, steps);
 000104  4642              MOV      r2,r8
 000106  2101              MOVS     r1,#1
 000108  2000              MOVS     r0,#0
 00010a  f7fffffe          BL       MoveNStep
-;;;870    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
+;;;952    					while (TMC5130_GetMotionStatus() != STATUS_TARGET_REACHED)
 00010e  e002              B        |L14.278|
                   |L14.272|
-;;;871    					{
-;;;872    						osDelay(pdMS_TO_TICKS(5U));
+;;;953    					{
+;;;954    						osDelay(pdMS_TO_TICKS(5U));
 000110  2005              MOVS     r0,#5
 000112  f7fffffe          BL       osDelay
                   |L14.278|
 000116  f7fffffe          BL       TMC5130_GetMotionStatus
-00011a  2804              CMP      r0,#4                 ;870
+00011a  2804              CMP      r0,#4                 ;952
 00011c  d1f8              BNE      |L14.272|
                   |L14.286|
-;;;873    					}
-;;;874    				}
-;;;875    				CurWaveLen = desWavelength;
+;;;955    					}
+;;;956    				}
+;;;957    				CurWaveLen = desWavelength;
 00011e  4817              LDR      r0,|L14.380|
 000120  6007              STR      r7,[r0,#0]  ; CurWaveLen
-;;;876    				break;
+;;;958    				break;
 000122  e006              B        |L14.306|
 000124  e7ff              B        |L14.294|
                   |L14.294|
-;;;877    
-;;;878    			default:
-;;;879    				printf("Unsupported wavelength stepper command: %u\r\n",
+;;;959    
+;;;960    			default:
+;;;961    				printf("Unsupported wavelength stepper command: %u\r\n",
 000126  f89d1000          LDRB     r1,[sp,#0]
 00012a  a016              ADR      r0,|L14.388|
 00012c  f7fffffe          BL       __2printf
-;;;880    				       (unsigned int)message.command);
-;;;881    				break;
+;;;962    				       (unsigned int)message.command);
+;;;963    				break;
 000130  bf00              NOP      
                   |L14.306|
-000132  bf00              NOP                            ;843
-;;;882    		}
-;;;883    
-;;;884    		if (MyOsFlag != NULL)
+000132  bf00              NOP                            ;925
+;;;964    		}
+;;;965    
+;;;966    		if (MyOsFlag != NULL)
 000134  481f              LDR      r0,|L14.436|
 000136  6800              LDR      r0,[r0,#0]  ; MyOsFlag
 000138  b120              CBZ      r0,|L14.324|
-;;;885    		{
-;;;886    			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
+;;;967    		{
+;;;968    			(void)xEventGroupSetBits(MyOsFlag, TASK_WAVE_LENGTH_FINISH_FLAG);
 00013a  2180              MOVS     r1,#0x80
 00013c  481d              LDR      r0,|L14.436|
 00013e  6800              LDR      r0,[r0,#0]  ; MyOsFlag
 000140  f7fffffe          BL       xEventGroupSetBits
                   |L14.324|
 000144  e760              B        |L14.8|
-;;;887    		}
-;;;888    	}
-;;;889    }
-;;;890    
+;;;969    		}
+;;;970    	}
+;;;971    }
+;;;972    
                           ENDP
 
 000146  0000              DCW      0x0000
@@ -2135,76 +2151,196 @@
                   |L14.436|
                           DCD      MyOsFlag
 
+                          AREA ||i.get_normal_time_value||, CODE, READONLY, ALIGN=2
+
+                  get_normal_time_value PROC
+;;;632    
+;;;633    int16_t get_normal_time_value(void)
+000000  b570              PUSH     {r4-r6,lr}
+;;;634    {
+000002  ed2d8b02          VPUSH    {d8}
+;;;635    //  int32_t sample = 0;
+;;;636    //  ADS1256_Status readStatus = ADS1256_ERROR_RTOS;
+;;;637    
+;;;638    //  if (ADS1256_WaitDataReady(osWaitForever) == osOK)
+;;;639    //  {
+;;;640    //    readStatus = ADS1256_ReadData(&sample);
+;;;641    //  }
+;;;642    
+;;;643    //  if (readStatus == ADS1256_OK)
+;;;644    //  {
+;;;645    //    CircularBuffer_Push(&cb_normal,
+;;;646    //                        ADS1256_ConvertToVoltage((uint16_t)((uint32_t)sample >> 8)));
+;;;647    //  }
+;;;648    //  else
+;;;649    //  {
+;;;650    //    printf("Failed to read ADS1256 sample\r\n");
+;;;651    //  }
+;;;652    
+;;;653    //  int16_t tmp_in = CircularBuffer_GetAverage(&cb_normal);
+;;;654    //  int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+;;;655    //  return tmp_voltage;
+;;;656    
+;;;657    
+;;;658    	uint32_t   tmp_ad=0;
+000006  2400              MOVS     r4,#0
+;;;659    	
+;;;660    //	while(ADS1256_FLAG == 0);
+;;;661    	tmp_ad = AD_read_data();
+000008  f7fffffe          BL       AD_read_data
+00000c  4604              MOV      r4,r0
+;;;662    //	ADS1256_FLAG = 0;
+;;;663    	CircularBuffer_Push(&cb_normal, ADS1256_ConvertToVoltage(tmp_ad));
+00000e  4620              MOV      r0,r4
+000010  f7fffffe          BL       ADS1256_ConvertToVoltage
+000014  ee000a10          VMOV     s0,r0
+000018  eeb80ac0          VCVT.F32.S32 s0,s0
+00001c  eef08a40          VMOV.F32 s17,s0
+000020  480b              LDR      r0,|L15.80|
+000022  f7fffffe          BL       CircularBuffer_Push
+;;;664    	int16_t tmp_in  = CircularBuffer_GetAverage(&cb_normal);
+000026  480a              LDR      r0,|L15.80|
+000028  f7fffffe          BL       CircularBuffer_GetAverage
+00002c  b200              SXTH     r0,r0
+00002e  ee080a10          VMOV     s16,r0
+;;;665    	int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+000032  eeb80ac8          VCVT.F32.S32 s0,s16
+000036  4807              LDR      r0,|L15.84|
+000038  f7fffffe          BL       rc_filter_process
+00003c  eebd0ac0          VCVT.S32.F32 s0,s0
+000040  ee100a10          VMOV     r0,s0
+000044  b205              SXTH     r5,r0
+;;;666    
+;;;667    	return (int16_t)tmp_voltage;
+000046  4628              MOV      r0,r5
+;;;668    
+;;;669    }
+000048  ecbd8b02          VPOP     {d8}
+00004c  bd70              POP      {r4-r6,pc}
+;;;670    int16_t get_normal_time_value_with_data(int16_t tmp_ad)
+                          ENDP
+
+00004e  0000              DCW      0x0000
+                  |L15.80|
+                          DCD      cb_normal
+                  |L15.84|
+                          DCD      normal_filter
+
+                          AREA ||i.get_normal_time_value_with_data||, CODE, READONLY, ALIGN=2
+
+                  get_normal_time_value_with_data PROC
+;;;669    }
+;;;670    int16_t get_normal_time_value_with_data(int16_t tmp_ad)
+000000  b570              PUSH     {r4-r6,lr}
+;;;671    {
+000002  ed2d8b02          VPUSH    {d8}
+000006  4604              MOV      r4,r0
+;;;672    
+;;;673    	CircularBuffer_Push(&cb_normal, ADS1256_ConvertToVoltage(tmp_ad));
+000008  b2a0              UXTH     r0,r4
+00000a  f7fffffe          BL       ADS1256_ConvertToVoltage
+00000e  ee000a10          VMOV     s0,r0
+000012  eeb80ac0          VCVT.F32.S32 s0,s0
+000016  eef08a40          VMOV.F32 s17,s0
+00001a  480b              LDR      r0,|L16.72|
+00001c  f7fffffe          BL       CircularBuffer_Push
+;;;674    	int16_t tmp_in  = CircularBuffer_GetAverage(&cb_normal);
+000020  4809              LDR      r0,|L16.72|
+000022  f7fffffe          BL       CircularBuffer_GetAverage
+000026  b200              SXTH     r0,r0
+000028  ee080a10          VMOV     s16,r0
+;;;675    	int16_t tmp_voltage = rc_filter_process(&normal_filter, tmp_in);
+00002c  eeb80ac8          VCVT.F32.S32 s0,s16
+000030  4806              LDR      r0,|L16.76|
+000032  f7fffffe          BL       rc_filter_process
+000036  eebd0ac0          VCVT.S32.F32 s0,s0
+00003a  ee100a10          VMOV     r0,s0
+00003e  b205              SXTH     r5,r0
+;;;676    
+;;;677    	return (int16_t)tmp_voltage;
+000040  4628              MOV      r0,r5
+;;;678    
+;;;679    }
+000042  ecbd8b02          VPOP     {d8}
+000046  bd70              POP      {r4-r6,pc}
+;;;680    
+                          ENDP
+
+                  |L16.72|
+                          DCD      cb_normal
+                  |L16.76|
+                          DCD      normal_filter
+
                           AREA ||i.vApplicationTickHook||, CODE, READONLY, ALIGN=2
 
                   vApplicationTickHook PROC
-;;;205     */
-;;;206    void vApplicationTickHook (void)
+;;;207     */
+;;;208    void vApplicationTickHook (void)
 000000  b510              PUSH     {r4,lr}
-;;;207    {
-;;;208      uint8_t buzzerOn;
-;;;209    	buzzerOn = 0U;
+;;;209    {
+;;;210      uint8_t buzzerOn;
+;;;211    	buzzerOn = 0U;
 000002  2400              MOVS     r4,#0
-;;;210    	if (Beep.En == 1U)
-000004  480f              LDR      r0,|L15.68|
+;;;212    	if (Beep.En == 1U)
+000004  480f              LDR      r0,|L17.68|
 000006  7800              LDRB     r0,[r0,#0]  ; Beep
 000008  2801              CMP      r0,#1
-00000a  d10f              BNE      |L15.44|
-;;;211    	{
-;;;212    		if (Beep.cnt > 0U)
-00000c  480d              LDR      r0,|L15.68|
+00000a  d10f              BNE      |L17.44|
+;;;213    	{
+;;;214    		if (Beep.cnt > 0U)
+00000c  480d              LDR      r0,|L17.68|
 00000e  6840              LDR      r0,[r0,#4]  ; Beep
-000010  b120              CBZ      r0,|L15.28|
-;;;213    		{
-;;;214    			Beep.cnt--;
-000012  480c              LDR      r0,|L15.68|
+000010  b120              CBZ      r0,|L17.28|
+;;;215    		{
+;;;216    			Beep.cnt--;
+000012  480c              LDR      r0,|L17.68|
 000014  6840              LDR      r0,[r0,#4]  ; Beep
 000016  1e40              SUBS     r0,r0,#1
-000018  490a              LDR      r1,|L15.68|
+000018  490a              LDR      r1,|L17.68|
 00001a  6048              STR      r0,[r1,#4]  ; Beep
-                  |L15.28|
-;;;215    		}
-;;;216    		if (Beep.cnt == 0U)
-00001c  4809              LDR      r0,|L15.68|
+                  |L17.28|
+;;;217    		}
+;;;218    		if (Beep.cnt == 0U)
+00001c  4809              LDR      r0,|L17.68|
 00001e  6840              LDR      r0,[r0,#4]  ; Beep
-000020  b918              CBNZ     r0,|L15.42|
-;;;217    		{
-;;;218    			Beep.En = 0U;
+000020  b918              CBNZ     r0,|L17.42|
+;;;219    		{
+;;;220    			Beep.En = 0U;
 000022  2000              MOVS     r0,#0
-000024  4907              LDR      r1,|L15.68|
+000024  4907              LDR      r1,|L17.68|
 000026  7008              STRB     r0,[r1,#0]
-000028  e000              B        |L15.44|
-                  |L15.42|
-;;;219    		}
-;;;220    		else
-;;;221    		{
-;;;222    			buzzerOn = 1U;
+000028  e000              B        |L17.44|
+                  |L17.42|
+;;;221    		}
+;;;222    		else
+;;;223    		{
+;;;224    			buzzerOn = 1U;
 00002a  2401              MOVS     r4,#1
-                  |L15.44|
-;;;223    		}
-;;;224    	}
-;;;225    	HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin,
-00002c  b10c              CBZ      r4,|L15.50|
-;;;226    										(buzzerOn != 0U) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+                  |L17.44|
+;;;225    		}
+;;;226    	}
+;;;227    	HAL_GPIO_WritePin(Buzzer_GPIO_Port, Buzzer_Pin,
+00002c  b10c              CBZ      r4,|L17.50|
+;;;228    										(buzzerOn != 0U) ? GPIO_PIN_SET : GPIO_PIN_RESET);
 00002e  2001              MOVS     r0,#1
-000030  e000              B        |L15.52|
-                  |L15.50|
+000030  e000              B        |L17.52|
+                  |L17.50|
 000032  2000              MOVS     r0,#0
-                  |L15.52|
+                  |L17.52|
 000034  4602              MOV      r2,r0
 000036  f44f5180          MOV      r1,#0x1000
-00003a  4803              LDR      r0,|L15.72|
+00003a  4803              LDR      r0,|L17.72|
 00003c  f7fffffe          BL       HAL_GPIO_WritePin
-;;;227    
-;;;228    }
-000040  bd10              POP      {r4,pc}
 ;;;229    
+;;;230    }
+000040  bd10              POP      {r4,pc}
+;;;231    
                           ENDP
 
 000042  0000              DCW      0x0000
-                  |L15.68|
+                  |L17.68|
                           DCD      Beep
-                  |L15.72|
+                  |L17.72|
                           DCD      0x40021400
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=2
