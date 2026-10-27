@@ -159,3 +159,4 @@ unsigned short AD_read_data(void);
 
 
 #endif /* __ADS1256_H */
+
