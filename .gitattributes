@@ -1,0 +1,42 @@
+# ============================================================
+# Li_930_F407_freeRTOS  .gitattributes
+# 作用：统一换行符策略，消除 "LF will be replaced by CRLF" 类噪音
+# ============================================================
+
+# 默认：由 Git 自动判定文本文件；仓库内存 LF，检出时按平台转换
+* text=auto
+
+# 配置类文件保持 LF，避免 core.autocrlf 产生 "LF will be replaced by CRLF" 噪音
+.gitattributes  text eol=lf
+.gitignore      text eol=lf
+
+# ---- 源码与工程文件：Windows 原生 CRLF，保证 Keil 打开不乱 ----
+*.c        text eol=crlf
+*.h        text eol=crlf
+*.s        text eol=crlf
+*.sct      text eol=crlf
+*.uvprojx  text eol=crlf
+*.uvoptx   text eol=crlf
+*.ioc      text eol=crlf
+*.md       text eol=lf
+
+# ---- 二进制文件：禁止任何换行符转换与 diff ----
+*.pdf      binary
+*.bin      binary
+*.hex      binary
+*.axf      binary
+*.lib      binary
+*.a        binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.bmp      binary
+*.ico      binary
+*.xlsx     binary
+*.docx     binary
+*.zip      binary
+*.rar      binary
+
+# ---- 汇编/链接产物 diff 无意义 ----
+*.map      -diff
